@@ -20,6 +20,8 @@ data/metadata/   수집기록, 스키마, 품질검사 결과
 docs/reference/  제공목록과 원자료 설명서
 notebooks/       탐색·검증 노트북
 scripts/         다운로드·정제·검증 도구
+tests/           파싱·페이지네이션·중복·오류 응답 테스트
+logs/            인증정보가 제거된 로컬 실행 로그(Git 제외)
 ```
 
 ## 원칙
@@ -36,3 +38,65 @@ scripts/         다운로드·정제·검증 도구
 - EDSS 개방데이터: https://www.edmgr.kr/edss/es/opd/odd/od/es_opd_oddod01_001
 - 대학알리미 Open API: https://www.data.go.kr/
 
+## 빠른 시작
+
+Python 3.11 이상과 표준 라이브러리만 사용합니다. 명령은 저장소 루트에서 실행합니다.
+
+```bash
+python3 -m unittest discover -s tests -p 'test_*.py' -v
+```
+
+공공데이터포털의 직접 다운로드형 파일을 수집합니다. 정상 파일과 SHA-256이 이미 기록돼 있으면 다시 받지 않습니다.
+
+```bash
+python3 scripts/download_files.py \
+  --config config/file_datasets.json \
+  --raw-root data/raw/public_data_portal \
+  --manifest data/metadata/file_manifest.jsonl \
+  --log logs/file_collection.log
+```
+
+EDSS 우선순위 1의 연도별 파일 목록만 검증하거나 전체연도 묶음 파일을 수집합니다.
+
+```bash
+python3 scripts/download_edss.py --list-only --priority 1
+python3 scripts/download_edss.py --priority 1 --year ALL
+```
+
+## 대학알리미 Open API
+
+공공데이터포털의 일반 인증키를 로컬 `.env`에 설정합니다. 키는 채팅, 문서, 로그, 커밋에 넣지 않습니다.
+
+```bash
+cp .env.example .env
+# .env를 직접 열어 DATA_GO_KR_SERVICE_KEY 값을 입력
+```
+
+Encoding/Decoding 키는 기본 `auto` 모드가 안전하게 판별합니다. API 요청 URL과 키 값은 로그에 남지 않습니다. StudentService의 연세대학교(학교 ID `0000149`) 2008·2009·최신 지원 연도를 비교합니다.
+
+```bash
+python3 scripts/collect_api.py \
+  --service student \
+  --operation /getComparisonEnrolledStudentCrntSt \
+  --school-id 0000149 \
+  --years 2008 2009 latest \
+  --num-rows 999
+```
+
+중단 후 재실행하면 정상 XML 페이지는 체크한 뒤 재사용합니다. 페이지네이션, 재시도, 호출 간격, 최대 요청 수(`--max-requests`)를 적용하며 중복 item과 오류 XML을 거부합니다. 인증키 없이 공식 응답 필드 사전만 다시 만들 수 있습니다.
+
+```bash
+python3 scripts/collect_api.py --schema-only \
+  --field-dictionary data/metadata/student_field_dictionary.csv
+```
+
+## 인벤토리와 메타데이터
+
+- `data/metadata/edss_catalog_inventory.csv`: 기준 Excel 7개 시트의 600개 행
+- `data/metadata/source_inventory.csv`: EDSS 우선순위 항목, 포털 파일데이터 12개, Open API 9개
+- `data/metadata/edss_field_dictionary.csv`: EDSS 공식 목록의 원본 항목명 10,505개
+- `data/metadata/student_field_dictionary.csv`: StudentService 공식 응답 필드
+- `data/metadata/file_manifest.jsonl`: 파일명, 출처, 크기, SHA-256, 기준연도, 라이선스
+- `data/metadata/edss_download_attempts.jsonl`: 연도 목록과 다운로드 성공·실패 이력
+
+원본과 정제 데이터는 재배포 조건과 크기를 확인할 때까지 Git에서 제외합니다. 체크섬과 위 실행 명령으로 재수집할 수 있습니다. 최초 수집 결과와 현재 차단 사항은 `docs/initial_collection_report.md`에 기록합니다.

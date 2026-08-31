@@ -5,6 +5,7 @@ __pycache__/
 .venv/
 .env
 .env.*
+!.env.example
 *.key
 *credential*
 *secret*
@@ -20,3 +21,6 @@ data/processed/*
 *.download
 *.tmp
 
+# Runtime logs may contain transient operational details.
+logs/*.log
+!logs/README.md
