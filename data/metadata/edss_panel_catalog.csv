@@ -1,0 +1,16 @@
+﻿source,catalog_code,dataset,access_tier,physical_domn_codes,row_count,column_count,first_year,last_year,input_archive_count,output_path,output_bytes,output_sha256
+고등교육통계,0101,고등교육학교개황,panel,16918,31883,66,2009,2025,1,data/processed/edss/panel/고등교육통계/0101_고등교육학교개황/panel.csv.gz,3931935,5ea31f661f2c55ace9bd46962aeac8bf23f7139a985864b84320c87de7b123a2
+고등교육통계,0103,대학교학생개황,panel,16920,333376,67,2009,2025,1,data/processed/edss/panel/고등교육통계/0103_대학교학생개황/panel.csv.gz,40589041,2271e6f4aeea3aeac4fea4a55587ae65925d4935474c7cddf9713becacc5387c
+고등교육통계,0105,대학원학생개황,panel,16922,64747,115,2009,2025,1,data/processed/edss/panel/고등교육통계/0105_대학원학생개황/panel.csv.gz,8984814,91d027110423c9f64c95c2c4d2780af4c83de7ac1d633f2251ab991357ea6b0f
+대학정보공시,0305,신입생충원현황,panel,17129,467149,21,2009,2025,1,data/processed/edss/panel/대학정보공시/0305_신입생충원현황/panel.csv.gz,47729560,60968e8b2b953f60faca5030c5b117650df09fafd515acafe3f78ea136928ae1
+대학정보공시,0310,재적학생현황,panel,17132,441474,17,2009,2025,1,data/processed/edss/panel/대학정보공시/0310_재적학생현황/panel.csv.gz,45930270,f750a9cc6fa9b28a311a3529d33708bb6be1bfbc678c7cf0103623ec385f6151
+대학정보공시,0316,중도탈락학생현황,panel,17141,427493,28,2009,2025,1,data/processed/edss/panel/대학정보공시/0316_중도탈락학생현황/panel.csv.gz,43562147,dd4ab8a3c4e80f138b511a63033a5af317035847db94cd9a8d70c304d20a1af3
+대학정보공시,0502,전체교원대비전임교원현황,panel,17312,242418,42,2009,2025,1,data/processed/edss/panel/대학정보공시/0502_전체교원대비전임교원현황/panel.csv.gz,25283084,c6f9174f106717cad1b41eea99719ab56a8cd5e33ecb3457772f184f71dc23ad
+대학정보공시,0503,전임교원1인당학생현황,panel,17313,22083,15,2009,2025,1,data/processed/edss/panel/대학정보공시/0503_전임교원1인당학생현황/panel.csv.gz,2276318,49f39ed0b269fbe10fdb3023684c975dbed55579260c3cf303bfead40c8428a1
+대학정보공시,0601,국내외학술지게재논문실적,panel,12543,201445,20,2009,2025,1,data/processed/edss/panel/대학정보공시/0601_국내외학술지게재논문실적/panel.csv.gz,21536829,ea56d720c015e85311b47b75e44d57ccc827e30ef648e5d369dcf9f548dbd403
+대학정보공시,0714,등록금현황,panel,17341,2822368,17,2009,2025,1,data/processed/edss/panel/대학정보공시/0714_등록금현황/panel.csv.gz,270524338,2db4406dae549aa75f1ab67157b9b8f629e56aeeaa75d3b586f18b0d67df9797
+대학정보공시,1014,연구비수혜실적,panel,17215,14505,30,2009,2025,1,data/processed/edss/panel/대학정보공시/1014_연구비수혜실적/panel.csv.gz,1632642,c3f4e490585881c7b4aa5a38704d97cb902ab5fdd65cce6fb6a023f782d1686f
+대학정보공시,1016,장학금수혜현황,panel,17217,978794,36,2009,2025,1,data/processed/edss/panel/대학정보공시/1016_장학금수혜현황/panel.csv.gz,107640966,469c6b2486836e69997b4cc8f81f7e937cd1fb42e9a79b79a177c885d1571083
+대학정보공시,1026,현장실습운영현황,panel,17227,253332,52,2011,2025,1,data/processed/edss/panel/대학정보공시/1026_현장실습운영현황/panel.csv.gz,26277204,c5bba0cb1cbcd48457c28df540951ab597860b3fd83ea5534719038ca18e7160
+대학정보공시,1207,기숙사수용현황,panel,17278,14730,19,2009,2025,1,data/processed/edss/panel/대학정보공시/1207_기숙사수용현황/panel.csv.gz,1692901,c494c5914343ade8ab11d645b4d439a1259437d74ea139901e9872d4a5bce8f5
+취업통계,0001,학생인적취업정보,restricted,"13299,13300",7324949,167,2010,2024,15,data/processed/edss/restricted/취업통계/0001_학생인적취업정보/panel.csv.gz,747424844,81dcf1558c9cae49d6f5f561a04ffea63b14046c98147f098605c6e1463b9603

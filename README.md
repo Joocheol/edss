@@ -1,6 +1,6 @@
 # EDSS
 
-EDSS 개방데이터를 이용해 2009~2025년 한국 고등교육 장기 패널을 구축하는 프로젝트입니다.
+EDSS 개방데이터를 이용해 2009~2025년 한국 고등교육 장기 패널을 구축하는 프로젝트입니다. 현재 우선순위 설정의 16개 물리 묶음을 모두 확보해 15개 주제 패널, 13,640,746행을 구축했습니다.
 
 ## 기본 전략
 
@@ -75,9 +75,19 @@ python3 scripts/inspect_edss_zip.py data/raw/edss/고등교육통계/0101_고등
   --source-url https://www.edmgr.kr/edss/es/opd/odd/od/es_opd_oddod01_001
 ```
 
-현재 EDSS 웹 브라우저의 전체 다운로드는 성공하지만 동일한 내부 주소를 독립 HTTP 수집기로 호출하면 404가 발생합니다. 이는 파일 부재가 아니라 브라우저 세션 또는 팝업의 선택 문맥 차이로 분류합니다. 현재 `0101 고등교육학교개황`, `0103 대학교학생개황`, `0105 대학원학생개황`의 2009~2025 전체연도 ZIP을 확보했습니다.
+현재 EDSS 웹 브라우저의 전체 다운로드는 성공하지만 동일한 내부 주소를 독립 HTTP 수집기로 호출하면 404가 발생합니다. 이는 파일 부재가 아니라 브라우저 세션 또는 팝업의 선택 문맥 차이로 분류합니다. 취업통계 전체 묶음은 생성 시간이 길어 2010~2024를 연도별로 수집했고, 나머지 대상은 전체연도 ZIP으로 확보했습니다.
 
-## 대학알리미 Open API
+원본을 검사하고 15개 주제 패널을 생성한 뒤 독립 검증합니다.
+
+```bash
+python3 scripts/build_edss_dataset.py --inspect-only
+python3 scripts/build_edss_dataset.py
+python3 scripts/validate_edss_dataset.py
+```
+
+모든 원본 값은 문자열로 보존하며 출처 ZIP, 내부 파일, 원본 행 번호와 결정적 행 ID를 추가합니다. 취업통계는 민감 가능 열과 2023년 구조 전환 때문에 `data/processed/edss/restricted/`에 분리합니다. 데이터 구조와 결합 주의사항은 `docs/edss_panel_dataset.md`를 참고합니다.
+
+## 대학알리미 Open API 사후 검증
 
 공공데이터포털의 일반 인증키를 로컬 `.env`에 설정합니다. 키는 채팅, 문서, 로그, 커밋에 넣지 않습니다.
 
@@ -86,7 +96,7 @@ cp .env.example .env
 # .env를 직접 열어 DATA_GO_KR_SERVICE_KEY 값을 입력
 ```
 
-Encoding/Decoding 키는 기본 `auto` 모드가 안전하게 판별합니다. API 요청 URL과 키 값은 로그에 남지 않습니다. StudentService의 연세대학교(학교 ID `0000149`) 2008·2009·최신 지원 연도를 비교합니다.
+Encoding/Decoding 키는 기본 `auto` 모드가 안전하게 판별합니다. API 요청 URL과 키 값은 로그에 남지 않습니다. API는 EDSS 원자료를 대체하지 않고 학교 ID·학교명 교차표, 최신 상태와 집계값의 사후 검증에 사용합니다. StudentService의 연세대학교(학교 ID `0000149`) 2008·2009·최신 지원 연도를 비교하는 명령은 다음과 같습니다.
 
 ```bash
 python3 scripts/collect_api.py \
@@ -116,5 +126,9 @@ python3 scripts/collect_api.py --schema-only \
 - `data/metadata/edss_0101_schema.json`: 0101 ZIP의 연도별 행 수·인코딩·원본 헤더
 - `data/metadata/edss_0103_schema.json`: 0103 ZIP의 연도별 행 수·인코딩·원본 헤더
 - `data/metadata/edss_0105_schema.json`: 0105 ZIP의 연도별 행 수·인코딩·원본 헤더
+- `data/metadata/edss_panel_catalog.csv`: 15개 논리 패널의 행·열·연도·출력 체크섬
+- `data/metadata/edss_panel_data_dictionary.csv`: 원본 필드명, 저장형, 관찰 자료형, 단위·결측 정의 상태
+- `data/metadata/edss_panel_quality_report.json`: 빌드 중 행·열·중복·식별자 검사
+- `data/metadata/edss_panel_validation.json`: 전체 패널 독립 재검산과 학교연도 결합 범위
 
 원본과 정제 데이터는 재배포 조건과 크기를 확인할 때까지 Git에서 제외합니다. 체크섬과 위 실행 명령으로 재수집할 수 있습니다. 최초 수집 결과와 현재 차단 사항은 `docs/initial_collection_report.md`에 기록합니다.
