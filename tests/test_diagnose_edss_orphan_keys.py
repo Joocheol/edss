@@ -11,11 +11,11 @@ sys.path.insert(0, str(SCRIPTS))
 import diagnose_edss_orphan_keys as diagnosis
 
 
-def write_panel(path: Path, rows: list[tuple[str, str, str]]) -> None:
+def write_panel(path: Path, rows: list[tuple[str, str, str, str]]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     with gzip.open(path, "wt", encoding="utf-8", newline="") as handle:
         writer = csv.writer(handle)
-        writer.writerow(["_panel_year", "개방ID", "학교구분명"])
+        writer.writerow(["_panel_year", "개방ID", "학교구분명", "본분교명"])
         writer.writerows(rows)
 
 
@@ -26,9 +26,9 @@ class DiagnoseEdssOrphanKeysTests(unittest.TestCase):
             base = root / "base.csv.gz"
             first = root / "first.csv.gz"
             second = root / "second.csv.gz"
-            write_panel(base, [("2010", "A", "대학"), ("2012", "A", "대학"), ("2011", "B", "대학")])
-            write_panel(first, [("2009", "A", "대학"), ("2011", "A", "대학"), ("2012", "B", "대학"), ("2011", "C", "대학")])
-            write_panel(second, [("2011", "A", "대학"), ("2011", "C", "대학"), ("2011", "C", "대학")])
+            write_panel(base, [("2010", "A", "대학", "본교"), ("2012", "A", "대학", "본교"), ("2011", "B", "대학", "본교")])
+            write_panel(first, [("2009", "A", "대학", ""), ("2011", "A", "대학", ""), ("2012", "B", "대학", ""), ("2011", "C", "대학", "")])
+            write_panel(second, [("2011", "A", "대학", ""), ("2011", "C", "대학", ""), ("2011", "C", "대학", "")])
             catalog = root / "catalog.csv"
             with catalog.open("w", encoding="utf-8", newline="") as handle:
                 writer = csv.DictWriter(handle, fieldnames=["catalog_code", "dataset", "access_tier", "output_path"])
@@ -57,8 +57,8 @@ class DiagnoseEdssOrphanKeysTests(unittest.TestCase):
             root = Path(temp_dir)
             base = root / "base.csv.gz"
             other = root / "other.csv.gz"
-            write_panel(base, [("2010", "A", "대학"), ("2010", "A", "전문대학")])
-            write_panel(other, [("2010", "A", "대학")])
+            write_panel(base, [("2010", "A", "대학", "본교"), ("2010", "A", "대학", "제2캠퍼스")])
+            write_panel(other, [("2010", "A", "대학", "")])
             catalog = root / "catalog.csv"
             with catalog.open("w", encoding="utf-8", newline="") as handle:
                 writer = csv.DictWriter(handle, fieldnames=["catalog_code", "dataset", "access_tier", "output_path"])
@@ -74,6 +74,8 @@ class DiagnoseEdssOrphanKeysTests(unittest.TestCase):
             self.assertEqual(summary["base_repeated_school_year_key_count"], 1)
             self.assertEqual(summary["base_duplicate_extra_row_count"], 1)
             self.assertEqual(summary["base_max_key_multiplicity"], 2)
+            self.assertEqual(summary["base_natural_key"], ["_panel_year", "개방ID", "본분교명"])
+            self.assertEqual(summary["base_repeated_natural_key_count"], 0)
 
 
 if __name__ == "__main__":

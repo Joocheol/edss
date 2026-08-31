@@ -65,12 +65,14 @@ def diagnose(catalog_path: Path, base_code: str = "0101") -> tuple[dict, list[di
     base_id_years: dict[str, set[int]] = defaultdict(set)
     base_attributes: dict[str, dict[str, set[str]]] = defaultdict(lambda: defaultdict(set))
     base_key_rows: Counter[tuple[str, str]] = Counter()
+    base_natural_key_rows: Counter[tuple[str, str, str]] = Counter()
     for year, open_id, values in panel_rows(base_path, BASE_ATTRIBUTE_FIELDS):
         if not year or not open_id:
             continue
         key = (year, open_id)
         base_keys.add(key)
         base_key_rows[key] += 1
+        base_natural_key_rows[(year, open_id, values.get("본분교명", ""))] += 1
         base_id_years[open_id].add(int(year))
         for field, value in values.items():
             base_attributes[open_id][field].add(value)
@@ -151,6 +153,7 @@ def diagnose(catalog_path: Path, base_code: str = "0101") -> tuple[dict, list[di
         year_key_counts[year_text] += 1
 
     repeated_base_keys = [count for count in base_key_rows.values() if count > 1]
+    repeated_natural_keys = [count for count in base_natural_key_rows.values() if count > 1]
     summary = {
         "generated_at": utc_now(),
         "status": "review_required" if records else "pass",
@@ -159,6 +162,10 @@ def diagnose(catalog_path: Path, base_code: str = "0101") -> tuple[dict, list[di
         "base_repeated_school_year_key_count": len(repeated_base_keys),
         "base_duplicate_extra_row_count": sum(count - 1 for count in repeated_base_keys),
         "base_max_key_multiplicity": max(base_key_rows.values(), default=0),
+        "base_natural_key": ["_panel_year", "개방ID", "본분교명"],
+        "base_natural_key_count": len(base_natural_key_rows),
+        "base_repeated_natural_key_count": len(repeated_natural_keys),
+        "base_natural_key_extra_row_count": sum(count - 1 for count in repeated_natural_keys),
         "dataset_orphan_key_occurrence_count": sum(item["orphan_key_count"] for item in dataset_summaries),
         "distinct_orphan_school_year_key_count": len(records),
         "distinct_orphan_open_id_count": len({record["open_id"] for record in records}),
@@ -168,7 +175,7 @@ def diagnose(catalog_path: Path, base_code: str = "0101") -> tuple[dict, list[di
         "classification_affected_row_counts": dict(sorted(classification_row_counts.items())),
         "year_key_counts": dict(sorted(year_key_counts.items())),
         "datasets": dataset_summaries,
-        "safe_join_rule": "Do not delete or force-map orphan keys. Join on (_panel_year, 개방ID) only after resolving the base 0101 grain and validating an external school-name/status crosswalk.",
+        "safe_join_rule": "The 0101 natural key is (_panel_year, 개방ID, 본분교명). Other panels usually lack 본분교명, so do not join them directly to raw 0101 rows. Do not delete or force-map orphan keys; first define an explicit aggregation or a validated school-name/status crosswalk.",
         "interpretation_limit": "Most non-0101 panels do not contain school names. Temporal classifications are evidence about coverage timing, not proof of opening, closure, merger, or ID change.",
     }
     return summary, records

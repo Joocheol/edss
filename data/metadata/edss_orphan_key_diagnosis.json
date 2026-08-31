@@ -1,11 +1,19 @@
 {
-  "generated_at": "2026-08-31T20:34:37.196225+00:00",
+  "generated_at": "2026-08-31T21:01:06.269529+00:00",
   "status": "review_required",
   "base_dataset": "0101 고등교육학교개황",
   "base_school_year_key_count": 30556,
   "base_repeated_school_year_key_count": 1187,
   "base_duplicate_extra_row_count": 1327,
   "base_max_key_multiplicity": 4,
+  "base_natural_key": [
+    "_panel_year",
+    "개방ID",
+    "본분교명"
+  ],
+  "base_natural_key_count": 31883,
+  "base_repeated_natural_key_count": 0,
+  "base_natural_key_extra_row_count": 0,
   "dataset_orphan_key_occurrence_count": 316,
   "distinct_orphan_school_year_key_count": 76,
   "distinct_orphan_open_id_count": 69,
@@ -144,6 +152,6 @@
       "affected_row_count": 3144
     }
   ],
-  "safe_join_rule": "Do not delete or force-map orphan keys. Join on (_panel_year, 개방ID) only after resolving the base 0101 grain and validating an external school-name/status crosswalk.",
+  "safe_join_rule": "The 0101 natural key is (_panel_year, 개방ID, 본분교명). Other panels usually lack 본분교명, so do not join them directly to raw 0101 rows. Do not delete or force-map orphan keys; first define an explicit aggregation or a validated school-name/status crosswalk.",
   "interpretation_limit": "Most non-0101 panels do not contain school names. Temporal classifications are evidence about coverage timing, not proof of opening, closure, merger, or ID change."
 }
