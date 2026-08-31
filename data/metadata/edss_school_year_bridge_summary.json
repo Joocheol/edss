@@ -1,0 +1,237 @@
+{
+  "generated_at": "2026-08-31T21:48:53.128571+00:00",
+  "status": "review_required",
+  "grain": "one row per distinct nonempty (_panel_year, 개방ID) observed in any cataloged panel",
+  "base_dataset": "0101 고등교육학교개황",
+  "bridge_validation": {
+    "key_columns": [
+      "_panel_year",
+      "개방ID"
+    ],
+    "row_count": 30632,
+    "distinct_key_count": 30632,
+    "duplicate_key_count": 0,
+    "blank_key_count": 0,
+    "max_key_multiplicity": 1,
+    "unique_key": true
+  },
+  "base_natural_key": [
+    "_panel_year",
+    "개방ID",
+    "본분교명"
+  ],
+  "base_source_row_count": 31883,
+  "base_natural_key_count": 31883,
+  "base_repeated_natural_key_count": 0,
+  "base_school_year_key_count": 30556,
+  "base_repeated_school_year_key_count": 1187,
+  "base_max_school_year_key_multiplicity": 4,
+  "match_status_counts": {
+    "after_base_last_seen": 32,
+    "before_base_first_seen": 38,
+    "internal_base_gap": 1,
+    "matched": 30556,
+    "open_id_absent_all_years": 5
+  },
+  "review_status_counts": {
+    "external_crosscheck_required_absent_all_years": 5,
+    "external_crosscheck_required_internal_gap": 1,
+    "not_required": 30556,
+    "unresolved_temporal_boundary": 70
+  },
+  "campus_scope_counts": {
+    "multiple_campuses": 1187,
+    "not_observed": 76,
+    "single_campus": 29369
+  },
+  "source_dataset_count": 15,
+  "source_input_row_count": 13640746,
+  "source_nonempty_join_key_row_count": 13593784,
+  "source_missing_join_key_row_count": 46962,
+  "source_unmatched_0101_row_count": 8106,
+  "left_join_validation": {
+    "status": "pass",
+    "rule": "A left join from any panel to this unique bridge on (_panel_year, 개방ID) preserves every source row and cannot expand rows.",
+    "source_row_count": 13640746,
+    "simulated_left_join_row_count": 13640746,
+    "row_expansion_count": 0
+  },
+  "datasets": [
+    {
+      "catalog_code": "0101",
+      "dataset": "고등교육학교개황",
+      "input_row_count": 31883,
+      "nonempty_join_key_row_count": 31883,
+      "missing_join_key_row_count": 0,
+      "matched_0101_row_count": 31883,
+      "unmatched_0101_row_count": 0,
+      "left_join_output_row_count": 31883,
+      "row_expansion_count": 0
+    },
+    {
+      "catalog_code": "0103",
+      "dataset": "대학교학생개황",
+      "input_row_count": 333376,
+      "nonempty_join_key_row_count": 333376,
+      "missing_join_key_row_count": 0,
+      "matched_0101_row_count": 333376,
+      "unmatched_0101_row_count": 0,
+      "left_join_output_row_count": 333376,
+      "row_expansion_count": 0
+    },
+    {
+      "catalog_code": "0105",
+      "dataset": "대학원학생개황",
+      "input_row_count": 64747,
+      "nonempty_join_key_row_count": 64747,
+      "missing_join_key_row_count": 0,
+      "matched_0101_row_count": 64747,
+      "unmatched_0101_row_count": 0,
+      "left_join_output_row_count": 64747,
+      "row_expansion_count": 0
+    },
+    {
+      "catalog_code": "0305",
+      "dataset": "신입생충원현황",
+      "input_row_count": 467149,
+      "nonempty_join_key_row_count": 467149,
+      "missing_join_key_row_count": 0,
+      "matched_0101_row_count": 466887,
+      "unmatched_0101_row_count": 262,
+      "left_join_output_row_count": 467149,
+      "row_expansion_count": 0
+    },
+    {
+      "catalog_code": "0310",
+      "dataset": "재적학생현황",
+      "input_row_count": 441474,
+      "nonempty_join_key_row_count": 441474,
+      "missing_join_key_row_count": 0,
+      "matched_0101_row_count": 441201,
+      "unmatched_0101_row_count": 273,
+      "left_join_output_row_count": 441474,
+      "row_expansion_count": 0
+    },
+    {
+      "catalog_code": "0316",
+      "dataset": "중도탈락학생현황",
+      "input_row_count": 427493,
+      "nonempty_join_key_row_count": 427493,
+      "missing_join_key_row_count": 0,
+      "matched_0101_row_count": 426586,
+      "unmatched_0101_row_count": 907,
+      "left_join_output_row_count": 427493,
+      "row_expansion_count": 0
+    },
+    {
+      "catalog_code": "0502",
+      "dataset": "전체교원대비전임교원현황",
+      "input_row_count": 242418,
+      "nonempty_join_key_row_count": 242418,
+      "missing_join_key_row_count": 0,
+      "matched_0101_row_count": 242333,
+      "unmatched_0101_row_count": 85,
+      "left_join_output_row_count": 242418,
+      "row_expansion_count": 0
+    },
+    {
+      "catalog_code": "0503",
+      "dataset": "전임교원1인당학생현황",
+      "input_row_count": 22083,
+      "nonempty_join_key_row_count": 22083,
+      "missing_join_key_row_count": 0,
+      "matched_0101_row_count": 22045,
+      "unmatched_0101_row_count": 38,
+      "left_join_output_row_count": 22083,
+      "row_expansion_count": 0
+    },
+    {
+      "catalog_code": "0601",
+      "dataset": "국내외학술지게재논문실적",
+      "input_row_count": 201445,
+      "nonempty_join_key_row_count": 201445,
+      "missing_join_key_row_count": 0,
+      "matched_0101_row_count": 201194,
+      "unmatched_0101_row_count": 251,
+      "left_join_output_row_count": 201445,
+      "row_expansion_count": 0
+    },
+    {
+      "catalog_code": "0714",
+      "dataset": "등록금현황",
+      "input_row_count": 2822368,
+      "nonempty_join_key_row_count": 2822368,
+      "missing_join_key_row_count": 0,
+      "matched_0101_row_count": 2820562,
+      "unmatched_0101_row_count": 1806,
+      "left_join_output_row_count": 2822368,
+      "row_expansion_count": 0
+    },
+    {
+      "catalog_code": "1014",
+      "dataset": "연구비수혜실적",
+      "input_row_count": 14505,
+      "nonempty_join_key_row_count": 14505,
+      "missing_join_key_row_count": 0,
+      "matched_0101_row_count": 14477,
+      "unmatched_0101_row_count": 28,
+      "left_join_output_row_count": 14505,
+      "row_expansion_count": 0
+    },
+    {
+      "catalog_code": "1016",
+      "dataset": "장학금수혜현황",
+      "input_row_count": 978794,
+      "nonempty_join_key_row_count": 978794,
+      "missing_join_key_row_count": 0,
+      "matched_0101_row_count": 977524,
+      "unmatched_0101_row_count": 1270,
+      "left_join_output_row_count": 978794,
+      "row_expansion_count": 0
+    },
+    {
+      "catalog_code": "1026",
+      "dataset": "현장실습운영현황",
+      "input_row_count": 253332,
+      "nonempty_join_key_row_count": 253332,
+      "missing_join_key_row_count": 0,
+      "matched_0101_row_count": 253325,
+      "unmatched_0101_row_count": 7,
+      "left_join_output_row_count": 253332,
+      "row_expansion_count": 0
+    },
+    {
+      "catalog_code": "1207",
+      "dataset": "기숙사수용현황",
+      "input_row_count": 14730,
+      "nonempty_join_key_row_count": 14730,
+      "missing_join_key_row_count": 0,
+      "matched_0101_row_count": 14695,
+      "unmatched_0101_row_count": 35,
+      "left_join_output_row_count": 14730,
+      "row_expansion_count": 0
+    },
+    {
+      "catalog_code": "0001",
+      "dataset": "학생인적취업정보",
+      "input_row_count": 7324949,
+      "nonempty_join_key_row_count": 7277987,
+      "missing_join_key_row_count": 46962,
+      "matched_0101_row_count": 7274843,
+      "unmatched_0101_row_count": 3144,
+      "left_join_output_row_count": 7324949,
+      "row_expansion_count": 0
+    }
+  ],
+  "aggregation_rule": "Only distinct nonempty categorical 0101 values are listed. Numeric 0101 measures are excluded and never summed or selected.",
+  "orphan_rule": "Unmatched keys remain in the bridge with _0101_exists=false and their temporal review status. They are never deleted or mapped to an adjacent year.",
+  "missing_key_rule": "Source rows with a blank year or open ID remain on the left side of downstream joins; no synthetic blank-key bridge row is created.",
+  "input_checksum_validation": {
+    "status": "pass",
+    "checked_file_count": 15,
+    "mismatch_count": 0
+  },
+  "output_csv": "data/metadata/edss_school_year_bridge.csv",
+  "output_csv_bytes": 4327732,
+  "output_csv_sha256": "e658060d122531bdd1720c5f7c13ad057546dcc8bc93552993cc9ecfa448a3c6"
+}
