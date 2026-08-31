@@ -1,0 +1,322 @@
+{
+  "inspected_at": "2026-08-31T05:36:37.456366+00:00",
+  "provider": "교육부·한국교육학술정보원 EDSS",
+  "source_url": "https://www.edmgr.kr/edss/es/opd/odd/od/es_opd_oddod01_001",
+  "dataset": "대학원학생개황",
+  "catalog_code": "0105",
+  "domn_code": "16922",
+  "archive_filename": "0105_대학원학생개황_2009-2025.zip",
+  "archive_path": "data/raw/edss/고등교육통계/0105_대학원학생개황/0105_대학원학생개황_2009-2025.zip",
+  "archive_bytes": 3089116,
+  "archive_sha256": "679e3b56d5af5a440788dde008df82f1e559da6397374261085dc05f8c3e10e7",
+  "member_count": 17,
+  "total_rows": 64747,
+  "header_variant_count": 1,
+  "original_fields": [
+    "조사년도",
+    "학교구분명",
+    "개방ID",
+    "학과계열구분명",
+    "야간박사과정남자입학생수",
+    "야간박사과정여자입학생수",
+    "주야간박사과정입학생수",
+    "주야간박사과정남자입학생수",
+    "주야간박사과정여자입학생수",
+    "대학원학생_재적학생수",
+    "재적남학생수",
+    "야간석사과정남자재학생수",
+    "대학원_야간석사과정여자재학생수",
+    "대학원_주간박사과정재학생수",
+    "주간박사과정남자재학생수",
+    "대학원_주간박사과정여자재학생수",
+    "대학원_야간박사과정재학생수",
+    "야간박사과정남자재학생수",
+    "대학원_야간박사과정여자재학생수",
+    "대학원학생_휴학생수",
+    "남자휴학생수",
+    "대학원학생_여자휴학생수",
+    "석사과정휴학생수",
+    "대학원_야간석사과정재학생수",
+    "대학원_주간석사과정여자재학생수",
+    "주간석사과정남자재학생수",
+    "대학원_주간석사과정재학생수",
+    "박사과정여자재학생수",
+    "박사과정남자재학생수",
+    "박사과정재학생수",
+    "석사과정여자재학생수",
+    "석사과정남자재학생수",
+    "석사과정재학생수",
+    "대학원_여자재학생수",
+    "남자재학생수",
+    "대학원_재학생수",
+    "대학원학생_야간박사과정재적여학생수",
+    "야간박사과정재적남학생수",
+    "석사과정남자휴학생수",
+    "석사과정여자휴학생수",
+    "박사과정휴학생수",
+    "대학원학생_박사과정학과수",
+    "석사과정학과수",
+    "대학원학생_학과수",
+    "대학원학생_박사과정여자졸업생수",
+    "박사과정남자졸업생수",
+    "대학원학생_박사과정졸업생수",
+    "대학원학생_석사과정여자졸업생수",
+    "석사과정남자졸업생수",
+    "대학원학생_석사과정졸업생수",
+    "대학원학생_여자졸업생수",
+    "남자졸업생수",
+    "대학원학생_졸업생수",
+    "대학원학생_야간박사과정여자휴학생수",
+    "대학원_야간박사과정남자휴학생수",
+    "대학원학생_야간박사과정휴학생수",
+    "대학원학생_주간박사과정여자휴학생수",
+    "주간박사과정남자휴학생수",
+    "대학원학생_주간박사과정휴학생수",
+    "대학원학생_야간석사과정여자휴학생수",
+    "야간석사과정남자휴학생수",
+    "대학원학생_야간석사과정휴학생수",
+    "대학원학생_주간석사과정여자휴학생수",
+    "주간석사과정남자휴학생수",
+    "대학원학생_주간석사과정휴학생수",
+    "박사과정여자휴학생수",
+    "박사과정남자휴학생수",
+    "대학원학생_야간박사과정재적학생수",
+    "대학원학생_주간박사과정재적여학생수",
+    "야간석사과정남자입학생수",
+    "야간석사과정입학생수",
+    "주간석사과정여자입학생수",
+    "주간석사과정남자입학생수",
+    "주간석사과정입학생수",
+    "박사과정여자입학생수",
+    "박사과정남자입학생수",
+    "박사과정입학생수",
+    "석사과정여자입학생수",
+    "석사과정남자입학생수",
+    "석사과정입학생수",
+    "대학원학생_여자입학생수",
+    "남자입학생수",
+    "대학원학생_입학생수",
+    "주야간박사과정입학정원수",
+    "대학원학생_야간박사과정입학정원수",
+    "대학원학생_주야간석사과정입학정원수",
+    "대학원학생_야간석사과정입학정원수",
+    "대학원학생_주간석사과정입학정원수",
+    "대학원학생_박사과정입학정원수",
+    "대학원학생_석사과정입학정원수",
+    "대학원학생_입학정원수",
+    "야간석사과정여자입학생수",
+    "주야간석사과정입학생수",
+    "주야간석사과정남자입학생수",
+    "주간박사과정재적남학생수",
+    "대학원학생_주간박사과정재적학생수",
+    "대학원학생_야간석사과정재적여학생수",
+    "야간석사과정재적남학생수",
+    "대학원학생_야간석사과정재적학생수",
+    "대학원학생_주간석사과정재적여학생수",
+    "주간석사과정재적남학생수",
+    "대학원학생_주간석사과정재적학생수",
+    "박사과정재적여학생수",
+    "박사과정재적남학생수",
+    "박사과정재적학생수",
+    "석사과정재적여학생수",
+    "석사과정재적남학생수",
+    "석사과정재적학생수",
+    "대학원학생_재적여학생수",
+    "주야간석사과정여자입학생수",
+    "주간박사과정입학생수",
+    "주간박사과정남자입학생수",
+    "주간박사과정여자입학생수",
+    "야간박사과정입학생수",
+    "대학원학생_주간박사과정입학정원수"
+  ],
+  "field_definition_status": "원본 필드명만 확인; 자료형·단위·결측값 의미는 별도 설명서 확인 필요",
+  "members": [
+    {
+      "filename": "0105. 대학원학생개황(09).csv",
+      "compressed_bytes": 179798,
+      "uncompressed_bytes": 891861,
+      "encoding": "cp949",
+      "row_count": 2972,
+      "column_count": 115,
+      "observed_years": [
+        "2009"
+      ]
+    },
+    {
+      "filename": "0105. 대학원학생개황(10).csv",
+      "compressed_bytes": 183042,
+      "uncompressed_bytes": 873266,
+      "encoding": "cp949",
+      "row_count": 2893,
+      "column_count": 115,
+      "observed_years": [
+        "2010"
+      ]
+    },
+    {
+      "filename": "0105. 대학원학생개황(11).csv",
+      "compressed_bytes": 188527,
+      "uncompressed_bytes": 928831,
+      "encoding": "cp949",
+      "row_count": 3091,
+      "column_count": 115,
+      "observed_years": [
+        "2011"
+      ]
+    },
+    {
+      "filename": "0105. 대학원학생개황(12).csv",
+      "compressed_bytes": 195534,
+      "uncompressed_bytes": 979237,
+      "encoding": "cp949",
+      "row_count": 3271,
+      "column_count": 115,
+      "observed_years": [
+        "2012"
+      ]
+    },
+    {
+      "filename": "0105. 대학원학생개황(13).csv",
+      "compressed_bytes": 199122,
+      "uncompressed_bytes": 999642,
+      "encoding": "cp949",
+      "row_count": 3343,
+      "column_count": 115,
+      "observed_years": [
+        "2013"
+      ]
+    },
+    {
+      "filename": "0105. 대학원학생개황(14).csv",
+      "compressed_bytes": 238353,
+      "uncompressed_bytes": 2461734,
+      "encoding": "cp949",
+      "row_count": 8755,
+      "column_count": 115,
+      "observed_years": [
+        "2014"
+      ]
+    },
+    {
+      "filename": "0105. 대학원학생개황(15).csv",
+      "compressed_bytes": 247090,
+      "uncompressed_bytes": 2124259,
+      "encoding": "cp949",
+      "row_count": 7466,
+      "column_count": 115,
+      "observed_years": [
+        "2015"
+      ]
+    },
+    {
+      "filename": "0105. 대학원학생개황(16).csv",
+      "compressed_bytes": 198922,
+      "uncompressed_bytes": 895813,
+      "encoding": "cp949",
+      "row_count": 2944,
+      "column_count": 115,
+      "observed_years": [
+        "2016"
+      ]
+    },
+    {
+      "filename": "0105. 대학원학생개황(17).csv",
+      "compressed_bytes": 196703,
+      "uncompressed_bytes": 921771,
+      "encoding": "cp949",
+      "row_count": 3054,
+      "column_count": 115,
+      "observed_years": [
+        "2017"
+      ]
+    },
+    {
+      "filename": "0105. 대학원학생개황(18).csv",
+      "compressed_bytes": 198068,
+      "uncompressed_bytes": 938667,
+      "encoding": "cp949",
+      "row_count": 3111,
+      "column_count": 115,
+      "observed_years": [
+        "2018"
+      ]
+    },
+    {
+      "filename": "0105. 대학원학생개황(19).csv",
+      "compressed_bytes": 196714,
+      "uncompressed_bytes": 940357,
+      "encoding": "cp949",
+      "row_count": 3125,
+      "column_count": 115,
+      "observed_years": [
+        "2019"
+      ]
+    },
+    {
+      "filename": "0105. 대학원학생개황(20).csv",
+      "compressed_bytes": 198709,
+      "uncompressed_bytes": 948034,
+      "encoding": "cp949",
+      "row_count": 3149,
+      "column_count": 115,
+      "observed_years": [
+        "2020"
+      ]
+    },
+    {
+      "filename": "0105. 대학원학생개황(21).csv",
+      "compressed_bytes": 199107,
+      "uncompressed_bytes": 957790,
+      "encoding": "cp949",
+      "row_count": 3186,
+      "column_count": 115,
+      "observed_years": [
+        "2021"
+      ]
+    },
+    {
+      "filename": "0105. 대학원학생개황(22).csv",
+      "compressed_bytes": 200717,
+      "uncompressed_bytes": 966773,
+      "encoding": "cp949",
+      "row_count": 3216,
+      "column_count": 115,
+      "observed_years": [
+        "2022"
+      ]
+    },
+    {
+      "filename": "0105. 대학원학생개황(23).csv",
+      "compressed_bytes": 99812,
+      "uncompressed_bytes": 1258291,
+      "encoding": "cp949",
+      "row_count": 4521,
+      "column_count": 115,
+      "observed_years": [
+        "2023"
+      ]
+    },
+    {
+      "filename": "0105. 대학원학생개황(24).csv",
+      "compressed_bytes": 81906,
+      "uncompressed_bytes": 893920,
+      "encoding": "cp949",
+      "row_count": 3215,
+      "column_count": 115,
+      "observed_years": [
+        "2024"
+      ]
+    },
+    {
+      "filename": "0105. 대학원학생개황(25).csv",
+      "compressed_bytes": 82618,
+      "uncompressed_bytes": 954063,
+      "encoding": "cp949",
+      "row_count": 3435,
+      "column_count": 115,
+      "observed_years": [
+        "2025"
+      ]
+    }
+  ]
+}

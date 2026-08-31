@@ -1,0 +1,274 @@
+{
+  "inspected_at": "2026-08-31T05:36:37.019487+00:00",
+  "provider": "교육부·한국교육학술정보원 EDSS",
+  "source_url": "https://www.edmgr.kr/edss/es/opd/odd/od/es_opd_oddod01_001",
+  "dataset": "대학교학생개황",
+  "catalog_code": "0103",
+  "domn_code": "16920",
+  "archive_filename": "0103_대학교학생개황_2009-2025.zip",
+  "archive_path": "data/raw/edss/고등교육통계/0103_대학교학생개황/0103_대학교학생개황_2009-2025.zip",
+  "archive_bytes": 10078176,
+  "archive_sha256": "a657313ecf072f415defd6c9b0650f9d5c28977994a7866e32d5351e09ba882e",
+  "member_count": 17,
+  "total_rows": 333376,
+  "header_variant_count": 1,
+  "original_fields": [
+    "조사년도",
+    "학교구분명",
+    "개방ID",
+    "학과계열구분명",
+    "학제유형명",
+    "학제유형그룹명",
+    "단과대학명",
+    "학과명",
+    "수업형태명",
+    "학과특성명",
+    "대학교학생_야간6학년재적학생수",
+    "대학교학생_야간5학년재적여학생수",
+    "대학교학생_야간5학년재적학생수",
+    "대학교학생_야간4학년재적여학생수",
+    "대학교학생_야간4학년재적학생수",
+    "대학교학생_야간3학년재적여학생수",
+    "대학교학생_야간3학년재적학생수",
+    "대학교학생_야간2학년재적여학생수",
+    "대학교학생_야간2학년재적학생수",
+    "대학교학생_야간1학년재적여학생수",
+    "대학교학생_야간1학년재적학생수",
+    "대학교학생_야간여자휴학생수",
+    "대학교학생_야간휴학생수",
+    "대학교학생_야간여자재학생수",
+    "대학교학생_야간재학생수",
+    "대학교학생_야간6학년재적여학생수",
+    "대학교학생_입학지원자수",
+    "대학교학생_여자국가기술자격취득자수",
+    "대학교학생_국가기술자격취득자수",
+    "대학교학생_입대학생수",
+    "대학교학생_여자취업불가능자수",
+    "대학교학생_취업불가능수",
+    "대학교학생_여자외국인유학생수",
+    "대학교학생_외국인유학생수",
+    "대학교학생개황_여자취업자수",
+    "대학교학생개황_취업자수",
+    "대학교학생_여자졸업생수",
+    "대학교학생_졸업생수",
+    "대학교학생_여자입학생수",
+    "대학교학생_입학생수",
+    "대학교학생_여자입학지원자수",
+    "대학교학생_주간6학년재적여학생수",
+    "대학교학생_주간6학년재적학생수",
+    "대학교학생_주간5학년재적여학생수",
+    "대학교학생_재적여학생수",
+    "대학교학생_재적학생수",
+    "대학교학생_야간입학정원수",
+    "대학교학생_주간입학정원수",
+    "대학교학생_입학정원수",
+    "대학교학생_학과수",
+    "대학교학생_재학생수",
+    "대학교학생_여자재학생수",
+    "대학교학생_주간5학년재적학생수",
+    "대학교학생_주간4학년재적여학생수",
+    "대학교학생_주간4학년재적학생수",
+    "대학교학생_주간3학년재적여학생수",
+    "대학교학생_주간3학년재적학생수",
+    "대학교학생_주간2학년재적여학생수",
+    "대학교학생_주간2학년재적학생수",
+    "대학교학생_주간1학년재적여학생수",
+    "대학교학생_주간1학년재적학생수",
+    "대학교학생_주간여자휴학생수",
+    "대학교학생_주간휴학생수",
+    "대학교학생_주간여자재학생수",
+    "대학교학생_주간재학생수",
+    "대학교학생_여자휴학생수",
+    "대학교학생_휴학생수"
+  ],
+  "field_definition_status": "원본 필드명만 확인; 자료형·단위·결측값 의미는 별도 설명서 확인 필요",
+  "members": [
+    {
+      "filename": "0103. 대학교학생개황(09).csv",
+      "compressed_bytes": 554576,
+      "uncompressed_bytes": 3623454,
+      "encoding": "cp949",
+      "row_count": 16395,
+      "column_count": 67,
+      "observed_years": [
+        "2009"
+      ]
+    },
+    {
+      "filename": "0103. 대학교학생개황(10).csv",
+      "compressed_bytes": 574131,
+      "uncompressed_bytes": 3623905,
+      "encoding": "cp949",
+      "row_count": 16294,
+      "column_count": 67,
+      "observed_years": [
+        "2010"
+      ]
+    },
+    {
+      "filename": "0103. 대학교학생개황(11).csv",
+      "compressed_bytes": 590769,
+      "uncompressed_bytes": 3680277,
+      "encoding": "cp949",
+      "row_count": 16503,
+      "column_count": 67,
+      "observed_years": [
+        "2011"
+      ]
+    },
+    {
+      "filename": "0103. 대학교학생개황(12).csv",
+      "compressed_bytes": 608527,
+      "uncompressed_bytes": 3884062,
+      "encoding": "cp949",
+      "row_count": 17455,
+      "column_count": 67,
+      "observed_years": [
+        "2012"
+      ]
+    },
+    {
+      "filename": "0103. 대학교학생개황(13).csv",
+      "compressed_bytes": 610034,
+      "uncompressed_bytes": 3843903,
+      "encoding": "cp949",
+      "row_count": 17243,
+      "column_count": 67,
+      "observed_years": [
+        "2013"
+      ]
+    },
+    {
+      "filename": "0103. 대학교학생개황(14).csv",
+      "compressed_bytes": 579176,
+      "uncompressed_bytes": 3735189,
+      "encoding": "cp949",
+      "row_count": 16797,
+      "column_count": 67,
+      "observed_years": [
+        "2014"
+      ]
+    },
+    {
+      "filename": "0103. 대학교학생개황(15).csv",
+      "compressed_bytes": 582620,
+      "uncompressed_bytes": 3861301,
+      "encoding": "cp949",
+      "row_count": 17408,
+      "column_count": 67,
+      "observed_years": [
+        "2015"
+      ]
+    },
+    {
+      "filename": "0103. 대학교학생개황(16).csv",
+      "compressed_bytes": 594942,
+      "uncompressed_bytes": 4017175,
+      "encoding": "cp949",
+      "row_count": 18142,
+      "column_count": 67,
+      "observed_years": [
+        "2016"
+      ]
+    },
+    {
+      "filename": "0103. 대학교학생개황(17).csv",
+      "compressed_bytes": 604193,
+      "uncompressed_bytes": 4422972,
+      "encoding": "cp949",
+      "row_count": 20105,
+      "column_count": 67,
+      "observed_years": [
+        "2017"
+      ]
+    },
+    {
+      "filename": "0103. 대학교학생개황(18).csv",
+      "compressed_bytes": 603405,
+      "uncompressed_bytes": 4486536,
+      "encoding": "cp949",
+      "row_count": 20399,
+      "column_count": 67,
+      "observed_years": [
+        "2018"
+      ]
+    },
+    {
+      "filename": "0103. 대학교학생개황(19).csv",
+      "compressed_bytes": 601991,
+      "uncompressed_bytes": 4436740,
+      "encoding": "cp949",
+      "row_count": 20162,
+      "column_count": 67,
+      "observed_years": [
+        "2019"
+      ]
+    },
+    {
+      "filename": "0103. 대학교학생개황(20).csv",
+      "compressed_bytes": 614504,
+      "uncompressed_bytes": 4611205,
+      "encoding": "cp949",
+      "row_count": 20963,
+      "column_count": 67,
+      "observed_years": [
+        "2020"
+      ]
+    },
+    {
+      "filename": "0103. 대학교학생개황(21).csv",
+      "compressed_bytes": 620249,
+      "uncompressed_bytes": 4774933,
+      "encoding": "cp949",
+      "row_count": 21796,
+      "column_count": 67,
+      "observed_years": [
+        "2021"
+      ]
+    },
+    {
+      "filename": "0103. 대학교학생개황(22).csv",
+      "compressed_bytes": 629905,
+      "uncompressed_bytes": 4886019,
+      "encoding": "cp949",
+      "row_count": 22307,
+      "column_count": 67,
+      "observed_years": [
+        "2022"
+      ]
+    },
+    {
+      "filename": "0103. 대학교학생개황(23).csv",
+      "compressed_bytes": 565238,
+      "uncompressed_bytes": 5082445,
+      "encoding": "cp949",
+      "row_count": 23418,
+      "column_count": 67,
+      "observed_years": [
+        "2023"
+      ]
+    },
+    {
+      "filename": "0103. 대학교학생개황(24).csv",
+      "compressed_bytes": 589515,
+      "uncompressed_bytes": 5460031,
+      "encoding": "cp949",
+      "row_count": 25206,
+      "column_count": 67,
+      "observed_years": [
+        "2024"
+      ]
+    },
+    {
+      "filename": "0103. 대학교학생개황(25).csv",
+      "compressed_bytes": 550027,
+      "uncompressed_bytes": 4502415,
+      "encoding": "cp949",
+      "row_count": 22783,
+      "column_count": 67,
+      "observed_years": [
+        "2025"
+      ]
+    }
+  ]
+}

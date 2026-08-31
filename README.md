@@ -63,7 +63,7 @@ python3 scripts/download_edss.py --list-only --priority 1
 python3 scripts/download_edss.py --priority 1 --year ALL
 ```
 
-EDSS 웹 화면에서 수동으로 받은 ZIP은 원본을 `data/raw/edss/`에 복사한 뒤, 압축을 풀지 않고 스키마와 체크섬을 등록할 수 있습니다.
+EDSS 웹 화면의 다운로드 팝업에서 받은 ZIP은 원본을 `data/raw/edss/`에 복사한 뒤, 압축을 풀지 않고 스키마와 체크섬을 등록할 수 있습니다. 목록 행의 `다운로드`를 누른 다음 팝업의 `전체 다운로드`를 선택해야 하며, 화면에 보이는 내부 주소를 독립 HTTP 요청으로 호출하는 방식은 동작하지 않습니다.
 
 ```bash
 python3 scripts/inspect_edss_zip.py data/raw/edss/고등교육통계/0101_고등교육학교개황/0101_고등교육학교개황_2009-2025.zip \
@@ -75,7 +75,7 @@ python3 scripts/inspect_edss_zip.py data/raw/edss/고등교육통계/0101_고등
   --source-url https://www.edmgr.kr/edss/es/opd/odd/od/es_opd_oddod01_001
 ```
 
-현재 EDSS 웹 브라우저의 전체 다운로드는 성공하지만 동일한 내부 주소를 독립 HTTP 수집기로 호출하면 404가 발생한다. 이는 파일 부재가 아니라 브라우저 세션 또는 요청 문맥 차이로 분류한다.
+현재 EDSS 웹 브라우저의 전체 다운로드는 성공하지만 동일한 내부 주소를 독립 HTTP 수집기로 호출하면 404가 발생합니다. 이는 파일 부재가 아니라 브라우저 세션 또는 팝업의 선택 문맥 차이로 분류합니다. 현재 `0101 고등교육학교개황`, `0103 대학교학생개황`, `0105 대학원학생개황`의 2009~2025 전체연도 ZIP을 확보했습니다.
 
 ## 대학알리미 Open API
 
@@ -114,5 +114,7 @@ python3 scripts/collect_api.py --schema-only \
 - `data/metadata/edss_download_attempts.jsonl`: 연도 목록과 다운로드 성공·실패 이력
 - `data/metadata/edss_file_manifest.jsonl`: EDSS 원본 ZIP의 체크섬과 수집 방식
 - `data/metadata/edss_0101_schema.json`: 0101 ZIP의 연도별 행 수·인코딩·원본 헤더
+- `data/metadata/edss_0103_schema.json`: 0103 ZIP의 연도별 행 수·인코딩·원본 헤더
+- `data/metadata/edss_0105_schema.json`: 0105 ZIP의 연도별 행 수·인코딩·원본 헤더
 
 원본과 정제 데이터는 재배포 조건과 크기를 확인할 때까지 Git에서 제외합니다. 체크섬과 위 실행 명령으로 재수집할 수 있습니다. 최초 수집 결과와 현재 차단 사항은 `docs/initial_collection_report.md`에 기록합니다.
