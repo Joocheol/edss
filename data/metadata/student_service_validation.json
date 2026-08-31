@@ -1,0 +1,19 @@
+{
+  "service": "student",
+  "base_url": "https://apis.data.go.kr/B340014/StudentService",
+  "operation": "/getComparisonEnrolledStudentCrntSt",
+  "school_id": "0000149",
+  "school_name_expected": "연세대학교",
+  "requested_years": [
+    "2008",
+    "2009",
+    "latest"
+  ],
+  "num_rows": 999,
+  "request_count_this_run": 1,
+  "generated_at": "2026-08-31T05:22:29.167564+00:00",
+  "status": "api_error",
+  "error_code": "22",
+  "error_message": "일일 서비스 요청제한 횟수 초과 에러",
+  "results": []
+}

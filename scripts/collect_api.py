@@ -149,6 +149,12 @@ def get_bytes(url: str, retries: int, timeout: int, delay: float) -> bytes:
             with urllib.request.urlopen(request, timeout=timeout) as response:
                 return response.read()
         except urllib.error.HTTPError as exc:
+            body = exc.read()
+            if body:
+                try:
+                    parse_xml(body)
+                except ApiResponseError as api_error:
+                    raise api_error from exc
             if exc.code < 500 and exc.code != 429:
                 raise
             if attempt >= retries:
@@ -243,8 +249,8 @@ def collect_year(service: dict, operation: dict, school_id: str, year: int, raw_
             if request_budget[0] >= args.max_requests:
                 raise RuntimeError("request budget exhausted before collection completed")
             params = {"pageNo": str(page), "numOfRows": str(args.num_rows), "schlId": school_id, "svyYr": str(year)}
-            data, parsed, key_interpretation = request_page(service, operation, params, raw_key, args.key_mode, args.retries, args.timeout, args.delay)
             request_budget[0] += 1
+            data, parsed, key_interpretation = request_page(service, operation, params, raw_key, args.key_mode, args.retries, args.timeout, args.delay)
             atomic_write(page_path, data)
             time.sleep(args.delay)
         record = {
@@ -349,17 +355,38 @@ def main() -> None:
     requested_years = [int(value) for value in args.years if value != "latest"]
     summaries = []
     budget = [0]
-    for year in requested_years:
-        summaries.append(collect_year(service, operation, args.school_id, year, args.raw_root, args.manifest, raw_key, args, budget))
-    if "latest" in args.years:
-        current_year = datetime.now().year
-        latest_summary = None
-        for year in range(current_year, current_year - args.latest_lookback - 1, -1):
-            summary = collect_year(service, operation, args.school_id, year, args.raw_root, args.manifest, raw_key, args, budget)
-            if summary["item_count"] > 0:
-                latest_summary = summary
-                break
-        summaries.append(latest_summary or summary)
+    try:
+        for year in requested_years:
+            summaries.append(collect_year(service, operation, args.school_id, year, args.raw_root, args.manifest, raw_key, args, budget))
+        if "latest" in args.years:
+            current_year = datetime.now().year
+            latest_summary = None
+            for year in range(current_year, current_year - args.latest_lookback - 1, -1):
+                summary = collect_year(service, operation, args.school_id, year, args.raw_root, args.manifest, raw_key, args, budget)
+                if summary["item_count"] > 0:
+                    latest_summary = summary
+                    break
+            summaries.append(latest_summary or summary)
+    except ApiResponseError as exc:
+        failure_report = {
+            "service": service["key"],
+            "base_url": service["base_url"],
+            "operation": operation["path"],
+            "school_id": args.school_id,
+            "school_name_expected": "연세대학교" if args.school_id == "0000149" else "",
+            "requested_years": args.years,
+            "num_rows": args.num_rows,
+            "request_count_this_run": budget[0],
+            "generated_at": datetime.now(timezone.utc).isoformat(),
+            "status": "api_error",
+            "error_code": exc.code,
+            "error_message": exc.message,
+            "results": summaries,
+        }
+        args.report.parent.mkdir(parents=True, exist_ok=True)
+        args.report.write_text(json.dumps(failure_report, ensure_ascii=False, indent=2), encoding="utf-8")
+        logging.error("API collection stopped code=%s message=%s", exc.code, exc.message)
+        raise SystemExit(3) from None
 
     report = {
         "service": service["key"],

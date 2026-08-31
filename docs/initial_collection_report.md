@@ -9,7 +9,7 @@
 - 공공데이터포털의 `한국대학교육협의회` 검색 결과를 상세 페이지 기준으로 확인했다: 파일데이터 12개, Open API 9개, 연계데이터 1개.
 - 직접 다운로드형 10개와 대학알리미 첨부 1개, 총 11개 원본(113,711,726 bytes)을 확보했다. 각 파일의 출처, 크기, SHA-256, 기준연도, 라이선스를 `data/metadata/file_manifest.jsonl`에 기록했다.
 - EDSS 우선순위 1의 14개 물리 데이터셋에서 연도별 파일 식별자와 `ALL` 파일 존재를 확인했다. 실제 다운로드는 공식 서버가 모든 대상에 HTTP 404를 반환해 실패했다.
-- 인증정보가 제거된 Open API 수집기와 13개 단위 테스트를 완성했다. StudentService 실제 비교 호출은 현재 환경에 인증키가 없어 아직 실행하지 못했다.
+- 인증정보가 제거된 Open API 수집기와 14개 단위 테스트를 완성했다. StudentService 실제 호출에서 인증키는 인식됐으나 공공데이터포털이 오류 코드 `22`(일일 서비스 요청제한 횟수 초과)를 반환했다.
 
 ## 기준 Excel 조사
 
@@ -66,7 +66,7 @@ StudentService 공식 명세에서 `/getComparisonEnrolledStudentCrntSt`의 요�
 
 ### StudentService 비교 시험 상태
 
-예정한 요청은 연세대학교 `0000149`, `pageNo=1`, `numOfRows=999`, 2008·2009·최신 지원 연도다. 현재 환경에는 `DATA_GO_KR_SERVICE_KEY`가 없어 네트워크 호출 전 안전하게 종료됐다. 따라서 2008년의 `totalCount=0` 또는 item 부재를 자료 부재로 단정하지 않았다. 인증키가 설정되면 수집기가 다음을 함께 기록한다.
+연세대학교 `0000149`, `pageNo=1`, `numOfRows=999`, 2008·2009·최신 지원 연도로 실제 호출을 시작했다. 로컬 `DATA_GO_KR_SERVICE_KEY`를 정상 인식했고 값은 로그에서 제거했지만, 2008년 첫 요청에서 HTTP 429와 공공데이터포털 표준 오류 코드 `22`, 메시지 `일일 서비스 요청제한 횟수 초과 에러`가 반환됐다. 따라서 2008년 응답의 `totalCount`나 item, 2009년과 최신 연도는 아직 확인하지 못했으며 2008년 자료 부재로 해석하지 않았다. 구조화된 결과는 `data/metadata/student_service_validation.json`에 저장했다. 일일 한도가 복구된 뒤 재실행하면 수집기가 다음을 함께 기록한다.
 
 - `resultCode`, `resultMsg`, `totalCount`, 실제 item 수
 - 원본 응답 필드명과 최대 3개 item의 실제 값
@@ -92,11 +92,11 @@ StudentService 공식 명세에서 `/getComparisonEnrolledStudentCrntSt`의 요�
 
 ## 검증 결과
 
-`python3 -m unittest discover -s tests -p 'test_*.py' -v` 결과 13개 테스트가 모두 통과했다. 검사 범위는 XML 정상·빈·인증 오류, 페이지네이션 재개, 페이지 간 중복, Encoding/Decoding 키 후보, HTML 오인 다운로드, XLSX 서명, EDSS 파일명과 성공 기록 재사용이다.
+`python3 -m unittest discover -s tests -p 'test_*.py' -v` 결과 14개 테스트가 모두 통과했다. 검사 범위는 XML 정상·빈·인증 오류, HTTP 429의 일일 한도 오류 파싱, 페이지네이션 재개, 페이지 간 중복, Encoding/Decoding 키 후보, HTML 오인 다운로드, XLSX 서명, EDSS 파일명과 성공 기록 재사용이다.
 
 ## 다음 수집 대상과 필요한 조치
 
-1. 사용자가 저장소 로컬 `.env`에 공공데이터포털 인증키를 설정하면 StudentService 2008·2009·최신 연도 비교를 즉시 실행한다.
+1. 공공데이터포털 StudentService의 일일 요청 한도가 초기화되면 동일 명령으로 2008·2009·최신 연도 비교를 재실행한다.
 2. EDSS 공식 다운로드 서버의 404를 재확인하고, 복구 시 우선순위 1 `ALL` 원본부터 수집한다.
 3. `15081503` 추가 수집이 필요하면 사용자가 실제 이용자 구분과 제출할 사용 목적 문구를 정해야 한다.
 4. GitHub CLI 재로그인 후 공개 `edss` 저장소를 생성·연결하고 로컬 커밋을 푸시한다.

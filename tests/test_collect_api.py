@@ -1,8 +1,11 @@
 import sys
 import tempfile
 import unittest
+from io import BytesIO
 from pathlib import Path
 from types import SimpleNamespace
+from unittest.mock import patch
+from urllib.error import HTTPError
 
 SCRIPTS = Path(__file__).resolve().parents[1] / "scripts"
 sys.path.insert(0, str(SCRIPTS))
@@ -43,6 +46,14 @@ class ParseXmlTests(unittest.TestCase):
         candidates = collect_api.key_candidates("abc%2Bdef%3D", "auto")
         self.assertIn(("normalized", "abc+def="), candidates)
         self.assertIn(("literal_encoded", "abc%2Bdef%3D"), candidates)
+
+    def test_http_429_xml_is_reported_as_daily_limit_error(self):
+        body = b"<OpenAPI_ServiceResponse><cmmMsgHeader><returnReasonCode>22</returnReasonCode><returnAuthMsg>LIMITED_NUMBER_OF_SERVICE_REQUESTS_EXCEEDS_ERROR</returnAuthMsg></cmmMsgHeader></OpenAPI_ServiceResponse>"
+        error = HTTPError("https://example.invalid/redacted", 429, "Too Many Requests", {}, BytesIO(body))
+        with patch("urllib.request.urlopen", side_effect=error):
+            with self.assertRaises(collect_api.ApiResponseError) as context:
+                collect_api.get_bytes("https://example.invalid/redacted", retries=0, timeout=1, delay=0)
+        self.assertEqual(context.exception.code, "22")
 
 
 class PaginationTests(unittest.TestCase):
