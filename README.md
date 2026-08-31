@@ -83,9 +83,11 @@ python3 scripts/inspect_edss_zip.py data/raw/edss/고등교육통계/0101_고등
 python3 scripts/build_edss_dataset.py --inspect-only
 python3 scripts/build_edss_dataset.py
 python3 scripts/validate_edss_dataset.py
+python3 scripts/diagnose_edss_orphan_keys.py
+python3 scripts/build_edss_school_year_bridge.py
 ```
 
-모든 원본 값은 문자열로 보존하며 출처 ZIP, 내부 파일, 원본 행 번호와 결정적 행 ID를 추가합니다. 취업통계는 민감 가능 열과 2023년 구조 전환 때문에 `data/processed/edss/restricted/`에 분리합니다. 데이터 구조와 결합 주의사항은 `docs/edss_panel_dataset.md`를 참고합니다.
+모든 원본 값은 문자열로 보존하며 출처 ZIP, 내부 파일, 원본 행 번호와 결정적 행 ID를 추가합니다. 취업통계는 민감 가능 열과 2023년 구조 전환 때문에 `data/processed/edss/restricted/`에 분리합니다. 다른 패널을 `0101`에 결합할 때는 원시 `0101` 대신 학교연도 유일키 기준표를 사용합니다. 데이터 구조와 결합 주의사항은 `docs/edss_panel_dataset.md`, 상세 grain 규칙은 `docs/edss_school_year_bridge.md`를 참고합니다.
 
 ## 대학알리미 Open API 사후 검증
 
@@ -130,5 +132,7 @@ python3 scripts/collect_api.py --schema-only \
 - `data/metadata/edss_panel_data_dictionary.csv`: 원본 필드명, 저장형, 관찰 자료형, 단위·결측 정의 상태
 - `data/metadata/edss_panel_quality_report.json`: 빌드 중 행·열·중복·식별자 검사
 - `data/metadata/edss_panel_validation.json`: 전체 패널 독립 재검산과 학교연도 결합 범위
+- `data/metadata/edss_school_year_bridge.csv`: 비어 있지 않은 학교연도 키마다 한 행인 안전 결합 기준표
+- `data/metadata/edss_school_year_bridge_summary.json`: 입력 체크섬, 기준표 유일성, 데이터셋별 left join 무증식 검증
 
 원본과 정제 데이터는 재배포 조건과 크기를 확인할 때까지 Git에서 제외합니다. 체크섬과 위 실행 명령으로 재수집할 수 있습니다. 최초 수집 결과와 현재 차단 사항은 `docs/initial_collection_report.md`에 기록합니다.

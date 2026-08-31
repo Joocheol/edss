@@ -12,6 +12,8 @@
 - `edss_panel_validation.json`: 패널 전체 독립 재검산과 학교연도 키 연결 결과
 - `edss_orphan_key_diagnosis.json`: `0101` 미연결 학교연도 키의 중복 제거, 시간적 분류와 영향 행 수
 - `edss_orphan_school_year_keys.csv`: 미연결 고유 `(연도, 개방ID)` 76개의 데이터셋·기준 관측연도·분류
+- `edss_school_year_bridge.csv`: 모든 패널의 비어 있지 않은 `(연도, 개방ID)`를 한 행씩 보존하고 `0101` 범주형 속성과 미연결 검토 상태를 연결한 기준표
+- `edss_school_year_bridge_summary.json`: 기준표 grain·유일성·입력 체크섬·데이터셋별 left join 무증식 검증 결과
 - `edss_catalog_inventory.csv`: 기준 Excel 7개 시트의 행 단위 인벤토리
 - `source_inventory.csv`: EDSS 우선순위와 공공데이터포털 파일/API 수집 목록
 - `edss_field_dictionary.csv`: 공식 원본 항목명 기반 데이터 사전

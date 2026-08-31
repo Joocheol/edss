@@ -36,6 +36,8 @@ EDSS 개방데이터를 주 자료원으로 사용해 현재 우선순위 설정
 - 독립 검증: `data/metadata/edss_panel_validation.json`
 - 미연결 키 요약: `data/metadata/edss_orphan_key_diagnosis.json`
 - 미연결 키 목록: `data/metadata/edss_orphan_school_year_keys.csv`
+- 안전 결합 기준표: `data/metadata/edss_school_year_bridge.csv`
+- 기준표 검증 요약: `data/metadata/edss_school_year_bridge_summary.json`
 
 원본 열은 이름과 값을 변경하지 않고 모두 문자열로 저장한다. 따라서 `개방ID`와 기타 코드의 선행 0, 원본 공란, `-` 등의 표기를 보존한다. 다음 열만 출처 추적을 위해 앞에 추가한다.
 
@@ -56,6 +58,8 @@ EDSS 개방데이터를 주 자료원으로 사용해 현재 우선순위 설정
 `0101 고등교육학교개황`에는 31,883행과 30,556개의 `(연도, 개방ID)`가 있다. 이 후보키가 반복되는 키는 1,187개이고 최대 반복 수는 4다. 독립 재검산 결과 반복키 1,187개 모두에서 `본분교명`이 달랐고, `(연도, 개방ID, 본분교명)`은 31,883행 전체에서 유일했다. 따라서 이는 중복 오류가 아니라 본교·캠퍼스 grain이다. 다른 패널에는 `본분교명`이 대부분 없으므로 원시 `0101`에 직접 결합하면 행이 증식할 수 있다.
 
 다른 주제의 고유 `(연도, 개방ID)`를 `0101`과 비교하면 데이터셋별 연결률은 99.30–100%다. 데이터셋별 미연결 키를 합하면 316건(일반 패널 305건, 취업통계 11건)이지만, 동일 키의 데이터셋 간 중복을 제거하면 76개 연도–ID 조합과 69개 `개방ID`다. 영향 행은 8,106행으로 전체의 0.0594%다.
+
+분석용 결합에는 원시 `0101` 대신 `edss_school_year_bridge.csv`를 사용한다. 이 기준표는 전체 패널에서 관측된 비어 있지 않은 `(연도, 개방ID)`마다 한 행이며, `0101`의 본분교·시도·지역·학교구분은 서로 다른 범주 목록으로만 보존한다. `0101` 수치 지표는 임의 합산하거나 대표 캠퍼스에서 선택하지 않는다. 자세한 grain과 left join 규칙은 `docs/edss_school_year_bridge.md`에 기록했다.
 
 76개 키를 동일 ID의 `0101` 관측기간과 비교하면 최초 등장 전 38개, 마지막 등장 후 32개, 내부 연도 공백 1개, 전 연도 미등장 5개다. 시간적 분류는 조사범위 차이의 증거일 뿐 신설·폐교·통폐합·ID 변경의 확정 근거가 아니다. 외부 학교명·학교상태 교차표로 검증하기 전에는 미연결 행을 삭제하거나 인접 연도 ID로 강제 매핑하지 않는다.
 
@@ -87,6 +91,7 @@ python3 scripts/build_edss_dataset.py --inspect-only
 python3 scripts/build_edss_dataset.py
 python3 scripts/validate_edss_dataset.py
 python3 scripts/diagnose_edss_orphan_keys.py
+python3 scripts/build_edss_school_year_bridge.py
 python3 -m unittest discover -s tests -p 'test_*.py' -v
 ```
 
