@@ -87,6 +87,7 @@ def main() -> int:
     parser.add_argument("--attempts", type=Path, default=Path("data/metadata/edss_download_attempts.jsonl"))
     parser.add_argument("--log", type=Path, default=Path("logs/edss_collection.log"))
     parser.add_argument("--priority", type=int, default=1)
+    parser.add_argument("--domn-code", action="append", default=[], help="limit collection to one or more official domnCd values")
     parser.add_argument("--year", default="ALL", help="ALL or one advertised year")
     parser.add_argument("--retries", type=int, default=2)
     parser.add_argument("--delay", type=float, default=0.5)
@@ -116,6 +117,8 @@ def main() -> int:
         if int(dataset["priority"]) > args.priority:
             continue
         code = str(dataset["domn_code"])
+        if args.domn_code and code not in set(args.domn_code):
+            continue
         list_body = json.dumps({"domnCd": code}).encode("utf-8")
         list_request = urllib.request.Request(
             FILE_LIST,

@@ -4,6 +4,8 @@
 
 - `file_manifest.jsonl`: 실제 확보한 포털·대학알리미 원본 파일
 - `edss_download_attempts.jsonl`: EDSS 연도 목록 확인 및 실제 다운로드 결과
+- `edss_file_manifest.jsonl`: EDSS 원본 ZIP의 체크섬, 수집 방식, 압축 내부 요약
+- `edss_0101_schema.json`: 고등교육학교개황 2009~2025 CSV의 연도별 행 수와 원본 스키마
 - `edss_catalog_inventory.csv`: 기준 Excel 7개 시트의 행 단위 인벤토리
 - `source_inventory.csv`: EDSS 우선순위와 공공데이터포털 파일/API 수집 목록
 - `edss_field_dictionary.csv`: 공식 원본 항목명 기반 데이터 사전

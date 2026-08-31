@@ -1,0 +1,273 @@
+{
+  "inspected_at": "2026-08-31T05:28:25.340082+00:00",
+  "provider": "교육부·한국교육학술정보원 EDSS",
+  "source_url": "https://www.edmgr.kr/edss/es/opd/odd/od/es_opd_oddod01_001",
+  "dataset": "고등교육학교개황",
+  "catalog_code": "0101",
+  "domn_code": "16918",
+  "archive_filename": "0101_고등교육학교개황_2009-2025.zip",
+  "archive_path": "data/raw/edss/고등교육통계/0101_고등교육학교개황/0101_고등교육학교개황_2009-2025.zip",
+  "archive_bytes": 1100924,
+  "archive_sha256": "cb8e04e04d18de258343a64a6eddf60e4da9cf3c1aaa65deacd6697252e6e4d2",
+  "member_count": 17,
+  "total_rows": 31883,
+  "header_variant_count": 1,
+  "original_fields": [
+    "조사년도",
+    "학교구분명",
+    "개방ID",
+    "시도명",
+    "지역명",
+    "본분교명",
+    "학제유형명",
+    "학사심화과정2학년재적학생수",
+    "학사심화과정1학년재적여학생수",
+    "학사심화과정1학년재적학생수",
+    "학사심화과정재적여학생수",
+    "학사심화과정재적학생수",
+    "6학년재적여학생수",
+    "6학년재적학생수",
+    "5학년재적여학생수",
+    "5학년재적학생수",
+    "4학년재적여학생수",
+    "4학년재적학생수",
+    "3학년재적여학생수",
+    "3학년재적학생수",
+    "2학년재적여학생수",
+    "학사심화과정2학년재적여학생수",
+    "학사심화과정3학년재적학생수",
+    "학사심화과정3학년재적여학생수",
+    "학사심화과정4학년재적학생수",
+    "학사심화과정4학년재적여학생수",
+    "고등교육학교_입학생수",
+    "고등교육학교_학사심화과정입학생수",
+    "고등교육학교_여자입학생수",
+    "고등교육학교_학사심화과정여자입학생수",
+    "고등교육학교_졸업생수",
+    "고등교육학교_여자졸업생수",
+    "고등교육학교_교원수",
+    "고등교육학교_여자교원수",
+    "고등교육학교_사무직원수",
+    "고등교육학교_여자사무직원수",
+    "고등교육학교_건물면적",
+    "2학년재적학생수",
+    "1학년재적여학생수",
+    "고등교육학교_학교수",
+    "주간학교수",
+    "야간학교수",
+    "주야간학교수",
+    "남자학교수",
+    "여자학교수",
+    "공학학교수",
+    "고등교육학교_분교학교수",
+    "주간분교학교수",
+    "야간분교학교수",
+    "주야간분교학교수",
+    "남자분교학교수",
+    "여자분교학교수",
+    "1학년재적학생수",
+    "고등교육학교_재적여학생수",
+    "고등교육학교_재적학생수",
+    "고등교육학교_박사과정학과수",
+    "고등교육학교_심화과정학과수",
+    "고등교육학교_학과수",
+    "공학대학원대학교수",
+    "여자대학원대학교수",
+    "남자대학원대학교수",
+    "주야간대학원대학교수",
+    "야간대학원대학교수",
+    "주간대학원대학교수",
+    "대학원대학교수",
+    "공학분교학교수"
+  ],
+  "field_definition_status": "원본 필드명만 확인; 자료형·단위·결측값 의미는 별도 설명서 확인 필요",
+  "members": [
+    {
+      "filename": "0101. 고등교육학교개황(09).csv",
+      "compressed_bytes": 64791,
+      "uncompressed_bytes": 335297,
+      "encoding": "cp949",
+      "row_count": 1684,
+      "column_count": 66,
+      "observed_years": [
+        "2009"
+      ]
+    },
+    {
+      "filename": "0101. 고등교육학교개황(10).csv",
+      "compressed_bytes": 66543,
+      "uncompressed_bytes": 344203,
+      "encoding": "cp949",
+      "row_count": 1728,
+      "column_count": 66,
+      "observed_years": [
+        "2010"
+      ]
+    },
+    {
+      "filename": "0101. 고등교육학교개황(11).csv",
+      "compressed_bytes": 67758,
+      "uncompressed_bytes": 348080,
+      "encoding": "cp949",
+      "row_count": 1745,
+      "column_count": 66,
+      "observed_years": [
+        "2011"
+      ]
+    },
+    {
+      "filename": "0101. 고등교육학교개황(12).csv",
+      "compressed_bytes": 69349,
+      "uncompressed_bytes": 362469,
+      "encoding": "cp949",
+      "row_count": 1824,
+      "column_count": 66,
+      "observed_years": [
+        "2012"
+      ]
+    },
+    {
+      "filename": "0101. 고등교육학교개황(13).csv",
+      "compressed_bytes": 69905,
+      "uncompressed_bytes": 366539,
+      "encoding": "cp949",
+      "row_count": 1846,
+      "column_count": 66,
+      "observed_years": [
+        "2013"
+      ]
+    },
+    {
+      "filename": "0101. 고등교육학교개황(14).csv",
+      "compressed_bytes": 64869,
+      "uncompressed_bytes": 368700,
+      "encoding": "cp949",
+      "row_count": 1878,
+      "column_count": 66,
+      "observed_years": [
+        "2014"
+      ]
+    },
+    {
+      "filename": "0101. 고등교육학교개황(15).csv",
+      "compressed_bytes": 69089,
+      "uncompressed_bytes": 379141,
+      "encoding": "cp949",
+      "row_count": 1923,
+      "column_count": 66,
+      "observed_years": [
+        "2015"
+      ]
+    },
+    {
+      "filename": "0101. 고등교육학교개황(16).csv",
+      "compressed_bytes": 68537,
+      "uncompressed_bytes": 374167,
+      "encoding": "cp949",
+      "row_count": 1897,
+      "column_count": 66,
+      "observed_years": [
+        "2016"
+      ]
+    },
+    {
+      "filename": "0101. 고등교육학교개황(17).csv",
+      "compressed_bytes": 68279,
+      "uncompressed_bytes": 375588,
+      "encoding": "cp949",
+      "row_count": 1907,
+      "column_count": 66,
+      "observed_years": [
+        "2017"
+      ]
+    },
+    {
+      "filename": "0101. 고등교육학교개황(18).csv",
+      "compressed_bytes": 68142,
+      "uncompressed_bytes": 378432,
+      "encoding": "cp949",
+      "row_count": 1924,
+      "column_count": 66,
+      "observed_years": [
+        "2018"
+      ]
+    },
+    {
+      "filename": "0101. 고등교육학교개황(19).csv",
+      "compressed_bytes": 67357,
+      "uncompressed_bytes": 373888,
+      "encoding": "cp949",
+      "row_count": 1900,
+      "column_count": 66,
+      "observed_years": [
+        "2019"
+      ]
+    },
+    {
+      "filename": "0101. 고등교육학교개황(20).csv",
+      "compressed_bytes": 67235,
+      "uncompressed_bytes": 373915,
+      "encoding": "cp949",
+      "row_count": 1900,
+      "column_count": 66,
+      "observed_years": [
+        "2020"
+      ]
+    },
+    {
+      "filename": "0101. 고등교육학교개황(21).csv",
+      "compressed_bytes": 67255,
+      "uncompressed_bytes": 375590,
+      "encoding": "cp949",
+      "row_count": 1911,
+      "column_count": 66,
+      "observed_years": [
+        "2021"
+      ]
+    },
+    {
+      "filename": "0101. 고등교육학교개황(22).csv",
+      "compressed_bytes": 67446,
+      "uncompressed_bytes": 377447,
+      "encoding": "cp949",
+      "row_count": 1921,
+      "column_count": 66,
+      "observed_years": [
+        "2022"
+      ]
+    },
+    {
+      "filename": "0101. 고등교육학교개황(23).csv",
+      "compressed_bytes": 49358,
+      "uncompressed_bytes": 369231,
+      "encoding": "cp949",
+      "row_count": 1934,
+      "column_count": 66,
+      "observed_years": [
+        "2023"
+      ]
+    },
+    {
+      "filename": "0101. 고등교육학교개황(24).csv",
+      "compressed_bytes": 49836,
+      "uncompressed_bytes": 373296,
+      "encoding": "cp949",
+      "row_count": 1955,
+      "column_count": 66,
+      "observed_years": [
+        "2024"
+      ]
+    },
+    {
+      "filename": "0101. 고등교육학교개황(25).csv",
+      "compressed_bytes": 50631,
+      "uncompressed_bytes": 403236,
+      "encoding": "cp949",
+      "row_count": 2006,
+      "column_count": 66,
+      "observed_years": [
+        "2025"
+      ]
+    }
+  ]
+}
