@@ -1,0 +1,22 @@
+.DS_Store
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+.venv/
+.env
+.env.*
+*.key
+*credential*
+*secret*
+
+# Large downloaded and derived data remain local.
+data/raw/*
+!data/raw/.gitkeep
+data/processed/*
+!data/processed/.gitkeep
+
+# Temporary download artifacts.
+*.part
+*.download
+*.tmp
+
