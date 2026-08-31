@@ -1,0 +1,8 @@
+service,operation,original_field,korean_meaning,data_type,unit,missing_value_definition
+student,/getComparisonEnrolledStudentCrntSt,indctId,지표아이디,string,지표별,빈 태그 또는 필드 부재
+student,/getComparisonEnrolledStudentCrntSt,indctVal1,지표값,string,지표별,빈 태그 또는 필드 부재
+student,/getComparisonEnrolledStudentCrntSt,schlDivNm,학교종류,string,명칭,빈 태그 또는 필드 부재
+student,/getComparisonEnrolledStudentCrntSt,schlEstbNm,설립구분,string,명칭,빈 태그 또는 필드 부재
+student,/getComparisonEnrolledStudentCrntSt,schlId,학교아이디,string,식별자,빈 태그 또는 필드 부재
+student,/getComparisonEnrolledStudentCrntSt,schlKrnNm,학교한글명,string,명칭,빈 태그 또는 필드 부재
+student,/getComparisonEnrolledStudentCrntSt,svyYr,공시년도,string,연도,빈 태그 또는 필드 부재

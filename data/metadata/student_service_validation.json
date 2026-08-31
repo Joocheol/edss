@@ -4,16 +4,57 @@
   "operation": "/getComparisonEnrolledStudentCrntSt",
   "school_id": "0000149",
   "school_name_expected": "연세대학교",
-  "requested_years": [
-    "2008",
-    "2009",
-    "latest"
-  ],
   "num_rows": 999,
-  "request_count_this_run": 1,
-  "generated_at": "2026-08-31T05:22:29.167564+00:00",
-  "status": "api_error",
-  "error_code": "22",
-  "error_message": "일일 서비스 요청제한 횟수 초과 에러",
-  "results": []
+  "request_count_this_run": 4,
+  "generated_at": "2026-08-31T20:23:22.277699+00:00",
+  "results": [
+    {
+      "year": 2008,
+      "result_code": "00",
+      "result_message": "NORMAL SERVICE.",
+      "total_count": 0,
+      "item_count": 0,
+      "fields": [],
+      "sample_items": [],
+      "pages": 1
+    },
+    {
+      "year": 2009,
+      "result_code": "00",
+      "result_message": "NORMAL SERVICE.",
+      "total_count": 0,
+      "item_count": 0,
+      "fields": [],
+      "sample_items": [],
+      "pages": 1
+    },
+    {
+      "year": 2025,
+      "result_code": "00",
+      "result_message": "NORMAL SERVICE.",
+      "total_count": 1,
+      "item_count": 1,
+      "fields": [
+        "indctId",
+        "indctVal1",
+        "schlDivNm",
+        "schlEstbNm",
+        "schlId",
+        "schlKrnNm",
+        "svyYr"
+      ],
+      "sample_items": [
+        {
+          "indctId": "9",
+          "indctVal1": "27914",
+          "schlDivNm": "대학",
+          "schlEstbNm": "사립",
+          "schlId": "0000149",
+          "schlKrnNm": "연세대학교",
+          "svyYr": "2025"
+        }
+      ],
+      "pages": 1
+    }
+  ]
 }
