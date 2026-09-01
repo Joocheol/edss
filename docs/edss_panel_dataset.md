@@ -4,7 +4,9 @@
 
 ## 구축 결과
 
-EDSS 개방데이터를 주 자료원으로 사용해 현재 우선순위 설정의 16개 물리 데이터 묶음을 모두 확보했다. 전체연도 ZIP 14개와 취업통계 연도별 ZIP 15개, 총 29개 원본(185,380,297 bytes)이다. 이를 15개 논리 주제 패널, 총 13,640,746행으로 변환했다.
+EDSS 개방데이터를 주 자료원으로 사용해 세 필수 분야의 265개 물리 데이터 단위, 278개 원본 ZIP을 233개 논리 주제 패널로 변환했다. 총행 수는 180,119,183행이고 압축 출력은 17,000,115,337 bytes다. 일반 패널은 232개이며 취업통계 1개는 제한 경로에 분리했다.
+
+아래 표는 최초 우선 검토 15개 패널이다. 이 15개는 전체 빌드에서도 행 수와 SHA-256이 변하지 않았다. 전체 233개 목록은 `data/metadata/edss_panel_catalog.csv`를 기준으로 한다.
 
 | 코드 | 주제 | 연도 | 행 | 원본 열 | 접근 구분 |
 |---|---|---|---:|---:|---|
@@ -33,7 +35,8 @@ EDSS 개방데이터를 주 자료원으로 사용해 현재 우선순위 설정
 - 주제별 프로필: 각 패널과 같은 폴더의 `profile.json`
 - 전체 카탈로그: `data/metadata/edss_panel_catalog.csv`
 - 필드 사전: `data/metadata/edss_panel_data_dictionary.csv`
-- 독립 검증: `data/metadata/edss_panel_validation.json`
+- 전체 빌드 검증 노트북: `notebooks/edss_full_panel_build_validation.ipynb`
+- 최초 15개 패널 독립 검증: `data/metadata/edss_panel_validation.json`
 - 미연결 키 요약: `data/metadata/edss_orphan_key_diagnosis.json`
 - 미연결 키 목록: `data/metadata/edss_orphan_school_year_keys.csv`
 - 안전 결합 기준표: `data/metadata/edss_school_year_bridge.csv`
@@ -57,7 +60,7 @@ EDSS 개방데이터를 주 자료원으로 사용해 현재 우선순위 설정
 
 `0101 고등교육학교개황`에는 31,883행과 30,556개의 `(연도, 개방ID)`가 있다. 이 후보키가 반복되는 키는 1,187개이고 최대 반복 수는 4다. 독립 재검산 결과 반복키 1,187개 모두에서 `본분교명`이 달랐고, `(연도, 개방ID, 본분교명)`은 31,883행 전체에서 유일했다. 따라서 이는 중복 오류가 아니라 본교·캠퍼스 grain이다. 다른 패널에는 `본분교명`이 대부분 없으므로 원시 `0101`에 직접 결합하면 행이 증식할 수 있다.
 
-다른 주제의 고유 `(연도, 개방ID)`를 `0101`과 비교하면 데이터셋별 연결률은 99.30–100%다. 데이터셋별 미연결 키를 합하면 316건(일반 패널 305건, 취업통계 11건)이지만, 동일 키의 데이터셋 간 중복을 제거하면 76개 연도–ID 조합과 69개 `개방ID`다. 영향 행은 8,106행으로 전체의 0.0594%다.
+최초 우선 15개 주제의 고유 `(연도, 개방ID)`를 `0101`과 비교하면 데이터셋별 연결률은 99.30–100%다. 데이터셋별 미연결 키를 합하면 316건(일반 패널 305건, 취업통계 11건)이지만, 동일 키의 데이터셋 간 중복을 제거하면 76개 연도–ID 조합과 69개 `개방ID`다. 영향 행은 최초 15개 패널 13,640,746행 중 8,106행(0.0594%)이다. 이 수치는 전체 233개 패널 감사 결과로 확대 해석하지 않는다.
 
 분석용 결합에는 원시 `0101` 대신 `edss_school_year_bridge.csv`를 사용한다. 이 기준표는 전체 패널에서 관측된 비어 있지 않은 `(연도, 개방ID)`마다 한 행이며, `0101`의 본분교·시도·지역·학교구분은 서로 다른 범주 목록으로만 보존한다. `0101` 수치 지표는 임의 합산하거나 대표 캠퍼스에서 선택하지 않는다. 자세한 grain과 left join 규칙은 `docs/edss_school_year_bridge.md`에 기록했다.
 
@@ -73,7 +76,10 @@ EDSS 개방데이터를 주 자료원으로 사용해 현재 우선순위 설정
 
 ## 품질검사 결과
 
-- 15개 패널의 gzip 무결성과 카탈로그 SHA-256 일치 확인
+- 전체 233개 패널의 파일 존재·크기·카탈로그 SHA-256 일치 확인
+- 카탈로그와 233개 프로필의 경로·행 수·크기·SHA-256 불일치 0건
+- 최초 15개 패널은 전체 빌드 전후 행 수와 SHA-256 동일
+- 전체 출력 행 수 합계 180,119,183행으로 원본 사전검사 합계와 일치
 - 예상 연도 누락 0건; 기숙사 2021년 부재는 공식 제공 범위와 일치
 - 구조가 깨진 CSV 행 0건
 - 원본 전체 값이 완전히 같은 중복 행 0건
@@ -82,13 +88,18 @@ EDSS 개방데이터를 주 자료원으로 사용해 현재 우선순위 설정
 - 취업통계 `개방ID` 결측 46,962건: 오류가 아니라 2023년 구조 전환에서 열 자체가 제거된 결과
 - 자료형·단위·결측 기호의 공식 의미는 추측하지 않고 데이터 사전에 `공식 정의 미확인`으로 기록
 
-검증 상태는 `review_required`다. 파일 손상이나 연도 누락 때문이 아니라 76개 고유 학교연도 키의 미연결과 취업통계의 2023년 스키마 단절을 사후 검증해야 하기 때문이다.
+검증 상태는 `review_required`다. 출력 파일 무결성은 확인했지만 전체 233개 패널에서 후보키 grain, 개방ID 의미, 중복·불일치·고아 키를 다시 감사해야 한다. 기존 76개 고유 학교연도 미연결 결과는 최초 15개 패널의 비교 기준으로만 유지한다.
 
 ## 재현 명령
 
 ```bash
-python3 scripts/build_edss_dataset.py --inspect-only
-python3 scripts/build_edss_dataset.py
+python3 scripts/build_edss_dataset.py \
+  --inventory data/metadata/edss_full_rebuild_inventory.csv \
+  --scan-profiles data/metadata/edss_full_rebuild_schema_scan.jsonl \
+  --inspect-only
+python3 scripts/build_edss_dataset.py \
+  --inventory data/metadata/edss_full_rebuild_inventory.csv \
+  --scan-profiles data/metadata/edss_full_rebuild_schema_scan.jsonl
 python3 scripts/validate_edss_dataset.py
 python3 scripts/diagnose_edss_orphan_keys.py
 python3 scripts/build_edss_school_year_bridge.py

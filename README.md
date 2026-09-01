@@ -1,6 +1,6 @@
 # EDSS
 
-EDSS 개방데이터를 이용해 2009~2025년 한국 고등교육 장기 패널을 구축하는 프로젝트입니다. 현재 우선순위 설정의 16개 물리 묶음으로 15개 주제 패널, 13,640,746행을 구축했습니다. 필수 세 분야의 전체 수집은 233개 논리 테이블·265개 물리 단위·278개 ZIP까지 완료했으며, 전체 재구성 입력은 `data/metadata/edss_full_rebuild_inventory.csv`에서 관리합니다.
+EDSS 개방데이터를 이용해 2009~2025년 한국 고등교육 장기 패널을 구축하는 프로젝트입니다. 필수 세 분야의 233개 논리 패널·265개 물리 단위·278개 ZIP을 전체 재구성했으며, 결과는 180,119,183행과 17,000,115,337 bytes의 압축 패널이다. 전체 재구성 입력은 `data/metadata/edss_full_rebuild_inventory.csv`에서 관리합니다.
 
 ## 기본 전략
 
@@ -77,11 +77,16 @@ python3 scripts/inspect_edss_zip.py data/raw/edss/고등교육통계/0101_고등
 
 현재 EDSS 웹 브라우저의 전체 다운로드는 성공하지만 동일한 내부 주소를 독립 HTTP 수집기로 호출하면 404가 발생합니다. 이는 파일 부재가 아니라 브라우저 세션 또는 팝업의 선택 문맥 차이로 분류합니다. 취업통계 전체 묶음은 생성 시간이 길어 2010~2024를 연도별로 수집했고, 나머지 대상은 전체연도 ZIP으로 확보했습니다.
 
-원본을 검사하고 15개 주제 패널을 생성한 뒤 독립 검증합니다.
+전체 원본 스캔 결과를 재사용해 233개 주제 패널을 생성합니다. 입력 ZIP의 경로와 SHA-256, 사전검사 프로필이 인벤토리와 정확히 일치해야 빌드가 시작됩니다.
 
 ```bash
-python3 scripts/build_edss_dataset.py --inspect-only
-python3 scripts/build_edss_dataset.py
+python3 scripts/build_edss_dataset.py \
+  --inventory data/metadata/edss_full_rebuild_inventory.csv \
+  --scan-profiles data/metadata/edss_full_rebuild_schema_scan.jsonl \
+  --inspect-only
+python3 scripts/build_edss_dataset.py \
+  --inventory data/metadata/edss_full_rebuild_inventory.csv \
+  --scan-profiles data/metadata/edss_full_rebuild_schema_scan.jsonl
 python3 scripts/validate_edss_dataset.py
 python3 scripts/diagnose_edss_orphan_keys.py
 python3 scripts/build_edss_school_year_bridge.py
@@ -128,14 +133,14 @@ python3 scripts/collect_api.py --schema-only \
 - `data/metadata/edss_0101_schema.json`: 0101 ZIP의 연도별 행 수·인코딩·원본 헤더
 - `data/metadata/edss_0103_schema.json`: 0103 ZIP의 연도별 행 수·인코딩·원본 헤더
 - `data/metadata/edss_0105_schema.json`: 0105 ZIP의 연도별 행 수·인코딩·원본 헤더
-- `data/metadata/edss_panel_catalog.csv`: 15개 논리 패널의 행·열·연도·출력 체크섬
+- `data/metadata/edss_panel_catalog.csv`: 233개 논리 패널의 행·열·연도·출력 체크섬
 - `data/metadata/edss_panel_data_dictionary.csv`: 원본 필드명, 저장형, 관찰 자료형, 단위·결측 정의 상태
 - `data/metadata/edss_panel_quality_report.json`: 빌드 중 행·열·중복·식별자 검사
 - `data/metadata/edss_panel_validation.json`: 전체 패널 독립 재검산과 학교연도 결합 범위
 - `data/metadata/edss_school_year_bridge.csv`: 비어 있지 않은 학교연도 키마다 한 행인 안전 결합 기준표
 - `data/metadata/edss_school_year_bridge_summary.json`: 입력 체크섬, 기준표 유일성, 데이터셋별 left join 무증식 검증
 - `data/metadata/edss_full_rebuild_inventory.csv`: 전체 265개 물리 단위를 233개 논리 테이블로 묶은 재구성 입력과 원본 ZIP 추적정보
-- `data/metadata/edss_full_rebuild_inventory_summary.json`: 현재 15개 패널과 전체 입력의 범위 차이, 분야별 수량, 파일·SHA-256 재검산 결과
+- `data/metadata/edss_full_rebuild_inventory_summary.json`: 최초 15개 패널과 전체 입력의 범위 차이, 분야별 수량, 파일·SHA-256 재검산 결과
 - `data/metadata/edss_full_rebuild_schema_scan.jsonl`: 265개 물리 단위의 CSV 멤버·원본 열·관찰 연도·행 수·스키마 변형
 - `data/metadata/edss_full_rebuild_schema_scan_summary.json`: 전체 180,119,183행 사전검사와 구조화된 검토 항목
 

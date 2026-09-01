@@ -2,7 +2,7 @@
 
 EDSS 다운로드, 압축 해제, 원본 목록 작성, 표준화, 품질검사 도구를 이 폴더에 둡니다.
 
-- `build_edss_dataset.py`: 직접 CSV ZIP, 전체연도 단일 CSV, 중첩 ZIP을 스트리밍으로 읽어 원본 문자열과 행 추적정보를 보존한 주제 패널을 만든다.
+- `build_edss_dataset.py`: 직접 CSV ZIP, 전체연도 단일 CSV, 중첩 ZIP을 스트리밍으로 읽어 원본 문자열과 행 추적정보를 보존한 주제 패널을 만든다. 전체 빌드는 인벤토리와 사전검사 JSONL을 대조하고, 대형 표의 SHA-256 행 해시를 디스크 분할해 메모리 사용량을 제한하며, 정상 기존 출력을 체크섬 검증 후 재사용한다.
 - `validate_edss_dataset.py`: 결과를 처음부터 다시 읽어 행 수, 체크섬, 연도 범위, 식별자 결측과 `0101` 기준 학교연도 연결률을 검산한다.
 - `diagnose_edss_orphan_keys.py`: 데이터셋별 미연결 키의 중복을 제거하고, `0101` 관측기간 전·후·내부 공백·전 기간 미등장으로 분류해 키 목록과 영향 행 수를 기록한다.
 - `build_edss_school_year_bridge.py`: 모든 패널의 비어 있지 않은 학교연도 키 합집합을 한 행씩 만들고, `0101`의 범주형 본분교·시도·지역 목록과 미연결 검토 상태를 보존한 안전 결합 기준표를 생성한다. 수치 지표는 집계하지 않는다.
@@ -12,3 +12,11 @@ EDSS 다운로드, 압축 해제, 원본 목록 작성, 표준화, 품질검사 
 - `verify_edss_full_collection.py`: 세 필수 분야의 실시간 `domnCd` 목록을 기존·신규 다운로드 기록과 대조하고 ZIP 무결성·체크섬·누락·실패 상태를 검증한다.
 - `build_edss_full_rebuild_inventory.py`: 실시간 265개 `domnCd`와 두 다운로드 기록을 결합해 233개 논리 테이블의 전체 재구성 입력을 만들고, 현재 15개 패널의 범위와 파일·SHA-256 상태를 대조한다.
 - `scan_edss_full_rebuild_inputs.py`: 전체 재구성 인벤토리의 명시적 ZIP 경로를 스트리밍으로 읽어 CSV 멤버·행 수·헤더 변형·관찰 연도·행 폭 오류를 물리 단위별로 기록한다.
+
+전체 233개 패널 빌드는 저장소 루트에서 다음과 같이 실행한다.
+
+```bash
+python3 scripts/build_edss_dataset.py \
+  --inventory data/metadata/edss_full_rebuild_inventory.csv \
+  --scan-profiles data/metadata/edss_full_rebuild_schema_scan.jsonl
+```
