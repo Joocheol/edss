@@ -31,6 +31,8 @@ class VerifyEdssFullCollectionTests(unittest.TestCase):
             rows, summary = verifier.build_status(targets, existing, attempts, root)
             self.assertEqual([row["status"] for row in rows], ["downloaded", "failed", "pending"])
             self.assertEqual(summary["verified_archive_count"], 1)
+            self.assertEqual(summary["logical_table_count"], 3)
+            self.assertEqual(summary["downloaded_logical_table_count"], 1)
             self.assertFalse(summary["complete"])
 
     def test_detects_checksum_mismatch(self):

@@ -103,11 +103,25 @@ def build_status(
         )
 
     counts = {name: sum(row["status"] == name for row in rows) for name in ("downloaded", "failed", "invalid", "pending")}
+    by_source = {}
+    for source in sorted({row["source"] for row in rows}):
+        source_rows = [row for row in rows if row["source"] == source]
+        by_source[source] = {
+            "target": len(source_rows),
+            **{name: sum(row["status"] == name for row in source_rows) for name in counts},
+        }
+    logical_groups: dict[tuple[str, str], list[dict]] = defaultdict(list)
+    for row in rows:
+        logical_groups[(row["source"], row["dataset"])].append(row)
+    downloaded_logical = sum(all(row["status"] == "downloaded" for row in group) for group in logical_groups.values())
     summary = {
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "grain": "one row per live EDSS domn_code in the three required domains",
         "target_count": len(rows),
+        "logical_table_count": len(logical_groups),
+        "downloaded_logical_table_count": downloaded_logical,
         **counts,
+        "by_source": by_source,
         "verified_archive_count": verified_archives,
         "invalid_archive_count": invalid_archives,
         "complete": counts["downloaded"] == len(rows),

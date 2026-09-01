@@ -1,12 +1,37 @@
 {
-  "generated_at": "2026-09-01T02:57:38.573431+00:00",
+  "generated_at": "2026-09-01T03:03:30.301329+00:00",
   "grain": "one row per live EDSS domn_code in the three required domains",
   "target_count": 265,
-  "downloaded": 217,
+  "logical_table_count": 233,
+  "downloaded_logical_table_count": 233,
+  "downloaded": 265,
   "failed": 0,
   "invalid": 0,
-  "pending": 48,
-  "verified_archive_count": 230,
+  "pending": 0,
+  "by_source": {
+    "고등교육통계": {
+      "target": 133,
+      "downloaded": 133,
+      "failed": 0,
+      "invalid": 0,
+      "pending": 0
+    },
+    "대학정보공시": {
+      "target": 130,
+      "downloaded": 130,
+      "failed": 0,
+      "invalid": 0,
+      "pending": 0
+    },
+    "취업통계": {
+      "target": 2,
+      "downloaded": 2,
+      "failed": 0,
+      "invalid": 0,
+      "pending": 0
+    }
+  },
+  "verified_archive_count": 278,
   "invalid_archive_count": 0,
-  "complete": false
+  "complete": true
 }
