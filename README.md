@@ -1,6 +1,6 @@
 # EDSS
 
-EDSS 개방데이터를 이용해 2009~2025년 한국 고등교육 장기 패널을 구축하는 프로젝트입니다. 현재 우선순위 설정의 16개 물리 묶음을 모두 확보해 15개 주제 패널, 13,640,746행을 구축했습니다.
+EDSS 개방데이터를 이용해 2009~2025년 한국 고등교육 장기 패널을 구축하는 프로젝트입니다. 현재 우선순위 설정의 16개 물리 묶음으로 15개 주제 패널, 13,640,746행을 구축했습니다. 필수 세 분야의 전체 수집은 233개 논리 테이블·265개 물리 단위·278개 ZIP까지 완료했으며, 전체 재구성 입력은 `data/metadata/edss_full_rebuild_inventory.csv`에서 관리합니다.
 
 ## 기본 전략
 
@@ -134,5 +134,7 @@ python3 scripts/collect_api.py --schema-only \
 - `data/metadata/edss_panel_validation.json`: 전체 패널 독립 재검산과 학교연도 결합 범위
 - `data/metadata/edss_school_year_bridge.csv`: 비어 있지 않은 학교연도 키마다 한 행인 안전 결합 기준표
 - `data/metadata/edss_school_year_bridge_summary.json`: 입력 체크섬, 기준표 유일성, 데이터셋별 left join 무증식 검증
+- `data/metadata/edss_full_rebuild_inventory.csv`: 전체 265개 물리 단위를 233개 논리 테이블로 묶은 재구성 입력과 원본 ZIP 추적정보
+- `data/metadata/edss_full_rebuild_inventory_summary.json`: 현재 15개 패널과 전체 입력의 범위 차이, 분야별 수량, 파일·SHA-256 재검산 결과
 
 원본과 정제 데이터는 재배포 조건과 크기를 확인할 때까지 Git에서 제외합니다. 체크섬과 위 실행 명령으로 재수집할 수 있습니다. 최초 수집 결과와 현재 차단 사항은 `docs/initial_collection_report.md`에 기록합니다.

@@ -1,0 +1,49 @@
+{
+  "generated_at": "2026-09-01T03:17:23.003363+00:00",
+  "grain": "one row per live EDSS physical domn_code; logical tables group by source, catalog_code, and dataset",
+  "logical_table_count": 233,
+  "physical_unit_count": 265,
+  "archive_count": 278,
+  "archive_bytes": 1314494214,
+  "multi_physical_logical_table_count": 32,
+  "by_source": {
+    "고등교육통계": {
+      "logical_table_count": 102,
+      "physical_unit_count": 133,
+      "archive_count": 133,
+      "archive_bytes": 953192775
+    },
+    "대학정보공시": {
+      "logical_table_count": 130,
+      "physical_unit_count": 130,
+      "archive_count": 130,
+      "archive_bytes": 256049330
+    },
+    "취업통계": {
+      "logical_table_count": 1,
+      "physical_unit_count": 2,
+      "archive_count": 15,
+      "archive_bytes": 105252109
+    }
+  },
+  "current_pipeline": {
+    "logical_table_count": 15,
+    "physical_unit_count": 16,
+    "archive_count": 29
+  },
+  "not_in_current_pipeline": {
+    "logical_table_count": 218,
+    "physical_unit_count": 249,
+    "archive_count": 249
+  },
+  "verification": {
+    "file_check_enabled": true,
+    "sha256_check_enabled": true,
+    "verified_file_count": 278,
+    "verified_sha256_count": 278,
+    "issue_count": 0,
+    "issue_counts_by_type": {},
+    "complete": true
+  },
+  "issues": []
+}

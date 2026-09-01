@@ -10,3 +10,4 @@ EDSS 다운로드, 압축 해제, 원본 목록 작성, 표준화, 품질검사 
 - `inspect_edss_zip.py`: 개별 EDSS ZIP의 헤더·연도·행 수·체크섬을 조사한다.
 - `download_edss.py`: 공식 목록과 내부 파일 식별자를 확인한다. 브라우저 팝업 문맥이 필요한 실제 ZIP은 이 스크립트의 독립 HTTP 요청으로 받을 수 없다.
 - `verify_edss_full_collection.py`: 세 필수 분야의 실시간 `domnCd` 목록을 기존·신규 다운로드 기록과 대조하고 ZIP 무결성·체크섬·누락·실패 상태를 검증한다.
+- `build_edss_full_rebuild_inventory.py`: 실시간 265개 `domnCd`와 두 다운로드 기록을 결합해 233개 논리 테이블의 전체 재구성 입력을 만들고, 현재 15개 패널의 범위와 파일·SHA-256 상태를 대조한다.
