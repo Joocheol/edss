@@ -1,0 +1,1238 @@
+{
+  "source_files": {
+    "0101": "0101. 고등교육학교개황(09-25).zip",
+    "0316": "0316. 중도탈락학생현황(09-25).zip",
+    "0502": "0502. 전체교원대비전임교원현황(09-25).zip",
+    "1016": "1016. 장학금수혜현황(09-25).zip"
+  },
+  "targets": [
+    {
+      "year": "2009",
+      "open_id": "4124740779",
+      "classification": "open_id_absent_all_years",
+      "departments": [
+        "산업디자인학과"
+      ],
+      "faculty_source_row_count": 1,
+      "other_source_row_counts": {},
+      "base_observed_years": [],
+      "base_attributes": {
+        "school_types": [],
+        "regions": [],
+        "localities": [],
+        "branch_types": [],
+        "program_types": []
+      },
+      "exact_row_match_ids": [
+        "4614893555",
+        "9551368892"
+      ],
+      "top_department_overlap_candidates": [
+        {
+          "candidate_open_id": "9551368892",
+          "overlap_count": 1,
+          "target_department_count": 1,
+          "candidate_department_count": 5,
+          "jaccard": 0.2,
+          "overlap_departments": [
+            "산업디자인학과"
+          ],
+          "exact_row_match": true,
+          "base_same_year": true
+        },
+        {
+          "candidate_open_id": "4614893555",
+          "overlap_count": 1,
+          "target_department_count": 1,
+          "candidate_department_count": 33,
+          "jaccard": 0.030303,
+          "overlap_departments": [
+            "산업디자인학과"
+          ],
+          "exact_row_match": true,
+          "base_same_year": true
+        },
+        {
+          "candidate_open_id": "5744977414",
+          "overlap_count": 1,
+          "target_department_count": 1,
+          "candidate_department_count": 1,
+          "jaccard": 1.0,
+          "overlap_departments": [
+            "산업디자인학과"
+          ],
+          "exact_row_match": false,
+          "base_same_year": true
+        },
+        {
+          "candidate_open_id": "7705674350",
+          "overlap_count": 1,
+          "target_department_count": 1,
+          "candidate_department_count": 6,
+          "jaccard": 0.166667,
+          "overlap_departments": [
+            "산업디자인학과"
+          ],
+          "exact_row_match": false,
+          "base_same_year": true
+        },
+        {
+          "candidate_open_id": "8373843729",
+          "overlap_count": 1,
+          "target_department_count": 1,
+          "candidate_department_count": 8,
+          "jaccard": 0.125,
+          "overlap_departments": [
+            "산업디자인학과"
+          ],
+          "exact_row_match": false,
+          "base_same_year": true
+        },
+        {
+          "candidate_open_id": "3897741675",
+          "overlap_count": 1,
+          "target_department_count": 1,
+          "candidate_department_count": 15,
+          "jaccard": 0.066667,
+          "overlap_departments": [
+            "산업디자인학과"
+          ],
+          "exact_row_match": false,
+          "base_same_year": true
+        },
+        {
+          "candidate_open_id": "9837188839",
+          "overlap_count": 1,
+          "target_department_count": 1,
+          "candidate_department_count": 21,
+          "jaccard": 0.047619,
+          "overlap_departments": [
+            "산업디자인학과"
+          ],
+          "exact_row_match": false,
+          "base_same_year": false
+        },
+        {
+          "candidate_open_id": "9974667608",
+          "overlap_count": 1,
+          "target_department_count": 1,
+          "candidate_department_count": 27,
+          "jaccard": 0.037037,
+          "overlap_departments": [
+            "산업디자인학과"
+          ],
+          "exact_row_match": false,
+          "base_same_year": true
+        },
+        {
+          "candidate_open_id": "9043817162",
+          "overlap_count": 1,
+          "target_department_count": 1,
+          "candidate_department_count": 28,
+          "jaccard": 0.035714,
+          "overlap_departments": [
+            "산업디자인학과"
+          ],
+          "exact_row_match": false,
+          "base_same_year": true
+        },
+        {
+          "candidate_open_id": "6524985253",
+          "overlap_count": 1,
+          "target_department_count": 1,
+          "candidate_department_count": 42,
+          "jaccard": 0.02381,
+          "overlap_departments": [
+            "산업디자인학과"
+          ],
+          "exact_row_match": false,
+          "base_same_year": true
+        },
+        {
+          "candidate_open_id": "2269515275",
+          "overlap_count": 1,
+          "target_department_count": 1,
+          "candidate_department_count": 48,
+          "jaccard": 0.020833,
+          "overlap_departments": [
+            "산업디자인학과"
+          ],
+          "exact_row_match": false,
+          "base_same_year": true
+        },
+        {
+          "candidate_open_id": "2353963553",
+          "overlap_count": 1,
+          "target_department_count": 1,
+          "candidate_department_count": 50,
+          "jaccard": 0.02,
+          "overlap_departments": [
+            "산업디자인학과"
+          ],
+          "exact_row_match": false,
+          "base_same_year": true
+        },
+        {
+          "candidate_open_id": "3939605593",
+          "overlap_count": 1,
+          "target_department_count": 1,
+          "candidate_department_count": 52,
+          "jaccard": 0.019231,
+          "overlap_departments": [
+            "산업디자인학과"
+          ],
+          "exact_row_match": false,
+          "base_same_year": true
+        },
+        {
+          "candidate_open_id": "5842803478",
+          "overlap_count": 1,
+          "target_department_count": 1,
+          "candidate_department_count": 52,
+          "jaccard": 0.019231,
+          "overlap_departments": [
+            "산업디자인학과"
+          ],
+          "exact_row_match": false,
+          "base_same_year": true
+        },
+        {
+          "candidate_open_id": "7015211522",
+          "overlap_count": 1,
+          "target_department_count": 1,
+          "candidate_department_count": 57,
+          "jaccard": 0.017544,
+          "overlap_departments": [
+            "산업디자인학과"
+          ],
+          "exact_row_match": false,
+          "base_same_year": true
+        },
+        {
+          "candidate_open_id": "8496494174",
+          "overlap_count": 1,
+          "target_department_count": 1,
+          "candidate_department_count": 58,
+          "jaccard": 0.017241,
+          "overlap_departments": [
+            "산업디자인학과"
+          ],
+          "exact_row_match": false,
+          "base_same_year": true
+        },
+        {
+          "candidate_open_id": "6217789173",
+          "overlap_count": 1,
+          "target_department_count": 1,
+          "candidate_department_count": 60,
+          "jaccard": 0.016667,
+          "overlap_departments": [
+            "산업디자인학과"
+          ],
+          "exact_row_match": false,
+          "base_same_year": true
+        },
+        {
+          "candidate_open_id": "9597821533",
+          "overlap_count": 1,
+          "target_department_count": 1,
+          "candidate_department_count": 61,
+          "jaccard": 0.016393,
+          "overlap_departments": [
+            "산업디자인학과"
+          ],
+          "exact_row_match": false,
+          "base_same_year": true
+        },
+        {
+          "candidate_open_id": "7039148092",
+          "overlap_count": 1,
+          "target_department_count": 1,
+          "candidate_department_count": 62,
+          "jaccard": 0.016129,
+          "overlap_departments": [
+            "산업디자인학과"
+          ],
+          "exact_row_match": false,
+          "base_same_year": true
+        },
+        {
+          "candidate_open_id": "8869336247",
+          "overlap_count": 1,
+          "target_department_count": 1,
+          "candidate_department_count": 62,
+          "jaccard": 0.016129,
+          "overlap_departments": [
+            "산업디자인학과"
+          ],
+          "exact_row_match": false,
+          "base_same_year": true
+        }
+      ]
+    },
+    {
+      "year": "2009",
+      "open_id": "5814962685",
+      "classification": "open_id_absent_all_years",
+      "departments": [
+        "세무학과"
+      ],
+      "faculty_source_row_count": 1,
+      "other_source_row_counts": {},
+      "base_observed_years": [],
+      "base_attributes": {
+        "school_types": [],
+        "regions": [],
+        "localities": [],
+        "branch_types": [],
+        "program_types": []
+      },
+      "exact_row_match_ids": [],
+      "top_department_overlap_candidates": [
+        {
+          "candidate_open_id": "6187031745",
+          "overlap_count": 1,
+          "target_department_count": 1,
+          "candidate_department_count": 1,
+          "jaccard": 1.0,
+          "overlap_departments": [
+            "세무학과"
+          ],
+          "exact_row_match": false,
+          "base_same_year": true
+        },
+        {
+          "candidate_open_id": "6524985253",
+          "overlap_count": 1,
+          "target_department_count": 1,
+          "candidate_department_count": 42,
+          "jaccard": 0.02381,
+          "overlap_departments": [
+            "세무학과"
+          ],
+          "exact_row_match": false,
+          "base_same_year": true
+        },
+        {
+          "candidate_open_id": "8451613843",
+          "overlap_count": 1,
+          "target_department_count": 1,
+          "candidate_department_count": 57,
+          "jaccard": 0.017544,
+          "overlap_departments": [
+            "세무학과"
+          ],
+          "exact_row_match": false,
+          "base_same_year": true
+        },
+        {
+          "candidate_open_id": "9597821533",
+          "overlap_count": 1,
+          "target_department_count": 1,
+          "candidate_department_count": 61,
+          "jaccard": 0.016393,
+          "overlap_departments": [
+            "세무학과"
+          ],
+          "exact_row_match": false,
+          "base_same_year": true
+        },
+        {
+          "candidate_open_id": "4122748434",
+          "overlap_count": 1,
+          "target_department_count": 1,
+          "candidate_department_count": 66,
+          "jaccard": 0.015152,
+          "overlap_departments": [
+            "세무학과"
+          ],
+          "exact_row_match": false,
+          "base_same_year": true
+        },
+        {
+          "candidate_open_id": "4379354298",
+          "overlap_count": 1,
+          "target_department_count": 1,
+          "candidate_department_count": 71,
+          "jaccard": 0.014085,
+          "overlap_departments": [
+            "세무학과"
+          ],
+          "exact_row_match": false,
+          "base_same_year": true
+        },
+        {
+          "candidate_open_id": "6900535821",
+          "overlap_count": 1,
+          "target_department_count": 1,
+          "candidate_department_count": 136,
+          "jaccard": 0.007353,
+          "overlap_departments": [
+            "세무학과"
+          ],
+          "exact_row_match": false,
+          "base_same_year": true
+        },
+        {
+          "candidate_open_id": "4055788159",
+          "overlap_count": 1,
+          "target_department_count": 1,
+          "candidate_department_count": 176,
+          "jaccard": 0.005682,
+          "overlap_departments": [
+            "세무학과"
+          ],
+          "exact_row_match": false,
+          "base_same_year": true
+        }
+      ]
+    },
+    {
+      "year": "2009",
+      "open_id": "6566148042",
+      "classification": "open_id_absent_all_years",
+      "departments": [
+        "디자인학과",
+        "소프트웨어학과",
+        "영상콘텐츠학과",
+        "유비쿼터스IT학과"
+      ],
+      "faculty_source_row_count": 4,
+      "other_source_row_counts": {},
+      "base_observed_years": [],
+      "base_attributes": {
+        "school_types": [],
+        "regions": [],
+        "localities": [],
+        "branch_types": [],
+        "program_types": []
+      },
+      "exact_row_match_ids": [
+        "7397292733"
+      ],
+      "top_department_overlap_candidates": [
+        {
+          "candidate_open_id": "7397292733",
+          "overlap_count": 4,
+          "target_department_count": 4,
+          "candidate_department_count": 5,
+          "jaccard": 0.8,
+          "overlap_departments": [
+            "디자인학과",
+            "소프트웨어학과",
+            "영상콘텐츠학과",
+            "유비쿼터스IT학과"
+          ],
+          "exact_row_match": true,
+          "base_same_year": true
+        },
+        {
+          "candidate_open_id": "1983657777",
+          "overlap_count": 1,
+          "target_department_count": 4,
+          "candidate_department_count": 1,
+          "jaccard": 0.25,
+          "overlap_departments": [
+            "디자인학과"
+          ],
+          "exact_row_match": false,
+          "base_same_year": true
+        },
+        {
+          "candidate_open_id": "3030306696",
+          "overlap_count": 1,
+          "target_department_count": 4,
+          "candidate_department_count": 1,
+          "jaccard": 0.25,
+          "overlap_departments": [
+            "디자인학과"
+          ],
+          "exact_row_match": false,
+          "base_same_year": true
+        },
+        {
+          "candidate_open_id": "6759204328",
+          "overlap_count": 1,
+          "target_department_count": 4,
+          "candidate_department_count": 1,
+          "jaccard": 0.25,
+          "overlap_departments": [
+            "디자인학과"
+          ],
+          "exact_row_match": false,
+          "base_same_year": true
+        },
+        {
+          "candidate_open_id": "8292315304",
+          "overlap_count": 1,
+          "target_department_count": 4,
+          "candidate_department_count": 1,
+          "jaccard": 0.25,
+          "overlap_departments": [
+            "디자인학과"
+          ],
+          "exact_row_match": false,
+          "base_same_year": true
+        },
+        {
+          "candidate_open_id": "5774459183",
+          "overlap_count": 1,
+          "target_department_count": 4,
+          "candidate_department_count": 3,
+          "jaccard": 0.166667,
+          "overlap_departments": [
+            "디자인학과"
+          ],
+          "exact_row_match": false,
+          "base_same_year": true
+        },
+        {
+          "candidate_open_id": "7997150003",
+          "overlap_count": 1,
+          "target_department_count": 4,
+          "candidate_department_count": 3,
+          "jaccard": 0.166667,
+          "overlap_departments": [
+            "유비쿼터스IT학과"
+          ],
+          "exact_row_match": false,
+          "base_same_year": true
+        },
+        {
+          "candidate_open_id": "9845878124",
+          "overlap_count": 1,
+          "target_department_count": 4,
+          "candidate_department_count": 5,
+          "jaccard": 0.125,
+          "overlap_departments": [
+            "디자인학과"
+          ],
+          "exact_row_match": false,
+          "base_same_year": true
+        },
+        {
+          "candidate_open_id": "7669046103",
+          "overlap_count": 1,
+          "target_department_count": 4,
+          "candidate_department_count": 8,
+          "jaccard": 0.090909,
+          "overlap_departments": [
+            "디자인학과"
+          ],
+          "exact_row_match": false,
+          "base_same_year": true
+        },
+        {
+          "candidate_open_id": "5332823812",
+          "overlap_count": 1,
+          "target_department_count": 4,
+          "candidate_department_count": 9,
+          "jaccard": 0.083333,
+          "overlap_departments": [
+            "디자인학과"
+          ],
+          "exact_row_match": false,
+          "base_same_year": true
+        },
+        {
+          "candidate_open_id": "7392964184",
+          "overlap_count": 1,
+          "target_department_count": 4,
+          "candidate_department_count": 22,
+          "jaccard": 0.04,
+          "overlap_departments": [
+            "디자인학과"
+          ],
+          "exact_row_match": false,
+          "base_same_year": true
+        },
+        {
+          "candidate_open_id": "8810827076",
+          "overlap_count": 1,
+          "target_department_count": 4,
+          "candidate_department_count": 24,
+          "jaccard": 0.037037,
+          "overlap_departments": [
+            "디자인학과"
+          ],
+          "exact_row_match": false,
+          "base_same_year": true
+        },
+        {
+          "candidate_open_id": "3191165745",
+          "overlap_count": 1,
+          "target_department_count": 4,
+          "candidate_department_count": 27,
+          "jaccard": 0.033333,
+          "overlap_departments": [
+            "디자인학과"
+          ],
+          "exact_row_match": false,
+          "base_same_year": true
+        },
+        {
+          "candidate_open_id": "5703346312",
+          "overlap_count": 1,
+          "target_department_count": 4,
+          "candidate_department_count": 38,
+          "jaccard": 0.02439,
+          "overlap_departments": [
+            "소프트웨어학과"
+          ],
+          "exact_row_match": false,
+          "base_same_year": true
+        },
+        {
+          "candidate_open_id": "2230504155",
+          "overlap_count": 1,
+          "target_department_count": 4,
+          "candidate_department_count": 41,
+          "jaccard": 0.022727,
+          "overlap_departments": [
+            "디자인학과"
+          ],
+          "exact_row_match": false,
+          "base_same_year": true
+        },
+        {
+          "candidate_open_id": "8120602428",
+          "overlap_count": 1,
+          "target_department_count": 4,
+          "candidate_department_count": 44,
+          "jaccard": 0.021277,
+          "overlap_departments": [
+            "디자인학과"
+          ],
+          "exact_row_match": false,
+          "base_same_year": true
+        },
+        {
+          "candidate_open_id": "2353963553",
+          "overlap_count": 1,
+          "target_department_count": 4,
+          "candidate_department_count": 50,
+          "jaccard": 0.018868,
+          "overlap_departments": [
+            "디자인학과"
+          ],
+          "exact_row_match": false,
+          "base_same_year": true
+        },
+        {
+          "candidate_open_id": "9063735783",
+          "overlap_count": 1,
+          "target_department_count": 4,
+          "candidate_department_count": 50,
+          "jaccard": 0.018868,
+          "overlap_departments": [
+            "디자인학과"
+          ],
+          "exact_row_match": false,
+          "base_same_year": true
+        },
+        {
+          "candidate_open_id": "6073314666",
+          "overlap_count": 1,
+          "target_department_count": 4,
+          "candidate_department_count": 56,
+          "jaccard": 0.016949,
+          "overlap_departments": [
+            "소프트웨어학과"
+          ],
+          "exact_row_match": false,
+          "base_same_year": true
+        },
+        {
+          "candidate_open_id": "5755970716",
+          "overlap_count": 1,
+          "target_department_count": 4,
+          "candidate_department_count": 60,
+          "jaccard": 0.015873,
+          "overlap_departments": [
+            "디자인학과"
+          ],
+          "exact_row_match": false,
+          "base_same_year": true
+        }
+      ]
+    },
+    {
+      "year": "2015",
+      "open_id": "5831784427",
+      "classification": "internal_base_gap",
+      "departments": [],
+      "faculty_source_row_count": 0,
+      "other_source_row_counts": {
+        "0316": 1,
+        "1016": 1
+      },
+      "base_observed_years": [
+        "2010",
+        "2011",
+        "2012",
+        "2013",
+        "2014",
+        "2020",
+        "2021",
+        "2022",
+        "2023",
+        "2024",
+        "2025"
+      ],
+      "base_attributes": {
+        "school_types": [
+          "전문대학"
+        ],
+        "regions": [
+          "인천"
+        ],
+        "localities": [
+          "인천 남구",
+          "인천 미추홀구"
+        ],
+        "branch_types": [
+          "본교",
+          "본교(제1캠퍼스)"
+        ],
+        "program_types": [
+          "기능대학"
+        ]
+      },
+      "exact_row_match_ids": [],
+      "top_department_overlap_candidates": []
+    },
+    {
+      "year": "2016",
+      "open_id": "9080059170",
+      "classification": "open_id_absent_all_years",
+      "departments": [
+        "사회복지학과"
+      ],
+      "faculty_source_row_count": 1,
+      "other_source_row_counts": {},
+      "base_observed_years": [],
+      "base_attributes": {
+        "school_types": [],
+        "regions": [],
+        "localities": [],
+        "branch_types": [],
+        "program_types": []
+      },
+      "exact_row_match_ids": [],
+      "top_department_overlap_candidates": [
+        {
+          "candidate_open_id": "1072555363",
+          "overlap_count": 1,
+          "target_department_count": 1,
+          "candidate_department_count": 1,
+          "jaccard": 1.0,
+          "overlap_departments": [
+            "사회복지학과"
+          ],
+          "exact_row_match": false,
+          "base_same_year": true
+        },
+        {
+          "candidate_open_id": "2529507696",
+          "overlap_count": 1,
+          "target_department_count": 1,
+          "candidate_department_count": 1,
+          "jaccard": 1.0,
+          "overlap_departments": [
+            "사회복지학과"
+          ],
+          "exact_row_match": false,
+          "base_same_year": true
+        },
+        {
+          "candidate_open_id": "3462916433",
+          "overlap_count": 1,
+          "target_department_count": 1,
+          "candidate_department_count": 1,
+          "jaccard": 1.0,
+          "overlap_departments": [
+            "사회복지학과"
+          ],
+          "exact_row_match": false,
+          "base_same_year": true
+        },
+        {
+          "candidate_open_id": "3709842741",
+          "overlap_count": 1,
+          "target_department_count": 1,
+          "candidate_department_count": 1,
+          "jaccard": 1.0,
+          "overlap_departments": [
+            "사회복지학과"
+          ],
+          "exact_row_match": false,
+          "base_same_year": true
+        },
+        {
+          "candidate_open_id": "3865075588",
+          "overlap_count": 1,
+          "target_department_count": 1,
+          "candidate_department_count": 1,
+          "jaccard": 1.0,
+          "overlap_departments": [
+            "사회복지학과"
+          ],
+          "exact_row_match": false,
+          "base_same_year": true
+        },
+        {
+          "candidate_open_id": "5055441558",
+          "overlap_count": 1,
+          "target_department_count": 1,
+          "candidate_department_count": 1,
+          "jaccard": 1.0,
+          "overlap_departments": [
+            "사회복지학과"
+          ],
+          "exact_row_match": false,
+          "base_same_year": true
+        },
+        {
+          "candidate_open_id": "5301821768",
+          "overlap_count": 1,
+          "target_department_count": 1,
+          "candidate_department_count": 1,
+          "jaccard": 1.0,
+          "overlap_departments": [
+            "사회복지학과"
+          ],
+          "exact_row_match": false,
+          "base_same_year": true
+        },
+        {
+          "candidate_open_id": "5344069242",
+          "overlap_count": 1,
+          "target_department_count": 1,
+          "candidate_department_count": 1,
+          "jaccard": 1.0,
+          "overlap_departments": [
+            "사회복지학과"
+          ],
+          "exact_row_match": false,
+          "base_same_year": true
+        },
+        {
+          "candidate_open_id": "5766724765",
+          "overlap_count": 1,
+          "target_department_count": 1,
+          "candidate_department_count": 1,
+          "jaccard": 1.0,
+          "overlap_departments": [
+            "사회복지학과"
+          ],
+          "exact_row_match": false,
+          "base_same_year": true
+        },
+        {
+          "candidate_open_id": "6228680551",
+          "overlap_count": 1,
+          "target_department_count": 1,
+          "candidate_department_count": 1,
+          "jaccard": 1.0,
+          "overlap_departments": [
+            "사회복지학과"
+          ],
+          "exact_row_match": false,
+          "base_same_year": true
+        },
+        {
+          "candidate_open_id": "6431509733",
+          "overlap_count": 1,
+          "target_department_count": 1,
+          "candidate_department_count": 1,
+          "jaccard": 1.0,
+          "overlap_departments": [
+            "사회복지학과"
+          ],
+          "exact_row_match": false,
+          "base_same_year": true
+        },
+        {
+          "candidate_open_id": "6715227365",
+          "overlap_count": 1,
+          "target_department_count": 1,
+          "candidate_department_count": 1,
+          "jaccard": 1.0,
+          "overlap_departments": [
+            "사회복지학과"
+          ],
+          "exact_row_match": false,
+          "base_same_year": true
+        },
+        {
+          "candidate_open_id": "7184069991",
+          "overlap_count": 1,
+          "target_department_count": 1,
+          "candidate_department_count": 1,
+          "jaccard": 1.0,
+          "overlap_departments": [
+            "사회복지학과"
+          ],
+          "exact_row_match": false,
+          "base_same_year": true
+        },
+        {
+          "candidate_open_id": "7344716608",
+          "overlap_count": 1,
+          "target_department_count": 1,
+          "candidate_department_count": 1,
+          "jaccard": 1.0,
+          "overlap_departments": [
+            "사회복지학과"
+          ],
+          "exact_row_match": false,
+          "base_same_year": true
+        },
+        {
+          "candidate_open_id": "7452604174",
+          "overlap_count": 1,
+          "target_department_count": 1,
+          "candidate_department_count": 1,
+          "jaccard": 1.0,
+          "overlap_departments": [
+            "사회복지학과"
+          ],
+          "exact_row_match": false,
+          "base_same_year": true
+        },
+        {
+          "candidate_open_id": "8117898762",
+          "overlap_count": 1,
+          "target_department_count": 1,
+          "candidate_department_count": 1,
+          "jaccard": 1.0,
+          "overlap_departments": [
+            "사회복지학과"
+          ],
+          "exact_row_match": false,
+          "base_same_year": true
+        },
+        {
+          "candidate_open_id": "8228316187",
+          "overlap_count": 1,
+          "target_department_count": 1,
+          "candidate_department_count": 1,
+          "jaccard": 1.0,
+          "overlap_departments": [
+            "사회복지학과"
+          ],
+          "exact_row_match": false,
+          "base_same_year": true
+        },
+        {
+          "candidate_open_id": "8644207715",
+          "overlap_count": 1,
+          "target_department_count": 1,
+          "candidate_department_count": 1,
+          "jaccard": 1.0,
+          "overlap_departments": [
+            "사회복지학과"
+          ],
+          "exact_row_match": false,
+          "base_same_year": true
+        },
+        {
+          "candidate_open_id": "8708949804",
+          "overlap_count": 1,
+          "target_department_count": 1,
+          "candidate_department_count": 1,
+          "jaccard": 1.0,
+          "overlap_departments": [
+            "사회복지학과"
+          ],
+          "exact_row_match": false,
+          "base_same_year": true
+        },
+        {
+          "candidate_open_id": "8837886273",
+          "overlap_count": 1,
+          "target_department_count": 1,
+          "candidate_department_count": 1,
+          "jaccard": 1.0,
+          "overlap_departments": [
+            "사회복지학과"
+          ],
+          "exact_row_match": false,
+          "base_same_year": true
+        }
+      ]
+    },
+    {
+      "year": "2019",
+      "open_id": "2957261025",
+      "classification": "open_id_absent_all_years",
+      "departments": [
+        "간호학과"
+      ],
+      "faculty_source_row_count": 1,
+      "other_source_row_counts": {},
+      "base_observed_years": [],
+      "base_attributes": {
+        "school_types": [],
+        "regions": [],
+        "localities": [],
+        "branch_types": [],
+        "program_types": []
+      },
+      "exact_row_match_ids": [
+        "2336580157",
+        "5636268556",
+        "6156376779",
+        "6375305652",
+        "6471747696",
+        "7625945150",
+        "7854049861",
+        "9291199982",
+        "9589447677"
+      ],
+      "top_department_overlap_candidates": [
+        {
+          "candidate_open_id": "2336580157",
+          "overlap_count": 1,
+          "target_department_count": 1,
+          "candidate_department_count": 3,
+          "jaccard": 0.333333,
+          "overlap_departments": [
+            "간호학과"
+          ],
+          "exact_row_match": true,
+          "base_same_year": true
+        },
+        {
+          "candidate_open_id": "7854049861",
+          "overlap_count": 1,
+          "target_department_count": 1,
+          "candidate_department_count": 5,
+          "jaccard": 0.2,
+          "overlap_departments": [
+            "간호학과"
+          ],
+          "exact_row_match": true,
+          "base_same_year": true
+        },
+        {
+          "candidate_open_id": "6156376779",
+          "overlap_count": 1,
+          "target_department_count": 1,
+          "candidate_department_count": 6,
+          "jaccard": 0.166667,
+          "overlap_departments": [
+            "간호학과"
+          ],
+          "exact_row_match": true,
+          "base_same_year": true
+        },
+        {
+          "candidate_open_id": "6375305652",
+          "overlap_count": 1,
+          "target_department_count": 1,
+          "candidate_department_count": 10,
+          "jaccard": 0.1,
+          "overlap_departments": [
+            "간호학과"
+          ],
+          "exact_row_match": true,
+          "base_same_year": true
+        },
+        {
+          "candidate_open_id": "7625945150",
+          "overlap_count": 1,
+          "target_department_count": 1,
+          "candidate_department_count": 10,
+          "jaccard": 0.1,
+          "overlap_departments": [
+            "간호학과"
+          ],
+          "exact_row_match": true,
+          "base_same_year": true
+        },
+        {
+          "candidate_open_id": "5636268556",
+          "overlap_count": 1,
+          "target_department_count": 1,
+          "candidate_department_count": 11,
+          "jaccard": 0.090909,
+          "overlap_departments": [
+            "간호학과"
+          ],
+          "exact_row_match": true,
+          "base_same_year": true
+        },
+        {
+          "candidate_open_id": "6471747696",
+          "overlap_count": 1,
+          "target_department_count": 1,
+          "candidate_department_count": 13,
+          "jaccard": 0.076923,
+          "overlap_departments": [
+            "간호학과"
+          ],
+          "exact_row_match": true,
+          "base_same_year": true
+        },
+        {
+          "candidate_open_id": "9589447677",
+          "overlap_count": 1,
+          "target_department_count": 1,
+          "candidate_department_count": 14,
+          "jaccard": 0.071429,
+          "overlap_departments": [
+            "간호학과"
+          ],
+          "exact_row_match": true,
+          "base_same_year": true
+        },
+        {
+          "candidate_open_id": "9291199982",
+          "overlap_count": 1,
+          "target_department_count": 1,
+          "candidate_department_count": 16,
+          "jaccard": 0.0625,
+          "overlap_departments": [
+            "간호학과"
+          ],
+          "exact_row_match": true,
+          "base_same_year": true
+        },
+        {
+          "candidate_open_id": "6767882347",
+          "overlap_count": 1,
+          "target_department_count": 1,
+          "candidate_department_count": 1,
+          "jaccard": 1.0,
+          "overlap_departments": [
+            "간호학과"
+          ],
+          "exact_row_match": false,
+          "base_same_year": true
+        },
+        {
+          "candidate_open_id": "9979787409",
+          "overlap_count": 1,
+          "target_department_count": 1,
+          "candidate_department_count": 2,
+          "jaccard": 0.5,
+          "overlap_departments": [
+            "간호학과"
+          ],
+          "exact_row_match": false,
+          "base_same_year": true
+        },
+        {
+          "candidate_open_id": "7619514286",
+          "overlap_count": 1,
+          "target_department_count": 1,
+          "candidate_department_count": 2,
+          "jaccard": 0.5,
+          "overlap_departments": [
+            "간호학과"
+          ],
+          "exact_row_match": false,
+          "base_same_year": true
+        },
+        {
+          "candidate_open_id": "7710297405",
+          "overlap_count": 1,
+          "target_department_count": 1,
+          "candidate_department_count": 3,
+          "jaccard": 0.333333,
+          "overlap_departments": [
+            "간호학과"
+          ],
+          "exact_row_match": false,
+          "base_same_year": true
+        },
+        {
+          "candidate_open_id": "2892641246",
+          "overlap_count": 1,
+          "target_department_count": 1,
+          "candidate_department_count": 4,
+          "jaccard": 0.25,
+          "overlap_departments": [
+            "간호학과"
+          ],
+          "exact_row_match": false,
+          "base_same_year": true
+        },
+        {
+          "candidate_open_id": "9444468915",
+          "overlap_count": 1,
+          "target_department_count": 1,
+          "candidate_department_count": 5,
+          "jaccard": 0.2,
+          "overlap_departments": [
+            "간호학과"
+          ],
+          "exact_row_match": false,
+          "base_same_year": true
+        },
+        {
+          "candidate_open_id": "6212758958",
+          "overlap_count": 1,
+          "target_department_count": 1,
+          "candidate_department_count": 6,
+          "jaccard": 0.166667,
+          "overlap_departments": [
+            "간호학과"
+          ],
+          "exact_row_match": false,
+          "base_same_year": true
+        },
+        {
+          "candidate_open_id": "2319199979",
+          "overlap_count": 1,
+          "target_department_count": 1,
+          "candidate_department_count": 9,
+          "jaccard": 0.111111,
+          "overlap_departments": [
+            "간호학과"
+          ],
+          "exact_row_match": false,
+          "base_same_year": true
+        },
+        {
+          "candidate_open_id": "9776334881",
+          "overlap_count": 1,
+          "target_department_count": 1,
+          "candidate_department_count": 13,
+          "jaccard": 0.076923,
+          "overlap_departments": [
+            "간호학과"
+          ],
+          "exact_row_match": false,
+          "base_same_year": true
+        },
+        {
+          "candidate_open_id": "1688166320",
+          "overlap_count": 1,
+          "target_department_count": 1,
+          "candidate_department_count": 13,
+          "jaccard": 0.076923,
+          "overlap_departments": [
+            "간호학과"
+          ],
+          "exact_row_match": false,
+          "base_same_year": true
+        },
+        {
+          "candidate_open_id": "2365366697",
+          "overlap_count": 1,
+          "target_department_count": 1,
+          "candidate_department_count": 14,
+          "jaccard": 0.071429,
+          "overlap_departments": [
+            "간호학과"
+          ],
+          "exact_row_match": false,
+          "base_same_year": true
+        }
+      ]
+    }
+  ],
+  "method_note": "Candidate matches are structural evidence only. EDSS open IDs are not mapped to school names unless an independent official source confirms the identity."
+}

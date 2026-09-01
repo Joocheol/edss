@@ -14,6 +14,9 @@
 - `edss_orphan_school_year_keys.csv`: 미연결 고유 `(연도, 개방ID)` 76개의 데이터셋·기준 관측연도·분류
 - `edss_school_year_bridge.csv`: 모든 패널의 비어 있지 않은 `(연도, 개방ID)`를 한 행씩 보존하고 `0101` 범주형 속성과 미연결 검토 상태를 연결한 기준표
 - `edss_school_year_bridge_summary.json`: 기준표 grain·유일성·입력 체크섬·데이터셋별 left join 무증식 검증 결과
+- `edss_priority_school_history_candidates.json`·`.csv`: 우선 검토 ID 6개의 학과 집합·행 서명·`0101` 연결 후보 비교 결과
+- `edss_priority_school_history_validation.csv`: 통폐합·명칭 변경·학위과정 공백과 중복 ID를 공식 자료 및 뉴스로 교차검증한 수동 학교명 후보표
+- `edss_priority_school_history_sources.json`: 학교이력 판정의 원본 파일·공식 자료·언론 교차검증 근거 목록
 - `edss_catalog_inventory.csv`: 기준 Excel 7개 시트의 행 단위 인벤토리
 - `source_inventory.csv`: EDSS 우선순위와 공공데이터포털 파일/API 수집 목록
 - `edss_field_dictionary.csv`: 공식 원본 항목명 기반 데이터 사전

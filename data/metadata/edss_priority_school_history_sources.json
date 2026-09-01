@@ -1,0 +1,134 @@
+{
+  "schemaVersion": 1,
+  "items": [
+    {
+      "id": "namincheon-degree-gap",
+      "title": "남인천캠퍼스는 폐교가 아니라 학위과정 공백인가?",
+      "queries": [
+        {
+          "id": "namincheon-edss-history",
+          "source": {
+            "label": "EDSS 원본과 한국폴리텍 공식 연혁",
+            "files": [
+              {"label": "0101. 고등교육학교개황(09-25).zip"},
+              {"label": "0316. 중도탈락학생현황(09-25).zip"},
+              {"label": "1016. 장학금수혜현황(09-25).zip"}
+            ],
+            "links": [
+              {"label": "한국폴리텍대학 남인천캠퍼스 공식 연혁"}
+            ],
+            "filters": ["개방ID: 5831784427", "조사연도: 2010–2025"],
+            "caveats": ["공식 연혁은 캠퍼스 존속과 2020년 2년제 학위과정 신설을 확인하지만, 2015년 폐과 잔존 행의 행정 처리 사유까지 명시하지는 않는다."],
+            "evidenceFlow": [
+              {"kind": "validation", "title": "EDSS 관측", "detail": "0101은 2010–2014년과 2020–2025년에 같은 ID를 기록하고, 2015년 비교 패널에는 폐과 인쇄정보미디어과 행이 남아 있다."},
+              {"kind": "validation", "title": "공식 연혁", "detail": "캠퍼스는 2019년에도 전문기술과정을 운영했고 2020년에 2년제 학위과정을 신설했다."}
+            ]
+          },
+          "columns": ["year", "open_id", "finding", "safe_action"],
+          "rows": [
+            {"year": "2015", "open_id": "5831784427", "finding": "학위과정 중단 후 재개", "safe_action": "동일 ID 유지·공백 플래그"}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "uos-graduate-renames",
+      "title": "2009년 서울시립대 대학원 명칭 변경의 구 ID인가?",
+      "queries": [
+        {
+          "id": "uos-edss-history",
+          "source": {
+            "label": "EDSS 0502·0101과 서울시립대 공식 연혁",
+            "files": [
+              {"label": "0502. 전체교원대비전임교원현황(09-25).zip"},
+              {"label": "0101. 고등교육학교개황(09-25).zip"}
+            ],
+            "links": [
+              {"label": "서울시립대 세무전문대학원 공식 연혁"},
+              {"label": "서울시보 제2892호"}
+            ],
+            "filters": ["조사연도: 2009", "학과: 산업디자인학과·세무학과"],
+            "caveats": ["기관·학과·시점은 일치하지만 EDSS 개방ID-학교명 공식 교차표가 없어 후보를 확정 매핑으로 사용할 수 없다."],
+            "evidenceFlow": [
+              {"kind": "validation", "title": "구조 비교", "detail": "두 미연결 ID는 각각 단일학과 0값 행이며, 동대문구 정상 대학원 ID에 동일 학과가 존재한다."},
+              {"kind": "validation", "title": "공식 명칭 변경", "detail": "2008년 11월 디자인대학원과 세무대학원이 각각 전문대학원으로 변경되었다."}
+            ]
+          },
+          "columns": ["year", "open_id", "likely_entity", "status"],
+          "rows": [
+            {"year": "2009", "open_id": "4124740779", "likely_entity": "서울시립대 디자인전문대학원", "status": "구 ID 가능성"},
+            {"year": "2009", "open_id": "5814962685", "likely_entity": "서울시립대 세무전문대학원", "status": "구 ID 가능성"}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "dongseo-duplicate-subunit",
+      "title": "동서대 일반대학원 하위 ID 중복인가?",
+      "queries": [
+        {
+          "id": "dongseo-edss-structure",
+          "source": {
+            "label": "EDSS 학과 집합과 동서대 공식 대학원 자료",
+            "files": [
+              {"label": "0502. 전체교원대비전임교원현황(09-25).zip"},
+              {"label": "0101. 고등교육학교개황(09-25).zip"}
+            ],
+            "links": [
+              {"label": "동서대학교 일반대학원 공식 모집자료"},
+              {"label": "동서대학교 대학·대학원 안내"}
+            ],
+            "filters": ["조사연도: 2009", "개방ID: 6566148042"],
+            "caveats": ["강한 구조 일치가 있지만 EDSS 공식 ID 교차표가 없어 자동 통합은 금지한다."],
+            "evidenceFlow": [
+              {"kind": "validation", "title": "학과 집합 비교", "detail": "미연결 ID의 4개 학과가 부산 사상구 정상 대학원 ID의 5개 학과 중 4개와 일치하고 일부 행은 ID를 제외하면 완전히 같다."},
+              {"kind": "validation", "title": "기관 확인", "detail": "동서대 공식 자료에서 부산 사상구 소재와 영상콘텐츠·유비쿼터스IT·디자인 대학원 학과를 확인했다."}
+            ]
+          },
+          "columns": ["year", "open_id", "likely_entity", "status"],
+          "rows": [
+            {"year": "2009", "open_id": "6566148042", "likely_entity": "동서대 일반대학원", "status": "중복·과거 하위 ID 가능성"}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "legacy-graduate-school-candidates",
+      "title": "남은 두 익명 대학원 ID의 학교명 후보는 무엇인가?",
+      "queries": [
+        {
+          "id": "unresolved-edss-rows",
+          "source": {
+            "label": "EDSS 0502와 대학알리미 2016·2019 공식 목록",
+            "files": [
+              {"label": "0502. 전체교원대비전임교원현황(09-25).zip"},
+              {"label": "edss_priority_school_history_candidates.json"},
+              {"label": "academyinfo_2016_departments.xlsx"},
+              {"label": "academyinfo_2016_school_overview.xlsx"},
+              {"label": "academyinfo_2019_departments.xlsx"},
+              {"label": "academyinfo_2019_school_overview.xlsx"}
+            ],
+            "links": [
+              {"label": "명지대학교 2016학년도 특수대학원 모집자료"},
+              {"label": "아시아투데이 신흥대·한북대 통합 기사"},
+              {"label": "경향신문 이화여대 사회복지학과·대학원 재편 기사"},
+              {"label": "헤드라인제주 제주국제대 대학원 모집 기사"},
+              {"label": "남부대학교 대학원 안내"}
+            ],
+            "filters": ["개방ID: 9080059170·2957261025"],
+            "caveats": ["두 학교명은 공식 학과목록·학교개황·EDSS 행 비교로 좁힌 유력 후보이며, EDSS의 개방ID-학교명 직접 교차표가 없어 확정 매핑은 아니다. 뉴스는 통폐합·조직개편 사실을 확인하지만 ID 자체를 공개하지 않는다."],
+            "evidenceFlow": [
+              {"kind": "validation", "title": "2016 사회복지학과", "detail": "익명 ID와 서울 서대문구·제2캠퍼스 정상 ID는 남 5·여 3 비전임교원 합계가 유일하게 일치한다. 정상 ID의 공식 학교 조건은 명지대 사회복지대학원과 일치한다."},
+              {"kind": "validation", "title": "2019 간호학과", "detail": "남부대 보건경영대학원 간호학과는 2019 공식 목록에서 폐과이며, 같은 지역 정상 ID는 보건대학원과 후속 문화복지 계열로 구조상 분리된다."}
+            ]
+          },
+          "columns": ["year", "open_id", "likely_entity", "status"],
+          "rows": [
+            {"year": "2016", "open_id": "9080059170", "likely_entity": "명지대학교 사회복지대학원", "status": "유력 후보"},
+            {"year": "2019", "open_id": "2957261025", "likely_entity": "남부대학교 보건경영대학원", "status": "유력 후보"}
+          ]
+        }
+      ]
+    }
+  ]
+}
