@@ -16,12 +16,14 @@ import io
 import json
 import os
 import re
+import sys
+import tempfile
 import unicodedata
 import zipfile
 from collections import Counter, defaultdict
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Callable, Iterable
+from typing import BinaryIO, Callable, Iterable
 
 
 SOURCE_URL = "https://www.edmgr.kr/edss/es/opd/odd/od/es_opd_oddod01_001"
@@ -55,6 +57,48 @@ def sha256_file(path: Path) -> str:
         for chunk in iter(lambda: handle.read(1024 * 1024), b""):
             digest.update(chunk)
     return digest.hexdigest()
+
+
+class PartitionedDigestCounter:
+    """Count repeated SHA-256 row digests with bounded memory.
+
+    Digests are partitioned on disk during the panel write, then each partition
+    is sorted independently.  This avoids retaining one Python object per row
+    for very large EDSS tables.
+    """
+
+    def __init__(self, root: Path, partition_count: int = 64) -> None:
+        self.root = root
+        self.partition_count = partition_count
+        self.handles: dict[int, BinaryIO] = {}
+        self.paths: dict[int, Path] = {}
+
+    def add(self, digest: bytes) -> None:
+        partition = digest[0] % self.partition_count
+        handle = self.handles.get(partition)
+        if handle is None:
+            path = self.root / f"rows-{partition:02d}.bin"
+            handle = path.open("wb", buffering=1024 * 1024)
+            self.handles[partition] = handle
+            self.paths[partition] = path
+        handle.write(digest)
+
+    def close(self) -> None:
+        for handle in self.handles.values():
+            handle.close()
+        self.handles.clear()
+
+    def duplicate_count(self) -> int:
+        self.close()
+        duplicates = 0
+        for path in self.paths.values():
+            data = path.read_bytes()
+            if len(data) % 32:
+                raise RuntimeError(f"invalid partitioned SHA-256 file: {path}")
+            digests = [data[index : index + 32] for index in range(0, len(data), 32)]
+            digests.sort()
+            duplicates += sum(left == right for left, right in zip(digests, digests[1:]))
+        return duplicates
 
 
 def recover_name(value: str) -> str:
@@ -190,7 +234,16 @@ def load_rebuild_inventory(path: Path, repo_root: Path) -> list[dict]:
     entries = []
     seen_domn_codes: set[str] = set()
     seen_archive_paths: set[str] = set()
-    required = {"source", "catalog_code", "dataset", "domn_code", "advertised_years", "archive_count", "archive_paths"}
+    required = {
+        "source",
+        "catalog_code",
+        "dataset",
+        "domn_code",
+        "advertised_years",
+        "archive_count",
+        "archive_paths",
+        "archive_sha256s",
+    }
     for row_number, row in enumerate(rows, start=2):
         missing = sorted(field for field in required if not row.get(field))
         if missing:
@@ -201,14 +254,19 @@ def load_rebuild_inventory(path: Path, repo_root: Path) -> list[dict]:
         seen_domn_codes.add(domn_code)
         try:
             archive_paths = json.loads(row["archive_paths"])
+            archive_sha256s = json.loads(row["archive_sha256s"])
         except json.JSONDecodeError as error:
-            raise RuntimeError(f"{path}:{row_number}: invalid archive_paths JSON") from error
+            raise RuntimeError(f"{path}:{row_number}: invalid archive path or SHA-256 JSON") from error
         if not isinstance(archive_paths, list) or not all(isinstance(value, str) and value for value in archive_paths):
             raise RuntimeError(f"{path}:{row_number}: archive_paths must be a non-empty string list")
+        if not isinstance(archive_sha256s, list) or not all(
+            isinstance(value, str) and re.fullmatch(r"[0-9a-f]{64}", value) for value in archive_sha256s
+        ):
+            raise RuntimeError(f"{path}:{row_number}: archive_sha256s must contain SHA-256 strings")
         expected_count = int(row["archive_count"])
-        if expected_count != len(archive_paths):
+        if expected_count != len(archive_paths) or expected_count != len(archive_sha256s):
             raise RuntimeError(
-                f"{path}:{row_number}: archive_count {expected_count} does not match {len(archive_paths)} paths"
+                f"{path}:{row_number}: archive_count {expected_count} does not match path and SHA-256 lists"
             )
         duplicates = sorted(value for value in archive_paths if value in seen_archive_paths)
         if duplicates:
@@ -226,9 +284,46 @@ def load_rebuild_inventory(path: Path, repo_root: Path) -> list[dict]:
                 "license": "EDSS 다운로드 정책 확인 필요",
                 "_archive_paths": resolved,
                 "_inventory_archive_paths": archive_paths,
+                "_inventory_archive_sha256s": archive_sha256s,
             }
         )
     return entries
+
+
+def load_scan_profiles(path: Path, entries: list[dict]) -> dict[str, dict]:
+    """Load and reconcile pre-scanned physical profiles for a full build."""
+
+    profiles: dict[str, dict] = {}
+    for line_number, line in enumerate(path.read_text(encoding="utf-8-sig").splitlines(), start=1):
+        if not line.strip():
+            continue
+        profile = json.loads(line)
+        domn_code = str(profile.get("domn_code", ""))
+        if not domn_code:
+            raise RuntimeError(f"{path}:{line_number}: profile has no domn_code")
+        if domn_code in profiles:
+            raise RuntimeError(f"{path}:{line_number}: duplicate profile domn_code: {domn_code}")
+        profiles[domn_code] = profile
+
+    entries_by_domn = {str(entry["domn_code"]): entry for entry in entries}
+    missing = sorted(set(entries_by_domn) - set(profiles))
+    extra = sorted(set(profiles) - set(entries_by_domn))
+    if missing or extra:
+        raise RuntimeError(f"scan profile coverage mismatch: missing={missing}, extra={extra}")
+
+    for domn_code, entry in entries_by_domn.items():
+        profile = profiles[domn_code]
+        for field in ("source", "catalog_code", "dataset", "advertised_years"):
+            if str(profile.get(field, "")) != str(entry.get(field, "")):
+                raise RuntimeError(f"scan profile mismatch for domn_code {domn_code}: {field}")
+        records = profile.get("archive_records", [])
+        paths = [str(record.get("local_path", "")) for record in records]
+        hashes = [str(record.get("sha256", "")) for record in records]
+        if paths != entry["_inventory_archive_paths"]:
+            raise RuntimeError(f"scan profile archive paths mismatch for domn_code {domn_code}")
+        if hashes != entry["_inventory_archive_sha256s"]:
+            raise RuntimeError(f"scan profile SHA-256 mismatch for domn_code {domn_code}")
+    return profiles
 
 
 def display_path(path: Path, display_root: Path | None) -> str:
@@ -392,7 +487,6 @@ def build_logical_panel(group: list[tuple[dict, dict]], processed_root: Path, fo
     year_counts: Counter[str] = Counter()
     domn_counts: Counter[str] = Counter()
     duplicate_hashes = 0
-    seen_row_hashes: set[int] = set()
     malformed_rows = 0
     total_rows = 0
     identifier_fields = [
@@ -403,76 +497,79 @@ def build_logical_panel(group: list[tuple[dict, dict]], processed_root: Path, fo
     ]
 
     temp_path = output_path.with_suffix(output_path.suffix + ".part")
-    with gzip.open(temp_path, "wt", encoding="utf-8", newline="", compresslevel=6) as output:
-        writer = csv.writer(output)
-        writer.writerow(META_FIELDS + union_fields)
-        for entry, profile in group:
-            record_by_path = {record["local_path"]: record for record in profile["archive_records"]}
-            for archive_path_text, archive_record in record_by_path.items():
-                archive_path = Path(archive_path_text)
-                archive_sha = archive_record["sha256"]
+    with tempfile.TemporaryDirectory(prefix=".row-digests-", dir=output_dir) as digest_directory:
+        digest_counter = PartitionedDigestCounter(Path(digest_directory))
+        try:
+            with gzip.open(temp_path, "wt", encoding="utf-8", newline="", compresslevel=6) as output:
+                writer = csv.writer(output)
+                writer.writerow(META_FIELDS + union_fields)
+                for entry, profile in group:
+                    record_by_path = {record["local_path"]: record for record in profile["archive_records"]}
+                    for archive_path_text, archive_record in record_by_path.items():
+                        archive_path = Path(archive_path_text)
+                        archive_sha = archive_record["sha256"]
 
-                def write_member(zf: zipfile.ZipFile, info: zipfile.ZipInfo, member_path: str) -> None:
-                    nonlocal total_rows, malformed_rows, duplicate_hashes
-                    text, _ = open_csv(zf, info)
-                    try:
-                        reader = csv.reader(text)
-                        fields = disambiguate_header(next(reader, []))
-                        destinations = [field_pos[field] for field in fields]
-                        year_index = fields.index("조사년도") if "조사년도" in fields else None
-                        fallback_year = infer_year(member_path) or infer_year(archive_path.name)
-                        for row_number, row in enumerate(reader, start=2):
-                            total_rows += 1
-                            if len(row) != len(fields):
-                                malformed_rows += 1
-                            row = row[: len(fields)] + [""] * max(0, len(fields) - len(row))
-                            values = [""] * len(union_fields)
-                            for index, value in enumerate(row):
-                                field = fields[index]
-                                value = unicodedata.normalize("NFC", value)
-                                values[destinations[index]] = value
-                                if not value.strip():
-                                    missing_counts[field] += 1
-                                else:
-                                    nonmissing_counts[field] += 1
-                                if value.strip() in MISSING_SENTINELS:
-                                    sentinel_values[field].add(value.strip())
-                                if type_sample_counts[field] < 10000:
-                                    type_samples[field].add(classify_value(value))
-                                    type_sample_counts[field] += 1
-                            year = row[year_index].strip() if year_index is not None else fallback_year
-                            if not re.fullmatch(r"(?:19|20)\d{2}", year):
-                                year = fallback_year
-                            year_counts[year or "unknown"] += 1
-                            domn_counts[entry["domn_code"]] += 1
-                            original_payload = "\x1f".join(row).encode("utf-8")
-                            row_hash = hashlib.sha256(original_payload).hexdigest()
-                            compact_hash = int.from_bytes(hashlib.blake2b(original_payload, digest_size=8).digest(), "big")
-                            if compact_hash in seen_row_hashes:
-                                duplicate_hashes += 1
-                            else:
-                                seen_row_hashes.add(compact_hash)
-                            identity = f"{entry['domn_code']}|{archive_sha}|{member_path}|{row_number}"
-                            row_id = hashlib.sha256(identity.encode("utf-8")).hexdigest()
-                            metadata = [
-                                PROVIDER,
-                                source,
-                                catalog,
-                                dataset,
-                                entry["domn_code"],
-                                archive_path.as_posix(),
-                                archive_sha,
-                                member_path,
-                                str(row_number),
-                                row_id,
-                                row_hash,
-                                year,
-                            ]
-                            writer.writerow(metadata + values)
-                    finally:
-                        text.close()
+                        def write_member(zf: zipfile.ZipFile, info: zipfile.ZipInfo, member_path: str) -> None:
+                            nonlocal total_rows, malformed_rows
+                            text, _ = open_csv(zf, info)
+                            try:
+                                reader = csv.reader(text)
+                                fields = disambiguate_header(next(reader, []))
+                                destinations = [field_pos[field] for field in fields]
+                                year_index = fields.index("조사년도") if "조사년도" in fields else None
+                                fallback_year = infer_year(member_path) or infer_year(archive_path.name)
+                                for row_number, row in enumerate(reader, start=2):
+                                    total_rows += 1
+                                    if len(row) != len(fields):
+                                        malformed_rows += 1
+                                    row = row[: len(fields)] + [""] * max(0, len(fields) - len(row))
+                                    values = [""] * len(union_fields)
+                                    for index, value in enumerate(row):
+                                        field = fields[index]
+                                        value = unicodedata.normalize("NFC", value)
+                                        values[destinations[index]] = value
+                                        if not value.strip():
+                                            missing_counts[field] += 1
+                                        else:
+                                            nonmissing_counts[field] += 1
+                                        if value.strip() in MISSING_SENTINELS:
+                                            sentinel_values[field].add(value.strip())
+                                        if type_sample_counts[field] < 10000:
+                                            type_samples[field].add(classify_value(value))
+                                            type_sample_counts[field] += 1
+                                    year = row[year_index].strip() if year_index is not None else fallback_year
+                                    if not re.fullmatch(r"(?:19|20)\d{2}", year):
+                                        year = fallback_year
+                                    year_counts[year or "unknown"] += 1
+                                    domn_counts[entry["domn_code"]] += 1
+                                    original_payload = "\x1f".join(row).encode("utf-8")
+                                    row_digest = hashlib.sha256(original_payload).digest()
+                                    row_hash = row_digest.hex()
+                                    digest_counter.add(row_digest)
+                                    identity = f"{entry['domn_code']}|{archive_sha}|{member_path}|{row_number}"
+                                    row_id = hashlib.sha256(identity.encode("utf-8")).hexdigest()
+                                    metadata = [
+                                        PROVIDER,
+                                        source,
+                                        catalog,
+                                        dataset,
+                                        entry["domn_code"],
+                                        archive_path.as_posix(),
+                                        archive_sha,
+                                        member_path,
+                                        str(row_number),
+                                        row_id,
+                                        row_hash,
+                                        year,
+                                    ]
+                                    writer.writerow(metadata + values)
+                            finally:
+                                text.close()
 
-                process_archive(archive_path, write_member)
+                        process_archive(archive_path, write_member)
+            duplicate_hashes = digest_counter.duplicate_count()
+        finally:
+            digest_counter.close()
     os.replace(temp_path, output_path)
 
     output_sha = sha256_file(output_path)
@@ -519,6 +616,7 @@ def build_logical_panel(group: list[tuple[dict, dict]], processed_root: Path, fo
         "malformed_row_count": malformed_rows,
         "exact_original_row_duplicate_count": duplicate_hashes,
         "exact_original_row_duplicate_rate": duplicate_hashes / total_rows if total_rows else 0,
+        "duplicate_detection": "SHA-256 row digests compared exactly within 64 on-disk partitions",
         "candidate_identifier_fields": identifier_fields,
         "candidate_identifier_missing_counts": {field: total_rows - nonmissing_counts[field] for field in identifier_fields},
         "data_dictionary": data_dictionary,
@@ -542,7 +640,8 @@ def write_manifest(path: Path, records: list[dict]) -> None:
                 record = json.loads(line)
                 existing[record["sha256"]] = record
     for record in records:
-        existing[record["sha256"]] = record
+        checksum = record["sha256"]
+        existing[checksum] = {**existing.get(checksum, {}), **record}
     ordered = sorted(existing.values(), key=lambda row: (row.get("source", ""), row.get("catalog_code", ""), row.get("domn_code", ""), row.get("file_year", ""), row.get("local_path", "")))
     temp = path.with_suffix(path.suffix + ".part")
     with temp.open("w", encoding="utf-8") as handle:
@@ -555,6 +654,7 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--config", type=Path, default=Path("config/edss_priority_datasets.json"))
     parser.add_argument("--inventory", type=Path, help="Canonical full-rebuild physical-unit inventory CSV")
+    parser.add_argument("--scan-profiles", type=Path, help="Pre-scanned physical profiles JSONL for a full rebuild")
     parser.add_argument("--repo-root", type=Path, default=Path("."))
     parser.add_argument("--raw-root", type=Path, default=Path("data/raw/edss"))
     parser.add_argument("--processed-root", type=Path, default=Path("data/processed/edss"))
@@ -568,24 +668,30 @@ def main() -> int:
         if args.inventory
         else json.loads(args.config.read_text(encoding="utf-8"))
     )
+    if args.scan_profiles and not args.inventory:
+        raise RuntimeError("--scan-profiles requires --inventory")
+    cached_profiles = load_scan_profiles(args.scan_profiles, entries) if args.scan_profiles else {}
     physical: list[tuple[dict, dict]] = []
     manifest_records: list[dict] = []
     missing = []
     for entry in entries:
-        archives = discover_archives(args.raw_root, entry)
-        if not archives:
-            missing.append({"domn_code": entry["domn_code"], "dataset": entry["dataset"]})
-            continue
-        profile = scan_physical_entry(entry, archives, display_root=args.repo_root if args.inventory else None)
-        schema_name = (
-            f"edss_{entry['catalog_code']}_{entry['domn_code']}_schema.json"
-            if args.inventory or entry["catalog_code"] == "0001"
-            else f"edss_{entry['catalog_code']}_schema.json"
-        )
-        schema_path = args.metadata_root / schema_name
-        for record in profile["archive_records"]:
-            record["schema_metadata"] = schema_path.as_posix()
-        write_json(schema_path, {key: value for key, value in profile.items() if key != "archive_records"})
+        if cached_profiles:
+            profile = cached_profiles[entry["domn_code"]]
+        else:
+            archives = discover_archives(args.raw_root, entry)
+            if not archives:
+                missing.append({"domn_code": entry["domn_code"], "dataset": entry["dataset"]})
+                continue
+            profile = scan_physical_entry(entry, archives, display_root=args.repo_root if args.inventory else None)
+            schema_name = (
+                f"edss_{entry['catalog_code']}_{entry['domn_code']}_schema.json"
+                if args.inventory or entry["catalog_code"] == "0001"
+                else f"edss_{entry['catalog_code']}_schema.json"
+            )
+            schema_path = args.metadata_root / schema_name
+            for record in profile["archive_records"]:
+                record["schema_metadata"] = schema_path.as_posix()
+            write_json(schema_path, {key: value for key, value in profile.items() if key != "archive_records"})
         physical.append((entry, profile))
         manifest_records.extend(profile["archive_records"])
 
@@ -604,8 +710,18 @@ def main() -> int:
     catalog_rows = []
     dictionary_rows: list[dict] = []
     quality_profiles = []
-    for key in sorted(logical_groups):
+    for index, key in enumerate(sorted(logical_groups), start=1):
+        print(
+            f"building {index}/{len(logical_groups)}: {key[0]} {key[1]} {key[2]}",
+            file=sys.stderr,
+            flush=True,
+        )
         profile, dictionary = build_logical_panel(logical_groups[key], args.processed_root, args.force)
+        print(
+            f"completed {index}/{len(logical_groups)}: {profile['row_count']} rows, {profile['output_bytes']} bytes",
+            file=sys.stderr,
+            flush=True,
+        )
         dictionary_rows.extend(dictionary)
         quality_profiles.append({key: value for key, value in profile.items() if key != "data_dictionary"})
         catalog_rows.append(

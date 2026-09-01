@@ -1,5 +1,6 @@
 import csv
 import gzip
+import hashlib
 import io
 import json
 import sys
@@ -40,7 +41,7 @@ class BuildEdssDatasetTests(unittest.TestCase):
             with inventory.open("w", encoding="utf-8-sig", newline="") as handle:
                 writer = csv.DictWriter(
                     handle,
-                    fieldnames=["source", "catalog_code", "dataset", "domn_code", "advertised_years", "archive_count", "archive_paths"],
+                    fieldnames=["source", "catalog_code", "dataset", "domn_code", "advertised_years", "archive_count", "archive_paths", "archive_sha256s"],
                 )
                 writer.writeheader()
                 writer.writerow(
@@ -52,6 +53,7 @@ class BuildEdssDatasetTests(unittest.TestCase):
                         "advertised_years": "2009~2025",
                         "archive_count": "1",
                         "archive_paths": json.dumps(["data/raw/001.zip"]),
+                        "archive_sha256s": json.dumps(["0" * 64]),
                     }
                 )
 
@@ -65,12 +67,49 @@ class BuildEdssDatasetTests(unittest.TestCase):
             root = Path(temp_dir)
             inventory = root / "inventory.csv"
             inventory.write_text(
-                "source,catalog_code,dataset,domn_code,advertised_years,archive_count,archive_paths\n"
-                '취업통계,0001,학생,9,2024,2,"[""raw/a.zip""]"\n',
+                "source,catalog_code,dataset,domn_code,advertised_years,archive_count,archive_paths,archive_sha256s\n"
+                '취업통계,0001,학생,9,2024,2,"[""raw/a.zip""]","[""0000000000000000000000000000000000000000000000000000000000000000""]"\n',
                 encoding="utf-8-sig",
             )
             with self.assertRaisesRegex(RuntimeError, "archive_count"):
                 builder.load_rebuild_inventory(inventory, root)
+
+    def test_partitioned_digest_counter_counts_extra_occurrences(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            counter = builder.PartitionedDigestCounter(Path(temp_dir))
+            first = hashlib.sha256(b"first").digest()
+            second = hashlib.sha256(b"second").digest()
+            for digest in (first, second, first, first):
+                counter.add(digest)
+            self.assertEqual(counter.duplicate_count(), 2)
+
+    def test_load_scan_profiles_reconciles_inventory_provenance(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            profiles_path = root / "profiles.jsonl"
+            checksum = "a" * 64
+            entry = {
+                "source": "고등교육통계",
+                "catalog_code": "0101",
+                "dataset": "학교",
+                "domn_code": "1",
+                "advertised_years": "2020",
+                "_inventory_archive_paths": ["data/raw/table.zip"],
+                "_inventory_archive_sha256s": [checksum],
+            }
+            profile = {
+                "source": "고등교육통계",
+                "catalog_code": "0101",
+                "dataset": "학교",
+                "domn_code": "1",
+                "advertised_years": "2020",
+                "archive_records": [{"local_path": "data/raw/table.zip", "sha256": checksum}],
+            }
+            profiles_path.write_text(json.dumps(profile, ensure_ascii=False) + "\n", encoding="utf-8")
+
+            loaded = builder.load_scan_profiles(profiles_path, [entry])
+
+            self.assertEqual(loaded["1"]["dataset"], "학교")
 
     def test_nested_zip_is_built_as_text_preserving_panel(self):
         with tempfile.TemporaryDirectory() as temp_dir:
