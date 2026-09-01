@@ -5,6 +5,9 @@
 - `file_manifest.jsonl`: 실제 확보한 포털·대학알리미 원본 파일
 - `edss_download_attempts.jsonl`: EDSS 연도 목록 확인 및 실제 다운로드 결과
 - `edss_file_manifest.jsonl`: EDSS 원본 ZIP 29개의 체크섬, 수집 방식, 압축 내부 요약
+- `edss_live_download_catalog.jsonl`: 포털 화면에서 확인한 세 필수 분야의 실제 다운로드 단위(`domnCd`) 목록
+- `edss_full_collection_attempts.jsonl`: 전체 수집 실행의 성공·실패·파일 크기·SHA-256 누적 기록
+- `edss_full_collection_status.csv`·`edss_full_collection_summary.json`: 기존 및 신규 원본의 ZIP 무결성, 체크섬, 누락 상태를 합친 검증 결과
 - `edss_{코드}_schema.json`: 물리 데이터셋별 연도·행 수·인코딩·원본 스키마. 취업통계는 물리 코드도 파일명에 포함한다.
 - `edss_panel_catalog.csv`: 15개 논리 주제 패널의 경로, 행·열·연도와 출력 SHA-256
 - `edss_panel_data_dictionary.csv`: 원본 필드명, 한글 표기, 문자열 저장형, 관찰 자료형, 단위·결측 정의 상태

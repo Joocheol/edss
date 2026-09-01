@@ -1,0 +1,12 @@
+{
+  "generated_at": "2026-09-01T02:40:50.746434+00:00",
+  "grain": "one row per live EDSS domn_code in the three required domains",
+  "target_count": 265,
+  "downloaded": 67,
+  "failed": 0,
+  "invalid": 0,
+  "pending": 198,
+  "verified_archive_count": 80,
+  "invalid_archive_count": 0,
+  "complete": false
+}
