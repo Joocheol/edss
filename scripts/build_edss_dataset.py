@@ -168,6 +168,8 @@ def open_csv(archive: zipfile.ZipFile, info: zipfile.ZipInfo):
 
 
 def discover_archives(raw_root: Path, entry: dict) -> list[Path]:
+    if "_archive_paths" in entry:
+        return sorted(Path(path) for path in entry["_archive_paths"])
     source_root = raw_root / entry["source"]
     if entry["catalog_code"] == "0001":
         directory = source_root / f"0001_{entry['dataset']}_{entry['domn_code']}"
@@ -176,7 +178,69 @@ def discover_archives(raw_root: Path, entry: dict) -> list[Path]:
     return sorted(directory.glob("*.zip"))
 
 
-def scan_physical_entry(entry: dict, archives: list[Path]) -> dict:
+def load_rebuild_inventory(path: Path, repo_root: Path) -> list[dict]:
+    """Load the canonical full-rebuild inventory as builder entries.
+
+    Archive paths in metadata stay repository-relative.  The private
+    ``_archive_paths`` field holds resolved paths only for local execution.
+    """
+
+    with path.open(encoding="utf-8-sig", newline="") as handle:
+        rows = list(csv.DictReader(handle))
+    entries = []
+    seen_domn_codes: set[str] = set()
+    seen_archive_paths: set[str] = set()
+    required = {"source", "catalog_code", "dataset", "domn_code", "advertised_years", "archive_count", "archive_paths"}
+    for row_number, row in enumerate(rows, start=2):
+        missing = sorted(field for field in required if not row.get(field))
+        if missing:
+            raise RuntimeError(f"{path}:{row_number}: missing required values: {missing}")
+        domn_code = row["domn_code"]
+        if domn_code in seen_domn_codes:
+            raise RuntimeError(f"{path}:{row_number}: duplicate domn_code: {domn_code}")
+        seen_domn_codes.add(domn_code)
+        try:
+            archive_paths = json.loads(row["archive_paths"])
+        except json.JSONDecodeError as error:
+            raise RuntimeError(f"{path}:{row_number}: invalid archive_paths JSON") from error
+        if not isinstance(archive_paths, list) or not all(isinstance(value, str) and value for value in archive_paths):
+            raise RuntimeError(f"{path}:{row_number}: archive_paths must be a non-empty string list")
+        expected_count = int(row["archive_count"])
+        if expected_count != len(archive_paths):
+            raise RuntimeError(
+                f"{path}:{row_number}: archive_count {expected_count} does not match {len(archive_paths)} paths"
+            )
+        duplicates = sorted(value for value in archive_paths if value in seen_archive_paths)
+        if duplicates:
+            raise RuntimeError(f"{path}:{row_number}: archive paths repeated across physical units: {duplicates}")
+        seen_archive_paths.update(archive_paths)
+        resolved = [value if Path(value).is_absolute() else (repo_root / value).as_posix() for value in archive_paths]
+        entries.append(
+            {
+                "source": row["source"],
+                "catalog_code": row["catalog_code"],
+                "dataset": row["dataset"],
+                "domn_code": domn_code,
+                "major_area": row.get("major_area", ""),
+                "advertised_years": row["advertised_years"],
+                "license": "EDSS 다운로드 정책 확인 필요",
+                "_archive_paths": resolved,
+                "_inventory_archive_paths": archive_paths,
+            }
+        )
+    return entries
+
+
+def display_path(path: Path, display_root: Path | None) -> str:
+    if display_root is not None:
+        try:
+            return path.resolve().relative_to(display_root.resolve()).as_posix()
+        except ValueError:
+            pass
+    return path.as_posix()
+
+
+def scan_physical_entry(entry: dict, archives: list[Path], display_root: Path | None = None) -> dict:
     members: list[dict] = []
     archive_records: list[dict] = []
     union_fields: list[str] = []
@@ -186,6 +250,7 @@ def scan_physical_entry(entry: dict, archives: list[Path]) -> dict:
     for path in archives:
         archive_sha = sha256_file(path)
         file_year = archive_file_year(path)
+        archive_display_path = display_path(path, display_root)
         archive_member_start = len(members)
 
         def inspect_member(zf: zipfile.ZipFile, info: zipfile.ZipInfo, member_path: str) -> None:
@@ -216,7 +281,7 @@ def scan_physical_entry(entry: dict, archives: list[Path]) -> dict:
                     field_years[field].update(years)
                 members.append(
                     {
-                        "archive_path": path.as_posix(),
+                        "archive_path": archive_display_path,
                         "archive_sha256": archive_sha,
                         "member_path": member_path,
                         "encoding": encoding,
@@ -247,7 +312,7 @@ def scan_physical_entry(entry: dict, archives: list[Path]) -> dict:
                 "advertised_years": entry["advertised_years"],
                 "filename": path.name,
                 "original_filename": browser_original_filename(entry, file_year),
-                "local_path": path.as_posix(),
+                "local_path": archive_display_path,
                 "size_bytes": path.stat().st_size,
                 "sha256": archive_sha,
                 "license": entry.get("license", "EDSS 다운로드 정책 확인 필요"),
@@ -489,6 +554,8 @@ def write_manifest(path: Path, records: list[dict]) -> None:
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--config", type=Path, default=Path("config/edss_priority_datasets.json"))
+    parser.add_argument("--inventory", type=Path, help="Canonical full-rebuild physical-unit inventory CSV")
+    parser.add_argument("--repo-root", type=Path, default=Path("."))
     parser.add_argument("--raw-root", type=Path, default=Path("data/raw/edss"))
     parser.add_argument("--processed-root", type=Path, default=Path("data/processed/edss"))
     parser.add_argument("--metadata-root", type=Path, default=Path("data/metadata"))
@@ -496,7 +563,11 @@ def main() -> int:
     parser.add_argument("--inspect-only", action="store_true")
     args = parser.parse_args()
 
-    entries = json.loads(args.config.read_text(encoding="utf-8"))
+    entries = (
+        load_rebuild_inventory(args.inventory, args.repo_root)
+        if args.inventory
+        else json.loads(args.config.read_text(encoding="utf-8"))
+    )
     physical: list[tuple[dict, dict]] = []
     manifest_records: list[dict] = []
     missing = []
@@ -505,8 +576,12 @@ def main() -> int:
         if not archives:
             missing.append({"domn_code": entry["domn_code"], "dataset": entry["dataset"]})
             continue
-        profile = scan_physical_entry(entry, archives)
-        schema_name = f"edss_{entry['catalog_code']}_{entry['domn_code']}_schema.json" if entry["catalog_code"] == "0001" else f"edss_{entry['catalog_code']}_schema.json"
+        profile = scan_physical_entry(entry, archives, display_root=args.repo_root if args.inventory else None)
+        schema_name = (
+            f"edss_{entry['catalog_code']}_{entry['domn_code']}_schema.json"
+            if args.inventory or entry["catalog_code"] == "0001"
+            else f"edss_{entry['catalog_code']}_schema.json"
+        )
         schema_path = args.metadata_root / schema_name
         for record in profile["archive_records"]:
             record["schema_metadata"] = schema_path.as_posix()

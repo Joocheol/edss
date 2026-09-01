@@ -10,6 +10,8 @@
 - `edss_full_collection_status.csv`·`edss_full_collection_summary.json`: 기존 및 신규 원본의 ZIP 무결성, 체크섬, 누락 상태를 합친 검증 결과
 - `edss_full_rebuild_inventory.csv`: 전체 265개 물리 다운로드 단위의 논리 테이블 키, 원본 ZIP 경로·연도·체크섬과 기존 패널 포함 여부
 - `edss_full_rebuild_inventory_summary.json`: 전체 233개 논리 테이블과 기존 15개 패널의 범위 차이, 분야별 수량, 실제 파일·SHA-256 재검산 결과
+- `edss_full_rebuild_schema_scan.jsonl`: 전체 265개 물리 단위의 ZIP·CSV 멤버, 관찰 연도, 원본 열, 헤더 변형, 인코딩, 행 수와 행 폭 검사 결과
+- `edss_full_rebuild_schema_scan_summary.json`: 278개 ZIP·1,142개 CSV·180,119,183행의 전수 스캔 요약과 제공·관찰 연도 차이 4건
 - `edss_{코드}_schema.json`: 물리 데이터셋별 연도·행 수·인코딩·원본 스키마. 취업통계는 물리 코드도 파일명에 포함한다.
 - `edss_panel_catalog.csv`: 15개 논리 주제 패널의 경로, 행·열·연도와 출력 SHA-256
 - `edss_panel_data_dictionary.csv`: 원본 필드명, 한글 표기, 문자열 저장형, 관찰 자료형, 단위·결측 정의 상태

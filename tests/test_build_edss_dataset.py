@@ -30,6 +30,48 @@ class BuildEdssDatasetTests(unittest.TestCase):
         encoded = "조사년도".encode("cp949")
         self.assertEqual(builder.detect_encoding(encoded[:-1]), "cp949")
 
+    def test_loads_full_rebuild_inventory_with_explicit_archive_paths(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            inventory = root / "inventory.csv"
+            archive = root / "data/raw/001.zip"
+            archive.parent.mkdir(parents=True)
+            archive.write_bytes(b"zip")
+            with inventory.open("w", encoding="utf-8-sig", newline="") as handle:
+                writer = csv.DictWriter(
+                    handle,
+                    fieldnames=["source", "catalog_code", "dataset", "domn_code", "advertised_years", "archive_count", "archive_paths"],
+                )
+                writer.writeheader()
+                writer.writerow(
+                    {
+                        "source": "고등교육통계",
+                        "catalog_code": "0101",
+                        "dataset": "학교",
+                        "domn_code": "16918",
+                        "advertised_years": "2009~2025",
+                        "archive_count": "1",
+                        "archive_paths": json.dumps(["data/raw/001.zip"]),
+                    }
+                )
+
+            entries = builder.load_rebuild_inventory(inventory, root)
+
+            self.assertEqual(entries[0]["catalog_code"], "0101")
+            self.assertEqual(builder.discover_archives(Path("unused"), entries[0]), [archive])
+
+    def test_rebuild_inventory_rejects_archive_count_mismatch(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            inventory = root / "inventory.csv"
+            inventory.write_text(
+                "source,catalog_code,dataset,domn_code,advertised_years,archive_count,archive_paths\n"
+                '취업통계,0001,학생,9,2024,2,"[""raw/a.zip""]"\n',
+                encoding="utf-8-sig",
+            )
+            with self.assertRaisesRegex(RuntimeError, "archive_count"):
+                builder.load_rebuild_inventory(inventory, root)
+
     def test_nested_zip_is_built_as_text_preserving_panel(self):
         with tempfile.TemporaryDirectory() as temp_dir:
             root = Path(temp_dir)

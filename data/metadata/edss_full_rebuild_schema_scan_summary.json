@@ -1,0 +1,159 @@
+{
+  "generated_at": "2026-09-01T03:41:00.899410+00:00",
+  "grain": "one profile per physical EDSS domn_code; logical tables group by source, catalog_code, and dataset",
+  "logical_table_count": 233,
+  "physical_unit_count": 265,
+  "scanned_physical_unit_count": 265,
+  "archive_count": 278,
+  "csv_member_count": 1142,
+  "row_count": 180119183,
+  "malformed_row_count": 0,
+  "physical_units_with_multiple_header_variants": 26,
+  "logical_tables_with_schema_variants": 58,
+  "physical_units_with_open_id": 264,
+  "logical_tables_with_open_id": 233,
+  "physical_units_with_year_scope_difference": 4,
+  "by_source": {
+    "고등교육통계": {
+      "logical_table_count": 102,
+      "physical_unit_count": 133,
+      "scanned_physical_unit_count": 133,
+      "archive_count": 133,
+      "csv_member_count": 829,
+      "row_count": 147761413
+    },
+    "대학정보공시": {
+      "logical_table_count": 130,
+      "physical_unit_count": 130,
+      "scanned_physical_unit_count": 130,
+      "archive_count": 130,
+      "csv_member_count": 298,
+      "row_count": 25032821
+    },
+    "취업통계": {
+      "logical_table_count": 1,
+      "physical_unit_count": 2,
+      "scanned_physical_unit_count": 2,
+      "archive_count": 15,
+      "csv_member_count": 15,
+      "row_count": 7324949
+    }
+  },
+  "verification": {
+    "issue_count": 4,
+    "issue_counts_by_severity": {
+      "medium": 4
+    },
+    "issue_counts_by_type": {
+      "advertised_observed_year_difference": 4
+    },
+    "scan_complete": true,
+    "panel_build_ready": true
+  },
+  "issues": [
+    {
+      "severity": "medium",
+      "type": "advertised_observed_year_difference",
+      "message": "Observed row years differ from the advertised year range",
+      "source": "고등교육통계",
+      "catalog_code": "0222",
+      "dataset": "재적학생현황_대학원_공동운영",
+      "domn_code": "16964",
+      "advertised_years": "2010~2023",
+      "observed_years": [
+        "2010",
+        "2011",
+        "2012",
+        "2013"
+      ],
+      "missing_advertised_years": [
+        "2014",
+        "2015",
+        "2016",
+        "2017",
+        "2018",
+        "2019",
+        "2020",
+        "2021",
+        "2022",
+        "2023"
+      ],
+      "unexpected_observed_years": []
+    },
+    {
+      "severity": "medium",
+      "type": "advertised_observed_year_difference",
+      "message": "Observed row years differ from the advertised year range",
+      "source": "고등교육통계",
+      "catalog_code": "0314",
+      "dataset": "교원급여및수업시수현황",
+      "domn_code": "17035",
+      "advertised_years": "2009~2014",
+      "observed_years": [
+        "2009",
+        "2010",
+        "2011",
+        "2012",
+        "2013"
+      ],
+      "missing_advertised_years": [
+        "2014"
+      ],
+      "unexpected_observed_years": []
+    },
+    {
+      "severity": "medium",
+      "type": "advertised_observed_year_difference",
+      "message": "Observed row years differ from the advertised year range",
+      "source": "고등교육통계",
+      "catalog_code": "0317",
+      "dataset": "교원현황_산업대학",
+      "domn_code": "17037",
+      "advertised_years": "2014~2022",
+      "observed_years": [
+        "2014",
+        "2015",
+        "2016",
+        "2020",
+        "2021",
+        "2022"
+      ],
+      "missing_advertised_years": [
+        "2017",
+        "2018",
+        "2019"
+      ],
+      "unexpected_observed_years": []
+    },
+    {
+      "severity": "medium",
+      "type": "advertised_observed_year_difference",
+      "message": "Observed row years differ from the advertised year range",
+      "source": "고등교육통계",
+      "catalog_code": "0405",
+      "dataset": "사이버강좌개설및수강현황_전문대학",
+      "domn_code": "17062",
+      "advertised_years": "2014~2022",
+      "observed_years": [
+        "2014",
+        "2015",
+        "2016",
+        "2017",
+        "2018",
+        "2019",
+        "2020",
+        "2021",
+        "2022",
+        "2023",
+        "2024",
+        "2025"
+      ],
+      "missing_advertised_years": [],
+      "unexpected_observed_years": [
+        "2023",
+        "2024",
+        "2025"
+      ]
+    }
+  ]
+}

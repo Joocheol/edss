@@ -136,5 +136,7 @@ python3 scripts/collect_api.py --schema-only \
 - `data/metadata/edss_school_year_bridge_summary.json`: 입력 체크섬, 기준표 유일성, 데이터셋별 left join 무증식 검증
 - `data/metadata/edss_full_rebuild_inventory.csv`: 전체 265개 물리 단위를 233개 논리 테이블로 묶은 재구성 입력과 원본 ZIP 추적정보
 - `data/metadata/edss_full_rebuild_inventory_summary.json`: 현재 15개 패널과 전체 입력의 범위 차이, 분야별 수량, 파일·SHA-256 재검산 결과
+- `data/metadata/edss_full_rebuild_schema_scan.jsonl`: 265개 물리 단위의 CSV 멤버·원본 열·관찰 연도·행 수·스키마 변형
+- `data/metadata/edss_full_rebuild_schema_scan_summary.json`: 전체 180,119,183행 사전검사와 구조화된 검토 항목
 
 원본과 정제 데이터는 재배포 조건과 크기를 확인할 때까지 Git에서 제외합니다. 체크섬과 위 실행 명령으로 재수집할 수 있습니다. 최초 수집 결과와 현재 차단 사항은 `docs/initial_collection_report.md`에 기록합니다.
