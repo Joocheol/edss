@@ -40,6 +40,10 @@
 
 전체 감사 상태는 `review_required`를 유지한다. 이는 데이터 손상을 뜻하지 않으며, 확정 교차표가 없는 후보와 내부 공백을 추측으로 고치지 않았음을 뜻한다.
 
+## 공식 교차표 후속 감사
+
+2026년 8월 공식 EDSS 제공목록과 실제 2023·2024 원본 ZIP을 추가 대조했다. 공식 목록은 두 연도의 학교코드 제공 여부를 `Y`로 표시하지만, 실제 내부 CSV에는 `학교명`만 있고 `개방ID` 또는 다른 코드형 학교 열이 없다. EDSS 공식 검색에서도 `개방ID`와 `학교코드` 결과는 각각 0건이었다. 따라서 맥락 일치 후보 30개 중 공식 확정은 0개이며 기존 비대입 원칙을 유지한다. 자세한 근거는 `docs/edss_official_crosswalk_audit.md`에 기록했다.
+
 ## 산출물과 재현
 
 - 안전 파생 집계: `data/processed/edss/derived/employment_2023_2024_school_department.csv.gz` (Git 제외)
@@ -47,6 +51,8 @@
 - 고위험 패널 판정: `data/metadata/edss_high_orphan_panel_review.csv`
 - 실행 요약과 체크섬: `data/metadata/edss_remaining_identity_gap_resolution.json`
 - 실행 노트북: `notebooks/edss_remaining_identity_gap_resolution.ipynb`
+- 공식 교차표 감사: `data/metadata/edss_official_crosswalk_audit.json`
+- 공식 교차표 검산 노트북: `notebooks/edss_official_crosswalk_audit.ipynb`
 
 ```bash
 python3 scripts/resolve_edss_remaining_identity_gaps.py

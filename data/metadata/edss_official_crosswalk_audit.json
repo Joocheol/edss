@@ -1,0 +1,94 @@
+{
+  "audit_version": 1,
+  "candidate_resolution": {
+    "candidate_open_id_count": 15,
+    "canonical_open_id_imputed_row_count": 0,
+    "context_confirmed_candidate_identity_count": 30,
+    "officially_confirmed_candidate_identity_count": 0,
+    "school_year_identity_count": 3281
+  },
+  "crosswalk_conclusion": {
+    "mapping_action": "none",
+    "metadata_conflict": true,
+    "official_crosswalk_available": false,
+    "required_confirmation": "An EDSS-issued school-name/OpenID crosswalk or written clarification of the school-code flag is required before promoting candidates."
+  },
+  "employment_raw_headers": [
+    {
+      "archive_depth": 2,
+      "column_count": 24,
+      "detected_encoding": "cp949",
+      "has_open_id": false,
+      "has_school_name": true,
+      "member_chain": [
+        "0001. ╟╨╗²└╬└√├δ╛≈┴ñ║╕(23).zip",
+        "0001. 학생인적취업정보(23).csv"
+      ],
+      "path": "data/raw/edss/취업통계/0001_학생인적취업정보_13300/0001_학생인적취업정보_2023.zip",
+      "school_code_fields": [],
+      "sha256": "1ace9e82663a816e00a66a35d2b76980e79c708d54abd390564d3d90dcdbe4eb",
+      "year": "2023"
+    },
+    {
+      "archive_depth": 2,
+      "column_count": 24,
+      "detected_encoding": "utf-8-sig",
+      "has_open_id": false,
+      "has_school_name": true,
+      "member_chain": [
+        "0001. ╟╨╗²└╬└√├δ╛≈┴ñ║╕(24).zip",
+        "0001. 학생인적취업정보(24).csv"
+      ],
+      "path": "data/raw/edss/취업통계/0001_학생인적취업정보_13300/0001_학생인적취업정보_2024.zip",
+      "school_code_fields": [],
+      "sha256": "568086fa2f3d40f7711837f4b72aeada578022e64ed3ca9f1bdd8ebfbc7fa9f1",
+      "year": "2024"
+    }
+  ],
+  "findings": [
+    {
+      "code": "employment_2023_2024_school_code_metadata_conflict",
+      "confidence": "high",
+      "evidence": "The August 2026 EDSS provider list marks school-code availability Y for 2023-2024 employment data, while both checksum-verified archives contain 24 columns with 학교명 and no 개방ID or other code-like school field.",
+      "impact": "The published metadata cannot support a school-name/OpenID join.",
+      "remediation": "Request EDSS clarification or a corrected file/crosswalk.",
+      "severity": "high"
+    },
+    {
+      "code": "official_school_name_open_id_crosswalk_not_published",
+      "confidence": "high",
+      "evidence": "The official provider workbook contains no 개방ID field entry, and official site searches for 개방ID and 학교코드 return no records.",
+      "impact": "Thirty structurally supported school-year candidates remain noncanonical.",
+      "remediation": "Keep candidates separate and do not impute canonical OpenID values.",
+      "severity": "high"
+    }
+  ],
+  "generated_at": "2026-09-02T03:10:47.893414+00:00",
+  "intended_use": "Confirm 2023-2024 school-name/OpenID mappings for longitudinal employment analysis.",
+  "official_provider_list": {
+    "listed_field_count": 24,
+    "listed_has_open_id": false,
+    "listed_has_school_name": true,
+    "listed_school_code_provided": "Y",
+    "path": "data/raw/edss/reference/edss_open_data_provider_list_2026-08.xlsx",
+    "period": "2023~2024",
+    "range": "A4:I6",
+    "sha256": "47b15fd775cfa6d7744941c2dd6d6c603536764ca4ab191b091b3c83497aedc2",
+    "sheet": "취업(1종), 평생(2종)",
+    "size_bytes": 155208,
+    "source_url": "https://www.edmgr.kr/edss/es/opd/odd/od/es_opd_oddod01_001"
+  },
+  "official_site_search": [
+    {
+      "result_count": 0,
+      "term": "개방ID",
+      "url": "https://www.edmgr.kr/edss/es/mis/pas/ps/es_mis_pasps01_001?searchPvsnArtclCd4=%EA%B0%9C%EB%B0%A9ID"
+    },
+    {
+      "result_count": 0,
+      "term": "학교코드",
+      "url": "https://www.edmgr.kr/edss/es/mis/pas/ps/es_mis_pasps01_001?searchPvsnArtclCd4=%ED%95%99%EA%B5%90%EC%BD%94%EB%93%9C"
+    }
+  ],
+  "status": "review_required"
+}

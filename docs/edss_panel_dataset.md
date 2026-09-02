@@ -47,6 +47,7 @@ EDSS 개방데이터를 주 자료원으로 사용해 세 필수 분야의 265�
 - 2023–2024 취업 안전 집계: `data/processed/edss/derived/employment_2023_2024_school_department.csv.gz`
 - 남은 식별자 공백 처리 요약: `data/metadata/edss_remaining_identity_gap_resolution.json`
 - 남은 식별자 공백 검산 노트북: `notebooks/edss_remaining_identity_gap_resolution.ipynb`
+- 공식 학교명–OpenID 교차표 감사: `data/metadata/edss_official_crosswalk_audit.json`
 
 원본 열은 이름과 값을 변경하지 않고 모두 문자열로 저장한다. 따라서 `개방ID`와 기타 코드의 선행 0, 원본 공란, `-` 등의 표기를 보존한다. 다음 열만 출처 추적을 위해 앞에 추가한다.
 
@@ -82,6 +83,8 @@ EDSS 개방데이터를 주 자료원으로 사용해 세 필수 분야의 265�
 
 2026-09-02 후속 실행에서 이 46,962행을 개인형 열이 없는 학교·학과 집계 파생 파일로 분리했다. 과거 OpenID별 학과·단과대 완전 집합과 일치한 학교·연도 후보 32개 중 30개는 같은 연도 `0101` 시도·본분교 맥락도 일치했고 2개는 충돌했다. 정식 `개방ID` 대입은 0건이며 후보는 공식 교차표를 확보하기 전까지 확정 연결로 사용하지 않는다. 자세한 규칙과 고위험 패널 검토는 `docs/edss_remaining_identity_gap_resolution.md`에 기록했다.
 
+공식 교차표 후속 감사에서도 후보는 확정되지 않았다. 2026년 8월 EDSS 제공목록은 2023–2024년 학교코드 제공 여부를 `Y`로 표시하지만, 체크섬이 확인된 실제 두 ZIP의 24개 열에는 `학교명`만 있고 `개방ID`와 다른 코드형 학교 열은 없다. 이는 취업 집계 수치의 오류가 아니라 학교 코드 제공 메타데이터의 불일치다. 공식 서면 확인 전까지 2023–2024년을 OpenID 장기 패널에 강제 연결하지 않는다.
+
 ## 품질검사 결과
 
 - 전체 233개 패널의 파일 존재·크기·카탈로그 SHA-256 일치 확인
@@ -96,6 +99,7 @@ EDSS 개방데이터를 주 자료원으로 사용해 세 필수 분야의 265�
 - 취업통계 `개방ID` 결측 46,962건: 오류가 아니라 2023년 구조 전환에서 열 자체가 제거된 결과
 - 취업통계 2023–2024년 안전 파생 집계 46,962행; 개인형 열 0개, 정식 `개방ID` 대입 0건
 - high 패널 4개 중 3개는 시간 경계로 설명, `1209`의 내부 공백 1개·16행만 수동 검토 유지
+- 공식 교차표 확정 후보 0개; 공식 목록의 학교코드 제공 `Y`와 실제 파일의 코드 열 부재가 충돌
 - 자료형·단위·결측 기호의 공식 의미는 추측하지 않고 데이터 사전에 `공식 정의 미확인`으로 기록
 
 전체 233개 패널·180,119,183행 재감사 결과 파일 폭, 행 ID, 행 ID 형식, 행 ID 중복, 패널 연도, 원본 연도 일치와 정규화 충돌 오류는 모두 0건이다. 다만 211개 패널은 `(연도, 개방ID)`보다 세분된 grain이고, 1개 취업 패널은 `개방ID`가 부분적으로만 존재한다. `0101` 미연결 키는 3,322건·82,959행이며 4개 패널은 미연결률이 1%를 넘는다. 원시 `0101` 결합은 기준 패널의 반복 키 때문에 229개 패널에서 이론상 30,192,638행을 추가 생성할 수 있다. 따라서 상태는 데이터 손상이 아니라 분석용 키·조인 규칙 검토가 필요한 `review_required`다. 자세한 결과는 `docs/edss_full_panel_key_audit.md`에 기록했다.
@@ -114,6 +118,7 @@ python3 scripts/validate_edss_dataset.py
 python3 scripts/diagnose_edss_orphan_keys.py
 python3 scripts/build_edss_school_year_bridge.py
 python3 scripts/resolve_edss_remaining_identity_gaps.py
+python3 scripts/audit_edss_official_crosswalk.py
 python3 scripts/audit_edss_full_panel_keys.py --repo-root .
 python3 -m unittest discover -s tests -p 'test_*.py' -v
 ```
