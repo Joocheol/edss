@@ -19,7 +19,7 @@ from pathlib import Path
 from typing import BinaryIO, Iterable
 
 
-AUDIT_VERSION = "1"
+AUDIT_VERSION = "2"
 META_FIELDS = [
     "_source_provider",
     "_source_area",
@@ -112,7 +112,7 @@ def write_csv(path: Path, rows: list[dict], fieldnames: list[str]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     temp = path.with_suffix(path.suffix + ".part")
     with temp.open("w", encoding="utf-8-sig", newline="") as handle:
-        writer = csv.DictWriter(handle, fieldnames=fieldnames)
+        writer = csv.DictWriter(handle, fieldnames=fieldnames, lineterminator="\n")
         writer.writeheader()
         writer.writerows(rows)
     os.replace(temp, path)
@@ -425,10 +425,16 @@ def audit_panel(
     dimension_gains.sort(key=lambda item: (-item["incremental_keys"], item["field"]))
     all_dimension_estimate = min(sample_rows, round(all_dimension_hll.estimate())) if sample_rows else 0
 
+    # `_source_row_hash` was computed from each source member's original field
+    # order. A canonical panel contains the union of fields across members, so
+    # rows from historical header variants cannot be reconstructed exactly from
+    # the panel alone. A canonical digest match is positive evidence; a
+    # non-match is therefore "not reconstructable", not an integrity failure.
+    source_row_hash_canonical_match_count = row_count - row_hash_mismatch_count
+    source_row_hash_not_reconstructable_count = row_hash_mismatch_count
     integrity_failures = sum(
         [
             width_mismatch_count,
-            row_hash_mismatch_count,
             row_id_mismatch_count,
             invalid_row_id_format_count,
             duplicate_row_ids,
@@ -495,11 +501,12 @@ def audit_panel(
         "observed_years": sorted(year_counts),
         "year_counts": dict(sorted(year_counts.items())),
         "width_mismatch_count": width_mismatch_count,
-        "row_hash_mismatch_count": row_hash_mismatch_count,
+        "source_row_hash_canonical_match_count": source_row_hash_canonical_match_count,
+        "source_row_hash_not_reconstructable_count": source_row_hash_not_reconstructable_count,
         "row_id_mismatch_count": row_id_mismatch_count,
         "invalid_row_id_format_count": invalid_row_id_format_count,
         "duplicate_row_id_count": duplicate_row_ids,
-        "exact_original_row_duplicate_count": exact_duplicate_rows,
+        "exact_canonical_row_duplicate_count": exact_duplicate_rows,
         "missing_panel_year_count": missing_panel_year_count,
         "invalid_panel_year_count": invalid_panel_year_count,
         "raw_year_mismatch_count": raw_year_mismatch_count,
@@ -544,6 +551,51 @@ def load_catalog(path: Path) -> list[dict]:
     return rows
 
 
+def recalculate_severity(result: dict) -> None:
+    integrity_failures = sum(
+        [
+            result["width_mismatch_count"],
+            result["row_id_mismatch_count"],
+            result["invalid_row_id_format_count"],
+            result["duplicate_row_id_count"],
+            result["missing_panel_year_count"],
+            result["invalid_panel_year_count"],
+            result["raw_year_mismatch_count"],
+            sum(result["provenance_missing_counts"].values()),
+        ]
+    )
+    row_count = result["row_count"]
+    missing_count = result["open_id_missing_count"]
+    nonmissing_count = row_count - missing_count
+    missing_rate = missing_count / row_count if row_count else 0
+    orphan_rate = result["orphan_row_count"] / nonmissing_count if nonmissing_count else 0
+    if integrity_failures or result["exact_canonical_row_duplicate_count"]:
+        severity = "critical"
+    elif not result["open_id_column_present"] or not nonmissing_count or missing_rate > 0.01 or orphan_rate > 0.01:
+        severity = "high"
+    elif missing_count or result["orphan_row_count"] or result["school_year_base_duplicate_rows"] or result["join_expansion_extra_rows"]:
+        severity = "medium"
+    elif result["open_id_normalization_collision_count"] or result["open_id_whitespace_count"]:
+        severity = "low"
+    else:
+        severity = "pass"
+    result["severity"] = severity
+    result["status"] = (
+        "pass" if severity == "pass" and result["grain_status"] == "school_year_open_id_unique" else "review_required"
+    )
+
+
+def upgrade_cache(cache: dict) -> dict:
+    if cache.get("audit_version") == "1":
+        row_hash_mismatches = int(cache.pop("row_hash_mismatch_count"))
+        cache["source_row_hash_canonical_match_count"] = cache["row_count"] - row_hash_mismatches
+        cache["source_row_hash_not_reconstructable_count"] = row_hash_mismatches
+        cache["exact_canonical_row_duplicate_count"] = cache.pop("exact_original_row_duplicate_count")
+        cache["audit_version"] = AUDIT_VERSION
+        recalculate_severity(cache)
+    return cache
+
+
 def cache_is_valid(cache: dict, row: dict, reference_sha256: str) -> bool:
     return (
         cache.get("audit_version") == AUDIT_VERSION
@@ -574,8 +626,9 @@ def summary_row(result: dict) -> dict:
         "orphan_row_rate",
         "join_expansion_affected_rows",
         "join_expansion_extra_rows",
-        "exact_original_row_duplicate_count",
-        "row_hash_mismatch_count",
+        "exact_canonical_row_duplicate_count",
+        "source_row_hash_canonical_match_count",
+        "source_row_hash_not_reconstructable_count",
         "row_id_mismatch_count",
         "invalid_row_id_format_count",
         "duplicate_row_id_count",
@@ -625,9 +678,10 @@ def main() -> int:
         base_cache_path = cache_root / safe_cache_name(base_catalog)
         base_result = None
         if base_cache_path.exists() and not args.force:
-            candidate = json.loads(base_cache_path.read_text(encoding="utf-8"))
+            candidate = upgrade_cache(json.loads(base_cache_path.read_text(encoding="utf-8")))
             if cache_is_valid(candidate, base_catalog, "") and candidate.get("_base_key_counts"):
                 base_result = candidate
+                write_json(base_cache_path, candidate)
         if base_result is None:
             print(f"auditing 1/{len(rows)}: {panel_key(base_catalog)}", flush=True)
             base_result = audit_panel(base_catalog, repo_root, temp_root, args.sample_target)
@@ -649,9 +703,10 @@ def main() -> int:
             cache_path = cache_root / safe_cache_name(row)
             result = None
             if cache_path.exists() and not args.force:
-                candidate = json.loads(cache_path.read_text(encoding="utf-8"))
+                candidate = upgrade_cache(json.loads(cache_path.read_text(encoding="utf-8")))
                 if cache_is_valid(candidate, row, reference_sha256):
                     result = candidate
+                    write_json(cache_path, candidate)
             if result is None:
                 print(f"auditing {index}/{len(rows)}: {panel_key(row)}", flush=True)
                 result = audit_panel(row, repo_root, temp_root, args.sample_target, base_key_counts, base_years_by_id)
@@ -691,11 +746,18 @@ def main() -> int:
         "grain_status_counts": dict(sorted(grain_status_counts.items())),
         "integrity": {
             "width_mismatch_rows": sum(result["width_mismatch_count"] for result in results),
-            "row_hash_mismatches": sum(result["row_hash_mismatch_count"] for result in results),
+            "source_row_hash_canonical_matches": sum(
+                result["source_row_hash_canonical_match_count"] for result in results
+            ),
+            "source_row_hash_not_reconstructable_from_panel": sum(
+                result["source_row_hash_not_reconstructable_count"] for result in results
+            ),
             "row_id_mismatches": sum(result["row_id_mismatch_count"] for result in results),
             "invalid_row_id_formats": sum(result["invalid_row_id_format_count"] for result in results),
             "duplicate_row_ids": sum(result["duplicate_row_id_count"] for result in results),
-            "exact_original_row_duplicates": sum(result["exact_original_row_duplicate_count"] for result in results),
+            "exact_canonical_row_duplicates": sum(
+                result["exact_canonical_row_duplicate_count"] for result in results
+            ),
             "missing_panel_year_rows": sum(result["missing_panel_year_count"] for result in results),
             "invalid_panel_year_rows": sum(result["invalid_panel_year_count"] for result in results),
             "raw_year_mismatch_rows": sum(result["raw_year_mismatch_count"] for result in results),
@@ -738,7 +800,8 @@ def main() -> int:
         ],
         "method_notes": [
             "All 180,119,183 gzip rows are re-read independently of build profiles.",
-            "Raw row SHA-256 and deterministic provenance row IDs are recomputed from stored values.",
+            "Deterministic provenance row IDs are recomputed exactly from stored values.",
+            "Source row hashes are verified when the canonical union-field row reproduces the original member payload; non-matches are reported as not reconstructable from the canonical panel and are not treated as corruption.",
             "School-year/OpenID multiplicity, 0101 orphan coverage, and theoretical raw-0101 join expansion are exact.",
             "Additional grain dimensions are heuristic rankings from a deterministic sample of up to 10,000 nonmissing-ID rows per panel using HyperLogLog estimates.",
             "A repeated school-year/OpenID key is not labeled an error; it triggers review for additional dimensions.",

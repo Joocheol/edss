@@ -63,8 +63,40 @@ class AuditEdssFullPanelKeysTests(unittest.TestCase):
             self.assertEqual(result["school_year_base_duplicate_rows"], 1)
             self.assertEqual(result["orphan_row_count"], 1)
             self.assertEqual(result["join_expansion_extra_rows"], 2)
-            self.assertEqual(result["row_hash_mismatch_count"], 0)
+            self.assertEqual(result["source_row_hash_canonical_match_count"], 4)
+            self.assertEqual(result["source_row_hash_not_reconstructable_count"], 0)
             self.assertEqual(result["row_id_mismatch_count"], 0)
+
+    def test_upgrade_cache_does_not_treat_union_field_hash_difference_as_corruption(self):
+        cached = {
+            "audit_version": "1",
+            "row_count": 10,
+            "row_hash_mismatch_count": 7,
+            "exact_original_row_duplicate_count": 0,
+            "width_mismatch_count": 0,
+            "row_id_mismatch_count": 0,
+            "invalid_row_id_format_count": 0,
+            "duplicate_row_id_count": 0,
+            "missing_panel_year_count": 0,
+            "invalid_panel_year_count": 0,
+            "raw_year_mismatch_count": 0,
+            "provenance_missing_counts": {},
+            "open_id_missing_count": 0,
+            "open_id_column_present": True,
+            "orphan_row_count": 0,
+            "school_year_base_duplicate_rows": 0,
+            "join_expansion_extra_rows": 0,
+            "open_id_normalization_collision_count": 0,
+            "open_id_whitespace_count": 0,
+            "grain_status": "school_year_open_id_unique",
+            "severity": "critical",
+            "status": "review_required",
+        }
+        result = audit.upgrade_cache(cached)
+        self.assertEqual(result["source_row_hash_canonical_match_count"], 3)
+        self.assertEqual(result["source_row_hash_not_reconstructable_count"], 7)
+        self.assertEqual(result["severity"], "pass")
+        self.assertEqual(result["status"], "pass")
 
     @staticmethod
     def make_row(year, open_id, department, source_row_number):

@@ -36,6 +36,9 @@ EDSS 개방데이터를 주 자료원으로 사용해 세 필수 분야의 265�
 - 전체 카탈로그: `data/metadata/edss_panel_catalog.csv`
 - 필드 사전: `data/metadata/edss_panel_data_dictionary.csv`
 - 전체 빌드 검증 노트북: `notebooks/edss_full_panel_build_validation.ipynb`
+- 전체 키·내용 감사 노트북: `notebooks/edss_full_panel_key_audit.ipynb`
+- 전체 키·내용 감사 보고서: `docs/edss_full_panel_key_audit.md`
+- 전체 감사 요약: `data/metadata/edss_full_panel_key_audit.json`
 - 최초 15개 패널 독립 검증: `data/metadata/edss_panel_validation.json`
 - 미연결 키 요약: `data/metadata/edss_orphan_key_diagnosis.json`
 - 미연결 키 목록: `data/metadata/edss_orphan_school_year_keys.csv`
@@ -88,7 +91,7 @@ EDSS 개방데이터를 주 자료원으로 사용해 세 필수 분야의 265�
 - 취업통계 `개방ID` 결측 46,962건: 오류가 아니라 2023년 구조 전환에서 열 자체가 제거된 결과
 - 자료형·단위·결측 기호의 공식 의미는 추측하지 않고 데이터 사전에 `공식 정의 미확인`으로 기록
 
-검증 상태는 `review_required`다. 출력 파일 무결성은 확인했지만 전체 233개 패널에서 후보키 grain, 개방ID 의미, 중복·불일치·고아 키를 다시 감사해야 한다. 기존 76개 고유 학교연도 미연결 결과는 최초 15개 패널의 비교 기준으로만 유지한다.
+전체 233개 패널·180,119,183행 재감사 결과 파일 폭, 행 ID, 행 ID 형식, 행 ID 중복, 패널 연도, 원본 연도 일치와 정규화 충돌 오류는 모두 0건이다. 다만 211개 패널은 `(연도, 개방ID)`보다 세분된 grain이고, 1개 취업 패널은 `개방ID`가 부분적으로만 존재한다. `0101` 미연결 키는 3,322건·82,959행이며 4개 패널은 미연결률이 1%를 넘는다. 원시 `0101` 결합은 기준 패널의 반복 키 때문에 229개 패널에서 이론상 30,192,638행을 추가 생성할 수 있다. 따라서 상태는 데이터 손상이 아니라 분석용 키·조인 규칙 검토가 필요한 `review_required`다. 자세한 결과는 `docs/edss_full_panel_key_audit.md`에 기록했다.
 
 ## 재현 명령
 
@@ -103,6 +106,7 @@ python3 scripts/build_edss_dataset.py \
 python3 scripts/validate_edss_dataset.py
 python3 scripts/diagnose_edss_orphan_keys.py
 python3 scripts/build_edss_school_year_bridge.py
+python3 scripts/audit_edss_full_panel_keys.py --repo-root .
 python3 -m unittest discover -s tests -p 'test_*.py' -v
 ```
 

@@ -17,6 +17,9 @@
 - `edss_panel_data_dictionary.csv`: 원본 필드명, 한글 표기, 문자열 저장형, 관찰 자료형, 단위·결측 정의 상태
 - `edss_panel_quality_report.json`: 패널 빌드 중 수집한 구조·중복·식별자 품질 결과
 - `edss_panel_validation.json`: 최초 15개 우선 패널의 독립 재검산과 학교연도 키 연결 결과. 전체 233개 출력의 행 내용 재감사는 후속 실행에서 갱신한다.
+- `edss_full_panel_key_audit.json`·`.csv`: 전체 233개 패널·180,119,183행의 무결성, grain, `개방ID` 완전성, `0101` 연결 및 원시 조인 증식 위험 감사 결과
+- `edss_full_panel_key_audit_by_year.csv`: 패널·연도별 행 수, `개방ID` 결측 행과 `0101` 미연결 행
+- `edss_full_panel_orphan_school_year_keys.csv`: 전체 패널에서 관찰된 `0101` 미연결 학교연도 키 3,322건과 시간적 분류
 - `edss_orphan_key_diagnosis.json`: `0101` 미연결 학교연도 키의 중복 제거, 시간적 분류와 영향 행 수
 - `edss_orphan_school_year_keys.csv`: 미연결 고유 `(연도, 개방ID)` 76개의 데이터셋·기준 관측연도·분류
 - `edss_school_year_bridge.csv`: 모든 패널의 비어 있지 않은 `(연도, 개방ID)`를 한 행씩 보존하고 `0101` 범주형 속성과 미연결 검토 상태를 연결한 기준표
