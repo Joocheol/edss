@@ -49,6 +49,8 @@
 
 미연결률이 1%를 넘는 high 패널은 대학정보공시 `0202 대학입학전형기본계획_전문대학`(1.3373%), `0204 대학입학전형시행계획_전문대학`(1.3053%), `1102 도서관예산현황`(1.5466%), `1209 법인임원현황`(1.0640%)이다. 시간적 분류는 조사 범위 차이를 보여줄 뿐 신설·폐교·통폐합·ID 변경을 확정하지 않는다.
 
+후속 전수 분류에서 `0202`의 26개 키·218행, `0204`의 12개 키·136행, `1102`의 35개 키·35행은 모두 해당 ID의 `0101` 관측기간 밖이었다. `1209`는 경계 키 66개와 내부 공백 1개로 나뉘며, 내부 공백은 2019년 OpenID `5831784427`의 16행이다. 앞의 세 패널은 미연결 상태를 보존하고 별도 ID 수정 없이 기간 범위 차이로 처리한다. `1209` 내부 공백 1개만 외부 근거 검토가 필요하다.
+
 ### 원시 `0101` 조인 증식
 
 `0101`에는 30,556개의 학교연도 키가 있고 그중 1,187개가 반복되며 최대 반복 수는 4다. 이 기준표를 그대로 다른 패널에 결합하면 27,047,504개의 원본 행이 영향을 받고 이론상 30,192,638개의 추가 행이 생긴다. 229개 패널이 이 위험을 가진다.
@@ -67,6 +69,9 @@
 - 패널별 결과: `data/metadata/edss_full_panel_key_audit.csv`
 - 연도별 결과: `data/metadata/edss_full_panel_key_audit_by_year.csv`
 - 미연결 키: `data/metadata/edss_full_panel_orphan_school_year_keys.csv`
+- high 패널 검토: `data/metadata/edss_high_orphan_panel_review.csv`
+- 남은 식별자 공백 처리 요약: `data/metadata/edss_remaining_identity_gap_resolution.json`
+- 후속 검산 노트북: `notebooks/edss_remaining_identity_gap_resolution.ipynb`
 - 실행 노트북: `notebooks/edss_full_panel_key_audit.ipynb`
 
 ```bash

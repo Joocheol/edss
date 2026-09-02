@@ -24,6 +24,9 @@
 - `edss_orphan_school_year_keys.csv`: 미연결 고유 `(연도, 개방ID)` 76개의 데이터셋·기준 관측연도·분류
 - `edss_school_year_bridge.csv`: 모든 패널의 비어 있지 않은 `(연도, 개방ID)`를 한 행씩 보존하고 `0101` 범주형 속성과 미연결 검토 상태를 연결한 기준표
 - `edss_school_year_bridge_summary.json`: 기준표 grain·유일성·입력 체크섬·데이터셋별 left join 무증식 검증 결과
+- `edss_employment_2023_2024_open_id_candidates.csv`: 취업통계 2023–2024년 학교·연도별 학과서명 후보와 `0101` 맥락 확인 상태. 정식 ID 교차표가 아니다.
+- `edss_high_orphan_panel_review.csv`: 미연결률 1% 초과 4개 패널의 시간 경계·내부 공백 분류와 권장 처리
+- `edss_remaining_identity_gap_resolution.json`: 취업 안전 집계와 high 패널 후속 검토의 행 수·상태·출력 체크섬
 - `edss_priority_school_history_candidates.json`·`.csv`: 우선 검토 ID 6개의 학과 집합·행 서명·`0101` 연결 후보 비교 결과
 - `edss_priority_school_history_validation.csv`: 통폐합·명칭 변경·학위과정 공백과 중복 ID를 공식 자료 및 뉴스로 교차검증한 수동 학교명 후보표
 - `edss_priority_school_history_sources.json`: 학교이력 판정의 원본 파일·공식 자료·언론 교차검증 근거 목록

@@ -1,0 +1,5 @@
+﻿source,catalog_code,dataset,panel_row_count,orphan_key_count,orphan_row_count,orphan_row_rate,boundary_key_count,boundary_row_count,internal_gap_key_count,internal_gap_row_count,never_in_0101_key_count,never_in_0101_row_count,review_disposition,recommended_handling
+대학정보공시,0202,대학입학전형기본계획_전문대학,16302,26,218,0.013372592319960741,26,218,0,0,0,0,explained_temporal_boundary,Preserve unmatched rows; no ID correction. Treat the orphan rate as reference-period coverage.
+대학정보공시,0204,대학입학전형시행계획_전문대학,10419,12,136,0.013053076110951146,12,136,0,0,0,0,explained_temporal_boundary,Preserve unmatched rows; no ID correction. Treat the orphan rate as reference-period coverage.
+대학정보공시,1102,도서관예산현황,2263,35,35,0.015466195315952275,35,35,0,0,0,0,explained_temporal_boundary,Preserve unmatched rows; no ID correction. Treat the orphan rate as reference-period coverage.
+대학정보공시,1209,법인임원현황,74058,67,788,0.010640308947041509,66,772,1,16,0,0,manual_review_required,Preserve unmatched rows; review internal gaps or never-seen IDs before any mapping.

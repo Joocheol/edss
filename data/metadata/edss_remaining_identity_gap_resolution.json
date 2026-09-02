@@ -1,0 +1,63 @@
+{
+  "generated_at": "2026-09-02T01:45:11.062133+00:00",
+  "status": "review_required",
+  "employment": {
+    "minimum_signature_size": 3,
+    "historical_open_id_count": 593,
+    "source_missing_open_id_row_count": 46962,
+    "current_school_year_identity_count": 3281,
+    "identity_status_counts": {
+      "candidate_0101_context_conflict": 2,
+      "candidate_signature_context_confirmed": 30,
+      "unresolved_ambiguous_exact_signature": 4,
+      "unresolved_no_exact_signature": 2108,
+      "unresolved_signature_too_small": 1137
+    },
+    "row_status_counts": {
+      "candidate_0101_context_conflict": 6,
+      "candidate_signature_context_confirmed": 272,
+      "unresolved_ambiguous_exact_signature": 48,
+      "unresolved_no_exact_signature": 45129,
+      "unresolved_signature_too_small": 1507
+    },
+    "candidate_open_id_count": 15,
+    "canonical_open_id_imputed_row_count": 0,
+    "privacy_rule": "Only the 2023-2024 aggregate schema and provenance fields are written; individual-level fields are excluded.",
+    "imputation_rule": "The canonical 개방ID remains absent. Candidate IDs are evidence labels and must not be treated as confirmed mappings."
+  },
+  "high_orphan_panels": {
+    "reviewed_panel_count": 4,
+    "explained_temporal_boundary_panel_count": 3,
+    "manual_review_required_panel_count": 1,
+    "manual_review_keys": [
+      {
+        "source": "대학정보공시",
+        "catalog_code": "1209",
+        "dataset": "법인임원현황",
+        "year": "2019",
+        "open_id": "5831784427",
+        "row_count": "16",
+        "classification": "internal_0101_gap",
+        "first_0101_year": "2010",
+        "last_0101_year": "2025"
+      }
+    ]
+  },
+  "outputs": {
+    "derived_employment": {
+      "path": "data/processed/edss/derived/employment_2023_2024_school_department.csv.gz",
+      "row_count": 46962,
+      "sha256": "ee68db81e54ac5b0bcb01362d2f1067af33d066f53a629d0df186fc12426afc5"
+    },
+    "employment_candidates": {
+      "path": "data/metadata/edss_employment_2023_2024_open_id_candidates.csv",
+      "row_count": 3281,
+      "sha256": "14d87910741df657b21922c095c0ba46981ef5ab408ec16812d53708bff0f074"
+    },
+    "high_panel_review": {
+      "path": "data/metadata/edss_high_orphan_panel_review.csv",
+      "row_count": 4,
+      "sha256": "ad6693c8201a64012c03b111aa20ecbca0d8567e0390e1e7024e77f78442d1db"
+    }
+  }
+}
