@@ -94,6 +94,24 @@ python3 scripts/build_edss_school_year_bridge.py
 
 모든 원본 값은 문자열로 보존하며 출처 ZIP, 내부 파일, 원본 행 번호와 결정적 행 ID를 추가합니다. 취업통계는 민감 가능 열과 2023년 구조 전환 때문에 `data/processed/edss/restricted/`에 분리합니다. 다른 패널을 `0101`에 결합할 때는 원시 `0101` 대신 학교연도 유일키 기준표를 사용합니다. 데이터 구조와 결합 주의사항은 `docs/edss_panel_dataset.md`, 상세 grain 규칙은 `docs/edss_school_year_bridge.md`를 참고합니다.
 
+### DuckDB 통합 조회
+
+서로 다른 grain의 233개 패널을 한 표로 강제 병합하지 않고, 하나의 DuckDB 안에 소스별 독립 테이블로 적재합니다. DuckDB 1.4.1을 임시 실행 환경에 설치해 빌드합니다.
+
+```bash
+uv run --offline --with duckdb==1.4.1 python scripts/build_edss_duckdb.py
+```
+
+결과는 `data/processed/edss/restricted/edss_all.duckdb`에 생성됩니다. 과거 취업통계의 민감 가능 열을 포함하므로 DB 전체는 제한 자료로 취급해야 합니다. 일반 분석에서는 개인형 열이 없는 `analysis.employment_2023_2024_resolved` 뷰를 우선 사용합니다.
+
+```sql
+SELECT * FROM meta.panel_catalog ORDER BY source, catalog_code;
+SELECT * FROM analysis.panel_inventory ORDER BY source, catalog_code;
+SELECT * FROM analysis.employment_2023_2024_resolved LIMIT 10;
+```
+
+테이블 명명법, 소스별 스키마와 검증 결과는 `docs/edss_duckdb.md`에 기록합니다.
+
 ## 대학알리미 Open API 사후 검증
 
 공공데이터포털의 일반 인증키를 로컬 `.env`에 설정합니다. 키는 채팅, 문서, 로그, 커밋에 넣지 않습니다.
@@ -145,6 +163,7 @@ python3 scripts/collect_api.py --schema-only \
 - `data/metadata/edss_panel_data_dictionary.csv`: 원본 필드명, 저장형, 관찰 자료형, 단위·결측 정의 상태
 - `data/metadata/edss_panel_quality_report.json`: 빌드 중 행·열·중복·식별자 검사
 - `data/metadata/edss_panel_validation.json`: 전체 패널 독립 재검산과 학교연도 결합 범위
+- `data/metadata/edss_duckdb_build.json`: 233개 DuckDB 적재 결과, DB 체크섬, 소스별 행 수와 검증 상태
 - `data/metadata/edss_school_year_bridge.csv`: 비어 있지 않은 학교연도 키마다 한 행인 안전 결합 기준표
 - `data/metadata/edss_school_year_bridge_summary.json`: 입력 체크섬, 기준표 유일성, 데이터셋별 left join 무증식 검증
 - `data/metadata/edss_full_rebuild_inventory.csv`: 전체 265개 물리 단위를 233개 논리 테이블로 묶은 재구성 입력과 원본 ZIP 추적정보

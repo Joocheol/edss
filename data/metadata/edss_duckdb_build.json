@@ -1,0 +1,51 @@
+{
+  "status": "complete",
+  "generated_at": "2026-09-02T04:28:34.475508+00:00",
+  "duckdb_version": "1.4.1",
+  "database": {
+    "relative_path": "data/processed/edss/restricted/edss_all.duckdb",
+    "bytes": 16044535808,
+    "sha256": "5a019a6844a8ce4960a4e736fccb497cf278b55b36e09ca46e405e24dd04a101"
+  },
+  "catalog": {
+    "relative_path": "data/metadata/edss_panel_catalog.csv",
+    "panel_table_count": 233,
+    "expected_panel_table_count": 233,
+    "expected_panel_row_count": 180119183,
+    "source_table_counts": {
+      "고등교육통계": 102,
+      "대학정보공시": 130,
+      "취업통계": 1
+    },
+    "source_row_counts": {
+      "고등교육통계": 147761413,
+      "대학정보공시": 25032821,
+      "취업통계": 7324949
+    }
+  },
+  "build": {
+    "loaded_this_run": 231,
+    "skipped_current_this_run": 2,
+    "manifest_table_count": 233,
+    "manifest_panel_row_count": 180119183,
+    "elapsed_seconds": 502.3
+  },
+  "resolved_employment": {
+    "schema": "employment",
+    "table": "safe_2023_2024_resolved",
+    "rows": 46962,
+    "columns": 36,
+    "applied_open_id_rows": 13920,
+    "remaining_missing_open_id_rows": 33042,
+    "sha256": "662d76392e62d2cf45735119d37cde6aefeb1c60eae3ef71eea064e299e22fd3"
+  },
+  "validation": {
+    "catalog_paths_missing": 0,
+    "catalog_size_mismatches": 0,
+    "panel_dimension_mismatches": 0,
+    "blank_strings_preserved_as_empty_strings": true,
+    "all_source_columns_loaded_as_varchar": true,
+    "incompatible_panel_grains_concatenated": false,
+    "database_access_tier": "restricted"
+  }
+}

@@ -18,6 +18,7 @@ EDSS 다운로드, 압축 해제, 원본 목록 작성, 표준화, 품질검사 
 - `verify_edss_full_collection.py`: 세 필수 분야의 실시간 `domnCd` 목록을 기존·신규 다운로드 기록과 대조하고 ZIP 무결성·체크섬·누락·실패 상태를 검증한다.
 - `build_edss_full_rebuild_inventory.py`: 실시간 265개 `domnCd`와 두 다운로드 기록을 결합해 233개 논리 테이블의 전체 재구성 입력을 만들고, 현재 15개 패널의 범위와 파일·SHA-256 상태를 대조한다.
 - `scan_edss_full_rebuild_inputs.py`: 전체 재구성 인벤토리의 명시적 ZIP 경로를 스트리밍으로 읽어 CSV 멤버·행 수·헤더 변형·관찰 연도·행 폭 오류를 물리 단위별로 기록한다.
+- `build_edss_duckdb.py`: 233개 이질적 패널을 소스별 독립 테이블로 하나의 제한 DuckDB에 재개 가능하게 적재한다. 업무열 수와 공통 출처열 12개를 분리 검증하고, 안전한 2023–2024 취업통계 테이블·분석 뷰·적재 매니페스트를 함께 만든다.
 
 전체 233개 패널 빌드는 저장소 루트에서 다음과 같이 실행한다.
 
@@ -26,4 +27,10 @@ python3 scripts/build_edss_dataset.py \
   --inventory data/metadata/edss_full_rebuild_inventory.csv \
   --scan-profiles data/metadata/edss_full_rebuild_schema_scan.jsonl
 python3 scripts/audit_edss_full_panel_keys.py --repo-root .
+```
+
+전체 패널을 DuckDB 조회 계층으로 만들려면 다음을 실행한다. 정상 적재 테이블은 SHA-256·행·열을 확인한 뒤 건너뛰므로 중단 후 같은 명령으로 재개할 수 있다.
+
+```bash
+uv run --offline --with duckdb==1.4.1 python scripts/build_edss_duckdb.py
 ```
