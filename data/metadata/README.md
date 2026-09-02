@@ -31,6 +31,11 @@
 - `edss_official_crosswalk_audit.json`: 2026년 8월 공식 EDSS 제공목록의 학교코드 표시, 2023·2024 취업 ZIP 실제 헤더, 공식 검색 결과와 후보의 공식 확정 여부 대조
 - `academyinfo_enrollment_manifest.jsonl`: 대학알리미 2023·2024년 학교코드·재적학생수 XML 756개의 경로·상태·크기·SHA-256
 - `academyinfo_enrollment_collection.json`: 학교코드 754행과 숫자 재적학생수 671건의 수집·중복·체크섬 요약
+- `academyinfo_school_major_manifest.jsonl`: 대학알리미 대학별 학과정보 2025년 원본 XML의 페이지별 상태·크기·SHA-256
+- `academyinfo_school_major_collection.json`: 2025년 전체 학과와 일반·전문·특수대학원 부분집합의 행 수·학교 수·학위과정·식별자 부재·체크섬 요약
+- `edss_academyinfo_graduate_name_candidates.csv`: 대학알리미 2025년 대학원명과 취업통계 2023–2024년 대학원 학교–연도 identity의 이름·학교종류·지역·학과 겹침 후보. OpenID는 비워 둔다.
+- `edss_academyinfo_graduate_name_match.json`: 2,435개 대학원 학교–연도 identity의 대학알리미 이름 연결률과 학과 겹침, 연도 차이·식별자 부재 제약, 출력 체크섬
+- `../../notebooks/academyinfo_graduate_name_coverage.ipynb`: API 수집 품질과 대학원명 연결률을 재실행 가능한 형태로 검산하는 노트북
 - `edss_academyinfo_open_id_candidates.csv`: 대학알리미 학교 ID별 2개 연도 재적학생수와 EDSS OpenID 정확일치 후보. 공식 교차표가 아니다.
 - `edss_employment_enrollment_open_id_candidates.csv`: 대학알리미 후보를 취업통계 2023–2024년 학교명에 연결한 학교·연도 후보와 학과서명 교차검증 상태
 - `edss_academyinfo_open_id_match.json`: 245개 학교–OpenID 후보, 482개 취업 학교·연도 연결, 학과서명 동의 24개·충돌 0개와 후보 생성 단계의 비대입 불변식

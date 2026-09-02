@@ -1,0 +1,93 @@
+{
+  "status": "review_required",
+  "source": "한국대학교육협의회_대학별 학과정보_GW",
+  "dataset_id": "15158666",
+  "service": "https://apis.data.go.kr/B340014/SchoolMajorInfoService/getSchoolMajorInfo",
+  "years": [
+    2025
+  ],
+  "generated_at": "2026-09-02T04:58:24.052284+00:00",
+  "request_count_this_run": 0,
+  "raw_file_count": 7,
+  "aggregate": {
+    "relative_path": "data/raw/open_api/academyinfo_school_major/school_major.csv",
+    "row_count": 60919,
+    "bytes": 70974374,
+    "sha256": "aae13d90955c0f5dc8d7761d9505b539df55525fd8cd54dc1958da292d23ba72"
+  },
+  "graduate_subset": {
+    "relative_path": "data/raw/open_api/academyinfo_school_major/graduate_school_major.csv",
+    "row_count": 22185,
+    "bytes": 26667104,
+    "sha256": "a39e0c91585f4c017e31a86beab6eb4dafe1e27dd356926b64dba910c6de22a2",
+    "filter": "schlKndNm in 일반대학원, 전문대학원, 특수대학원"
+  },
+  "year_summaries": [
+    {
+      "year": 2025,
+      "row_count": 60919,
+      "column_count": 23,
+      "graduate_row_count": 22185,
+      "graduate_row_rate": 0.364172,
+      "graduate_school_count": 1581,
+      "graduate_kind_counts": {
+        "일반대학원": 10871,
+        "전문대학원": 1704,
+        "특수대학원": 9610
+      },
+      "graduate_degree_counts": {
+        "박사": 825,
+        "박사, 석박사통합": 56,
+        "석박사통합": 18,
+        "석사": 11396,
+        "석사, 박사": 3443,
+        "석사, 석박사통합": 11,
+        "석사,박사, 석박사통합": 4991,
+        "전문학사": 1,
+        "학사": 1430,
+        "학석사통합": 14
+      },
+      "blank_school_name_count": 0,
+      "blank_major_name_count": 0,
+      "exact_duplicate_row_count": 284,
+      "graduate_candidate_key_duplicate_row_count": 164,
+      "observed_fields": [
+        "svyYr",
+        "schlNm",
+        "schlKndNm",
+        "clgNm",
+        "korMjrNm",
+        "pbnfDgriCrseDivNm",
+        "lsnTrmNm",
+        "dghtDivNm",
+        "schlMjrCharNm",
+        "schlMjrStatNm",
+        "mjrAreaNm",
+        "mjrAreaSignguNm",
+        "eschlPscpNum",
+        "grdtNum",
+        "kediMjrId",
+        "stdClftMjrId",
+        "mjrAreaCd",
+        "mjrAreaSignguCd",
+        "onsfSrsClftNm",
+        "edcCrseLtrCtnt",
+        "pwayEmplLtrCtnt",
+        "mjrUpdtDtm",
+        "lstUpdtDtm"
+      ],
+      "identifier_like_fields": [
+        "kediMjrId",
+        "stdClftMjrId"
+      ],
+      "graduate_school_identifier_present": false
+    }
+  ],
+  "limitations": [
+    "The live endpoint currently returns records only for survey year 2025; 2009-2024 returned normal empty responses during validation.",
+    "The response names graduate schools but does not expose a graduate-school or parent-university identifier.",
+    "eschlPscpNum is admission quota and grdtNum is graduates; neither is current enrollment.",
+    "Any EDSS OpenID linkage produced from names, departments, or counts is a review candidate rather than an official crosswalk.",
+    "Exact duplicate source rows are preserved in the raw aggregate and reported rather than silently removed."
+  ]
+}

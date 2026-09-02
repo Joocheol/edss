@@ -64,6 +64,8 @@
 - 대학알리미–취업 학교·연도 후보: `data/metadata/edss_employment_enrollment_open_id_candidates.csv`
 - 대학알리미 교차검증 요약: `data/metadata/edss_academyinfo_open_id_match.json`
 - 대학알리미 교차검증 노트북: `notebooks/edss_academyinfo_enrollment_crosswalk.ipynb`
+- 대학알리미 2025년 대학원명·학과 교차검증: `docs/edss_academyinfo_graduate_name_coverage.md`
+- 대학원명 교차검증 노트북: `notebooks/academyinfo_graduate_name_coverage.ipynb`
 - OpenID 적용 감사: `data/metadata/edss_employment_open_id_application.json`
 - OpenID 적용 검산 노트북: `notebooks/edss_employment_open_id_application.ipynb`
 

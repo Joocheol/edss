@@ -1,0 +1,42 @@
+{
+  "status": "review_required",
+  "generated_at": "2026-09-02T05:00:39.599931+00:00",
+  "source_api": "한국대학교육협의회_대학별 학과정보_GW 2025",
+  "edss_population": "취업통계 2023-2024 일반·전문·특수대학원 학교-연도 identity",
+  "input": {
+    "api": {
+      "relative_path": "data/raw/open_api/academyinfo_school_major/graduate_school_major.csv",
+      "sha256": "a39e0c91585f4c017e31a86beab6eb4dafe1e27dd356926b64dba910c6de22a2"
+    },
+    "identities": {
+      "relative_path": "data/metadata/edss_employment_2023_2024_open_id_candidates.csv",
+      "sha256": "14d87910741df657b21922c095c0ba46981ef5ab408ec16812d53708bff0f074"
+    },
+    "employment": {
+      "relative_path": "data/processed/edss/derived/employment_2023_2024_school_department.csv.gz",
+      "sha256": "ee68db81e54ac5b0bcb01362d2f1067af33d066f53a629d0df186fc12426afc5"
+    }
+  },
+  "graduate_identity_count": 2435,
+  "source_row_count": 19477,
+  "match_status_counts": {
+    "candidate_unique_name_context": 2286,
+    "unmatched_name_context": 149
+  },
+  "unique_name_context_match_count": 2286,
+  "unique_name_context_match_rate": 0.938809,
+  "positive_department_overlap_count": 2281,
+  "canonical_open_id_imputed_row_count": 0,
+  "output": {
+    "relative_path": "data/metadata/edss_academyinfo_graduate_name_candidates.csv",
+    "row_count": 2435,
+    "bytes": 621876,
+    "sha256": "3afa1c2fce0fa1d0fed39f244d71e7a7af94186cabcf4bca996b43dfa7273737"
+  },
+  "limitations": [
+    "The AcademyInfo source is survey year 2025 while EDSS identities are 2023-2024.",
+    "The API has graduate-school names but no graduate-school identifier or EDSS OpenID.",
+    "Department overlap is supporting evidence only because departments can open, close, rename, or be reported at different grains.",
+    "No candidate or canonical OpenID is populated by this analysis."
+  ]
+}
