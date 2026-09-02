@@ -11,6 +11,7 @@ EDSS 다운로드, 압축 해제, 원본 목록 작성, 표준화, 품질검사 
 - `audit_edss_official_crosswalk.py`: 공식 EDSS 제공목록의 학교코드 제공 표시와 실제 2023·2024 취업 중첩 ZIP 내부 CSV 헤더를 대조한다. 공개 교차표가 없거나 메타데이터가 충돌하면 후보의 공식 확정을 0으로 유지한다.
 - `collect_academyinfo_enrollment.py`: 대학알리미 2023·2024년 학교코드 목록과 학교별 재적학생수를 원본 XML로 재개 가능하게 수집하고, 인증정보 없이 체크섬·빈 응답·중복키를 기록한다.
 - `match_academyinfo_enrollment_open_ids.py`: 두 연도의 학교구분·지역·본분교·재적학생수가 각각 하나의 같은 EDSS OpenID에 정확히 일치하고 역방향도 유일할 때만 후보를 만든다. 취업 학교명에 연결하되 정식 ID는 대입하지 않는다.
+- `apply_edss_employment_open_id_candidates.py`: 명시적 승인 플래그가 있을 때만 검토된 대학알리미 후보를 개인정보 열이 없는 별도 취업 파생 패널의 빈 `개방ID`에 적용한다. 기존 값·원본·제한 패널은 수정하지 않고 충돌 시 중단하며 적용 근거 열과 감사 JSON을 남긴다.
 - `validate_edss_priority_school_history.py`: 우선 검토 ID 6개의 학과 집합과 교원 행을 같은 연도 정상 ID와 비교해 통폐합·명칭 변경·중복 ID 검토용 후보표를 생성한다. 학교명 확정은 별도 공식 근거가 있을 때만 수행한다.
 - `inspect_edss_zip.py`: 개별 EDSS ZIP의 헤더·연도·행 수·체크섬을 조사한다.
 - `download_edss.py`: 공식 목록과 내부 파일 식별자를 확인한다. 브라우저 팝업 문맥이 필요한 실제 ZIP은 이 스크립트의 독립 HTTP 요청으로 받을 수 없다.

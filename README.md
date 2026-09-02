@@ -114,11 +114,12 @@ python3 scripts/collect_api.py \
   --num-rows 999
 ```
 
-취업통계 2023–2024년 학교명과 익명 EDSS OpenID를 교차검증하려면 두 해의 대학알리미 학교코드·재적학생수를 수집한 뒤, 학교구분·지역·본분교 문맥 안에서 2개 연도 정확일치 후보를 만든다. 결과는 검토 후보이며 원본이나 canonical 패널 키를 수정하지 않는다.
+취업통계 2023–2024년 학교명과 익명 EDSS OpenID를 교차검증하려면 두 해의 대학알리미 학교코드·재적학생수를 수집한 뒤, 학교구분·지역·본분교 문맥 안에서 2개 연도 정확일치 후보를 만든다. 원본과 제한 패널은 수정하지 않는다. 검토 승인 후에는 별도 안전 파생 패널에만 `개방ID`와 추론 근거 열을 추가한다.
 
 ```bash
 python3 scripts/collect_academyinfo_enrollment.py --years 2023 2024
 python3 scripts/match_academyinfo_enrollment_open_ids.py
+python3 scripts/apply_edss_employment_open_id_candidates.py --approve-inferred-crosswalk
 ```
 
 중단 후 재실행하면 정상 XML 페이지는 체크한 뒤 재사용합니다. 페이지네이션, 재시도, 호출 간격, 최대 요청 수(`--max-requests`)를 적용하며 중복 item과 오류 XML을 거부합니다. 인증키 없이 공식 응답 필드 사전만 다시 만들 수 있습니다.

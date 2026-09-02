@@ -6,7 +6,7 @@
 
 대학알리미 2023·2024년 재적학생수와 EDSS `0101 고등교육학교개황`을 학교구분·지역·본분교 문맥 안에서 대조해 245개 대학알리미 학교 ID와 245개 EDSS OpenID의 양방향 1:1 후보를 만들었다. 이 후보를 취업통계 2023–2024년 학교명에 연결하면 482개 학교·연도 식별자를 덮는다. 기존 학과서명 후보와 겹치는 24개 학교·연도는 모두 같은 OpenID에 동의했고 충돌은 0개였다.
 
-이 결과는 공식 교차표가 아니라 서로 독립적인 공개 통계의 2개 연도 완전 일치에 기반한 고신뢰 후보다. 정식 `개방ID`를 대입한 행은 0건이며, 공식 교차표나 EDSS 서면 확인 전에는 장기 패널의 canonical 키로 사용하지 않는다.
+이 결과는 공식 교차표가 아니라 서로 독립적인 공개 통계의 2개 연도 완전 일치에 기반한 고신뢰 후보다. 후보 검토 승인 후 원본·제한 패널과 후보 전용 파생 파일은 보존하고, 별도 안전 파생 패널의 `개방ID`에만 적용했다. 적용값은 추론 교차표임을 나타내는 근거 열을 함께 가지며 공식 EDSS 교차표로 표현하지 않는다.
 
 ## 원자료와 grain
 
@@ -52,7 +52,11 @@ EDSS 비교 대상은 `0101 고등교육학교개황`의 2023·2024년 행이다
 | 취업통계 이름 연결 미완료 | 8 |
 | 기존 학과서명 후보와 동의 | 24 |
 | 기존 학과서명 후보와 충돌 | 0 |
-| canonical OpenID 대입 | 0 |
+| 안전 파생 패널 적용 학교·연도 | 482 |
+| 안전 파생 패널 적용 행 | 13,920 |
+| 안전 파생 패널 적용 고유 OpenID | 242 |
+| 적용 후 `개방ID` 미해결 행 | 33,042 |
+| 기존 비어 있지 않은 ID 덮어쓰기·충돌 | 0 |
 
 취업통계 이름 연결은 공백·괄호·`국립` 접두어를 정규화하고 알려진 캠퍼스 표기 차이만 별도 별칭으로 관리한다. 이름이 바뀌었거나 학부 취업행이 없는 8개 학교·연도는 자동 연결하지 않았다.
 
@@ -63,7 +67,8 @@ EDSS 비교 대상은 `0101 고등교육학교개황`의 2023·2024년 행이다
 - **영향:** 취업통계 2023–2024년의 482개 학교·연도에 검토 가능한 OpenID 후보가 생겼다.
 - **심각도:** 중간. 원본 수치는 손상되지 않았지만 공식 교차표가 아니므로 canonical ID로 승격하면 식별 오류 위험이 남는다.
 - **신뢰도:** 후보 생성 규칙과 관찰 결과는 높음. 공식 학교 ID라는 해석의 신뢰도는 공식 확인 전까지 제한됨.
-- **처리:** 후보 파일을 별도로 유지하고 원본·파생 취업행의 `개방ID`를 수정하지 않는다.
+- **처리:** 후보 파일과 원본·제한 패널은 그대로 유지한다. 명시적 승인 플래그를 거쳐 별도 안전 파생 패널에만 적용하고, 13,920개 적용 행에는 방법·상태·후보 파일 경로를 기록한다.
+- **잔여 위험:** 전체 46,962행 중 33,042행(70.3590%)은 승인 후보가 없어 계속 미해결이다. 적용된 ID도 공식 교차표가 아니라 검토 승인된 추론값이다.
 
 ## 산출물과 재현
 
@@ -73,10 +78,14 @@ EDSS 비교 대상은 `0101 고등교육학교개황`의 2023·2024년 행이다
 - 취업 학교·연도 후보: `data/metadata/edss_employment_enrollment_open_id_candidates.csv`
 - 매칭 품질 요약: `data/metadata/edss_academyinfo_open_id_match.json`
 - 실행 노트북: `notebooks/edss_academyinfo_enrollment_crosswalk.ipynb`
+- ID 적용 안전 파생 패널: `data/processed/edss/derived/employment_2023_2024_school_department_resolved.csv.gz` (Git 제외)
+- ID 적용 감사: `data/metadata/edss_employment_open_id_application.json`
+- ID 적용 검산 노트북: `notebooks/edss_employment_open_id_application.ipynb`
 
 ```bash
 python3 scripts/collect_academyinfo_enrollment.py --years 2023 2024
 python3 scripts/match_academyinfo_enrollment_open_ids.py
+python3 scripts/apply_edss_employment_open_id_candidates.py --approve-inferred-crosswalk
 ```
 
 원본 XML과 합친 CSV는 `data/raw/`에 보존하며 Git에 커밋하지 않는다. 인증키, 요청 URL의 쿼리 문자열, 쿠키는 메타데이터와 로그에 기록하지 않는다.

@@ -1,0 +1,82 @@
+{
+  "status": "applied_reviewed_inferred_crosswalk",
+  "generated_at": "2026-09-02T04:03:10.665483+00:00",
+  "scope": {
+    "years": [
+      "2023",
+      "2024"
+    ],
+    "source_grain": "one row per employment school/department aggregate record",
+    "output_grain": "unchanged from source",
+    "restricted_source_modified": false,
+    "official_crosswalk": false
+  },
+  "inputs": {
+    "safe_derived_employment": {
+      "relative_path": "data/processed/edss/derived/employment_2023_2024_school_department.csv.gz",
+      "bytes": 3228018,
+      "sha256": "ee68db81e54ac5b0bcb01362d2f1067af33d066f53a629d0df186fc12426afc5"
+    },
+    "reviewed_candidates": {
+      "relative_path": "data/metadata/edss_employment_enrollment_open_id_candidates.csv",
+      "bytes": 132592,
+      "sha256": "3666fa22e265a1363050ca72dc9fe48458c6d648708a4d0660c52263a6e0bcaa"
+    }
+  },
+  "candidates": {
+    "candidate_school_year_count": 482,
+    "candidate_distinct_open_id_count": 242,
+    "candidate_status_counts": {
+      "candidate_two_year_exact_enrollment": 458,
+      "candidate_two_year_exact_enrollment_department_signature_confirmed": 24
+    },
+    "candidate_key_duplicate_count": 0,
+    "candidate_reverse_duplicate_count": 0
+  },
+  "application": {
+    "source_row_count": 46962,
+    "output_row_count": 46962,
+    "source_column_count": 32,
+    "output_column_count": 36,
+    "source_school_year_identity_count": 3281,
+    "applied_school_year_identity_count": 482,
+    "remaining_unresolved_school_year_identity_count": 2799,
+    "applied_row_count": 13920,
+    "newly_imputed_row_count": 13920,
+    "candidate_confirmed_existing_row_count": 0,
+    "remaining_missing_open_id_row_count": 33042,
+    "applied_row_rate": 0.2964098632937268,
+    "applied_distinct_open_id_count": 242,
+    "applied_rows_by_year": {
+      "2023": 6895,
+      "2024": 7025
+    },
+    "applied_identities_by_year": {
+      "2023": 240,
+      "2024": 242
+    },
+    "source_nonempty_open_id_row_count": 0,
+    "overwritten_nonempty_open_id_row_count": 0,
+    "conflict_count": 0,
+    "unmatched_candidate_key_count": 0,
+    "source_row_id_duplicate_count": 0
+  },
+  "output": {
+    "relative_path": "data/processed/edss/derived/employment_2023_2024_school_department_resolved.csv.gz",
+    "bytes": 3323280,
+    "sha256": "662d76392e62d2cf45735119d37cde6aefeb1c60eae3ef71eea064e299e22fd3",
+    "row_count": 46962,
+    "column_count": 36
+  },
+  "safety": {
+    "existing_nonempty_open_ids_preserved": true,
+    "conflicts_fail_closed": true,
+    "unmatched_rows_preserved": true,
+    "provenance_columns_added": [
+      "_open_id_resolution_method",
+      "_open_id_resolution_status",
+      "_open_id_resolution_source"
+    ],
+    "interpretation": "Applied IDs are reviewed inferred crosswalk values and are not represented as an official EDSS crosswalk."
+  }
+}
