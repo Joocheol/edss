@@ -1,0 +1,74 @@
+{
+  "status": "review_required",
+  "generated_at": "2026-09-02T03:46:22.112241+00:00",
+  "years": [
+    "2023",
+    "2024"
+  ],
+  "inputs": {
+    "academyinfo_csv": {
+      "relative_path": "data/raw/open_api/academyinfo_enrollment/academyinfo_enrollment_2023_2024.csv",
+      "bytes": 95204,
+      "sha256": "eba1fa91528c892fe52a8c7d9ef45f1c28cbbc90ea22327e0f7fd4decc951482"
+    },
+    "edss_0101": {
+      "relative_path": "data/processed/edss/panel/고등교육통계/0101_고등교육학교개황/panel.csv.gz",
+      "bytes": 3931935,
+      "sha256": "5ea31f661f2c55ace9bd46962aeac8bf23f7139a985864b84320c87de7b123a2"
+    },
+    "employment_candidates": {
+      "relative_path": "data/metadata/edss_employment_2023_2024_open_id_candidates.csv",
+      "rows": 3281,
+      "sha256": "14d87910741df657b21922c095c0ba46981ef5ab408ec16812d53708bff0f074"
+    }
+  },
+  "academyinfo": {
+    "school_id_count": 380,
+    "numeric_enrollment_school_year_counts": {
+      "2023": 336,
+      "2024": 335
+    },
+    "unique_exact_edss_school_year_count": 507,
+    "candidate_two_year_exact_enrollment_school_count": 245,
+    "candidate_distinct_open_id_count": 245,
+    "candidate_reverse_duplicate_open_id_count": 0,
+    "resolution_status_counts": {
+      "unresolved_two_year_exact_match_not_unique": 89,
+      "unresolved_missing_two_year_numeric_enrollment": 46,
+      "candidate_two_year_exact_enrollment": 245
+    }
+  },
+  "employment": {
+    "school_year_identity_count": 3281,
+    "matched_candidate_school_year_count": 482,
+    "unmatched_candidate_school_year_count": 8,
+    "resolution_status_counts": {
+      "candidate_two_year_exact_enrollment": 458,
+      "candidate_two_year_exact_enrollment_department_signature_confirmed": 24
+    },
+    "department_signature_agreement_count": 24,
+    "department_signature_conflict_count": 0,
+    "diagnostics": {
+      "employment_school_year_match": 482,
+      "employment_name_unmatched": 8,
+      "department_signature_agreement": 24
+    }
+  },
+  "safety": {
+    "official_crosswalk": false,
+    "canonical_open_id_imputed_row_count": 0,
+    "candidate_rule": "same AcademyInfo school ID; numeric 2023 and 2024 enrollment; exactly one EDSS 0101 match per year within school-division, compatible-region, and branch context; same OpenID in both years"
+  },
+  "outputs": {
+    "public_candidates": {
+      "relative_path": "data/metadata/edss_academyinfo_open_id_candidates.csv",
+      "rows": 380,
+      "sha256": "7dbc55ee881f2de4ea98b2a27e92e95e74ac811bf20f0510dc09f115319df4eb"
+    },
+    "employment_candidates": {
+      "relative_path": "data/metadata/edss_employment_enrollment_open_id_candidates.csv",
+      "rows": 482,
+      "sha256": "3666fa22e265a1363050ca72dc9fe48458c6d648708a4d0660c52263a6e0bcaa"
+    }
+  }
+}

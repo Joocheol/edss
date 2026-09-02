@@ -1,0 +1,42 @@
+{
+  "status": "complete",
+  "source": "한국대학교육협의회 대학알리미 Open API",
+  "code_service": "https://apis.data.go.kr/B340014/BasicInformationService_2/getUniversityCode",
+  "enrollment_service": "https://apis.data.go.kr/B340014/StudentService/getComparisonEnrolledStudentCrntSt",
+  "years": [
+    2023,
+    2024
+  ],
+  "generated_at": "2026-09-02T03:33:13.916346+00:00",
+  "request_count_this_run": 756,
+  "raw_file_count": 756,
+  "aggregate_row_count": 754,
+  "duplicate_school_year_key_count": 0,
+  "aggregate_relative_path": "data/raw/open_api/academyinfo_enrollment/academyinfo_enrollment_2023_2024.csv",
+  "aggregate_bytes": 95204,
+  "aggregate_sha256": "eba1fa91528c892fe52a8c7d9ef45f1c28cbbc90ea22327e0f7fd4decc951482",
+  "year_summaries": [
+    {
+      "year": 2023,
+      "school_code_count": 378,
+      "enrollment_response_count": 336,
+      "numeric_enrollment_count": 336,
+      "blank_or_nonnumeric_count": 42
+    },
+    {
+      "year": 2024,
+      "school_code_count": 376,
+      "enrollment_response_count": 335,
+      "numeric_enrollment_count": 335,
+      "blank_or_nonnumeric_count": 41
+    }
+  ],
+  "metric_definition": {
+    "api_operation": "/getComparisonEnrolledStudentCrntSt",
+    "indicator_id": [
+      "9"
+    ],
+    "value_field": "indctVal1",
+    "label": "재적학생 현황"
+  }
+}

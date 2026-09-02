@@ -44,6 +44,12 @@
 
 2026년 8월 공식 EDSS 제공목록과 실제 2023·2024 원본 ZIP을 추가 대조했다. 공식 목록은 두 연도의 학교코드 제공 여부를 `Y`로 표시하지만, 실제 내부 CSV에는 `학교명`만 있고 `개방ID` 또는 다른 코드형 학교 열이 없다. EDSS 공식 검색에서도 `개방ID`와 `학교코드` 결과는 각각 0건이었다. 따라서 맥락 일치 후보 30개 중 공식 확정은 0개이며 기존 비대입 원칙을 유지한다. 자세한 근거는 `docs/edss_official_crosswalk_audit.md`에 기록했다.
 
+## 대학알리미 재적학생수 교차검증
+
+대학알리미 2023·2024년 학교 ID·학교명·학교구분·본분교·지역·재적학생수를 별도로 수집해 `0101`과 대조했다. 같은 대학알리미 학교 ID가 두 해 모두 문맥 안에서 정확히 하나의 OpenID를 선택하고 두 해의 ID가 같으며 역방향 중복도 없는 경우만 후보로 남겼다. 결과는 245개 학교–OpenID 후보이고 취업통계의 482개 학교·연도 식별자에 연결됐다. 기존 학과서명 후보와 겹치는 24개 학교·연도는 모두 동의했고 충돌은 0개였다.
+
+이 교차검증은 기존 30개 학과서명 후보보다 범위를 넓히지만 공식 교차표를 대체하지 않는다. 취업 원본·안전 파생 파일에 정식 `개방ID`를 대입한 행은 계속 0건이다. 자세한 규칙은 `docs/edss_academyinfo_enrollment_crosswalk.md`에 기록했다.
+
 ## 산출물과 재현
 
 - 안전 파생 집계: `data/processed/edss/derived/employment_2023_2024_school_department.csv.gz` (Git 제외)
@@ -53,6 +59,10 @@
 - 실행 노트북: `notebooks/edss_remaining_identity_gap_resolution.ipynb`
 - 공식 교차표 감사: `data/metadata/edss_official_crosswalk_audit.json`
 - 공식 교차표 검산 노트북: `notebooks/edss_official_crosswalk_audit.ipynb`
+- 대학알리미 학교 ID–OpenID 후보: `data/metadata/edss_academyinfo_open_id_candidates.csv`
+- 대학알리미–취업 학교·연도 후보: `data/metadata/edss_employment_enrollment_open_id_candidates.csv`
+- 대학알리미 교차검증 요약: `data/metadata/edss_academyinfo_open_id_match.json`
+- 대학알리미 교차검증 노트북: `notebooks/edss_academyinfo_enrollment_crosswalk.ipynb`
 
 ```bash
 python3 scripts/resolve_edss_remaining_identity_gaps.py

@@ -28,6 +28,11 @@
 - `edss_high_orphan_panel_review.csv`: 미연결률 1% 초과 4개 패널의 시간 경계·내부 공백 분류와 권장 처리
 - `edss_remaining_identity_gap_resolution.json`: 취업 안전 집계와 high 패널 후속 검토의 행 수·상태·출력 체크섬
 - `edss_official_crosswalk_audit.json`: 2026년 8월 공식 EDSS 제공목록의 학교코드 표시, 2023·2024 취업 ZIP 실제 헤더, 공식 검색 결과와 후보의 공식 확정 여부 대조
+- `academyinfo_enrollment_manifest.jsonl`: 대학알리미 2023·2024년 학교코드·재적학생수 XML 756개의 경로·상태·크기·SHA-256
+- `academyinfo_enrollment_collection.json`: 학교코드 754행과 숫자 재적학생수 671건의 수집·중복·체크섬 요약
+- `edss_academyinfo_open_id_candidates.csv`: 대학알리미 학교 ID별 2개 연도 재적학생수와 EDSS OpenID 정확일치 후보. 공식 교차표가 아니다.
+- `edss_employment_enrollment_open_id_candidates.csv`: 대학알리미 후보를 취업통계 2023–2024년 학교명에 연결한 학교·연도 후보와 학과서명 교차검증 상태
+- `edss_academyinfo_open_id_match.json`: 245개 학교–OpenID 후보, 482개 취업 학교·연도 연결, 학과서명 동의 24개·충돌 0개와 비대입 불변식
 - `edss_priority_school_history_candidates.json`·`.csv`: 우선 검토 ID 6개의 학과 집합·행 서명·`0101` 연결 후보 비교 결과
 - `edss_priority_school_history_validation.csv`: 통폐합·명칭 변경·학위과정 공백과 중복 ID를 공식 자료 및 뉴스로 교차검증한 수동 학교명 후보표
 - `edss_priority_school_history_sources.json`: 학교이력 판정의 원본 파일·공식 자료·언론 교차검증 근거 목록
