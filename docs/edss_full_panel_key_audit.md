@@ -55,7 +55,7 @@
 
 ## 사용 규칙
 
-1. 원시 `0101` 대신 `data/metadata/edss_school_year_bridge.csv`를 사용한다.
+1. 원시 `0101` 대신 `data/metadata/edss_school_year_bridge.csv`를 사용한다. 이 기준표는 전체 233개 패널 180,119,183행에서 left join 행 증식 0으로 재검증됐다.
 2. 패널별 분석 grain은 `candidate_dimension_gains`를 출발점으로 전수 유일성을 재검사해 확정한다.
 3. 미연결 행을 삭제하거나 인접 연도의 ID로 강제 매핑하지 않는다.
 4. 취업통계 2023–2024년은 `개방ID` 기반 장기 패널에서 제외하거나 검증된 학교명 교차표를 별도로 사용한다.

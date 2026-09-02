@@ -13,6 +13,7 @@ import csv
 import gzip
 import hashlib
 import json
+import sys
 from collections import Counter, defaultdict
 from datetime import datetime, timezone
 from pathlib import Path
@@ -120,9 +121,21 @@ def campus_scope(base_row_count: int, branch_count: int) -> str:
     return "multiple_campuses"
 
 
-def validate_catalog_checksums(catalog_path: Path, catalog: list[dict[str, str]]) -> list[dict[str, str]]:
+def validate_catalog_checksums(
+    catalog_path: Path,
+    catalog: list[dict[str, str]],
+    show_progress: bool = False,
+) -> list[dict[str, str]]:
     results = []
-    for item in catalog:
+    total = len(catalog)
+    for index, item in enumerate(catalog, start=1):
+        if show_progress:
+            print(
+                f"checksum {index}/{total}: {item.get('source', '')} "
+                f"{item['catalog_code']} {item['dataset']}",
+                file=sys.stderr,
+                flush=True,
+            )
         expected = item.get("output_sha256", "").strip()
         path = resolve_panel_path(catalog_path, item["output_path"])
         actual = sha256_file(path)
@@ -178,11 +191,29 @@ def validate_bridge_records(records: list[dict]) -> dict:
     }
 
 
-def build_bridge(catalog_path: Path, base_code: str = "0101") -> tuple[dict, list[dict]]:
+def panel_identifier(item: dict[str, str]) -> str:
+    source = item.get("source", "").strip()
+    code = item["catalog_code"].strip()
+    return f"{source}:{code}" if source else code
+
+
+def build_bridge(
+    catalog_path: Path,
+    base_code: str = "0101",
+    base_source: str | None = None,
+    show_progress: bool = False,
+) -> tuple[dict, list[dict]]:
     catalog = read_catalog(catalog_path)
-    base_item = next((item for item in catalog if item["catalog_code"] == base_code), None)
+    base_candidates = [item for item in catalog if item["catalog_code"] == base_code]
+    if base_source is not None:
+        base_candidates = [item for item in base_candidates if item.get("source", "") == base_source]
+    base_item = base_candidates[0] if len(base_candidates) == 1 else None
     if base_item is None:
-        raise RuntimeError(f"base catalog code not found: {base_code}")
+        label = f"{base_source}:{base_code}" if base_source else base_code
+        raise RuntimeError(
+            f"base panel must resolve to exactly one catalog row: {label}; "
+            f"matches={len(base_candidates)}"
+        )
 
     base_path = resolve_panel_path(catalog_path, base_item["output_path"])
     base_by_key: dict[tuple[str, str], dict] = defaultdict(
@@ -217,12 +248,20 @@ def build_bridge(catalog_path: Path, base_code: str = "0101") -> tuple[dict, lis
         )
 
     key_sources: dict[tuple[str, str], dict] = defaultdict(
-        lambda: {"datasets": set(), "row_count": 0}
+        lambda: {"panels": set(), "row_count": 0}
     )
     dataset_summaries = []
-    for item in catalog:
+    total_panels = len(catalog)
+    for index, item in enumerate(catalog, start=1):
+        if show_progress:
+            print(
+                f"scan {index}/{total_panels}: {item.get('source', '')} "
+                f"{item['catalog_code']} {item['dataset']}",
+                file=sys.stderr,
+                flush=True,
+            )
         path = resolve_panel_path(catalog_path, item["output_path"])
-        catalog_code = item["catalog_code"]
+        panel_id = panel_identifier(item)
         input_rows = 0
         missing_key_rows = 0
         matched_0101_rows = 0
@@ -233,15 +272,22 @@ def build_bridge(catalog_path: Path, base_code: str = "0101") -> tuple[dict, lis
                 missing_key_rows += 1
                 continue
             key = (year, open_id)
-            key_sources[key]["datasets"].add(catalog_code)
+            key_sources[key]["panels"].add(panel_id)
             key_sources[key]["row_count"] += 1
             if key in base_by_key:
                 matched_0101_rows += 1
             else:
                 unmatched_0101_rows += 1
         nonempty_key_rows = input_rows - missing_key_rows
+        expected_rows = int(item.get("row_count", input_rows) or input_rows)
+        if input_rows != expected_rows:
+            raise RuntimeError(
+                f"panel row count mismatch: {panel_id} {item['dataset']}; "
+                f"catalog={expected_rows}, observed={input_rows}"
+            )
         dataset_summaries.append(
             {
+                "source": item.get("source", ""),
                 "catalog_code": item["catalog_code"],
                 "dataset": item["dataset"],
                 "input_row_count": input_rows,
@@ -280,8 +326,8 @@ def build_bridge(catalog_path: Path, base_code: str = "0101") -> tuple[dict, lis
                 "_0101_school_type_count": len(school_types),
                 "_0101_school_types": "|".join(school_types),
                 "_0101_campus_scope": campus_scope(base_row_count, len(branches)),
-                "_source_dataset_count": len(source["datasets"]),
-                "_source_catalog_codes": "|".join(sorted(source["datasets"])),
+                "_source_dataset_count": len(source["panels"]),
+                "_source_catalog_codes": "|".join(sorted(source["panels"])),
                 "_source_row_count": source["row_count"],
             }
         )
@@ -298,7 +344,7 @@ def build_bridge(catalog_path: Path, base_code: str = "0101") -> tuple[dict, lis
         "generated_at": utc_now(),
         "status": "review_required" if match_counts.get("matched", 0) != len(records) else "pass",
         "grain": "one row per distinct nonempty (_panel_year, 개방ID) observed in any cataloged panel",
-        "base_dataset": f"{base_code} {base_item['dataset']}",
+        "base_dataset": f"{base_item.get('source', '')} {base_code} {base_item['dataset']}".strip(),
         "bridge_validation": validation,
         "base_natural_key": ["_panel_year", "개방ID", "본분교명"],
         "base_source_row_count": len(base_natural_key_rows),
@@ -351,6 +397,7 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--catalog", type=Path, default=Path("data/metadata/edss_panel_catalog.csv"))
     parser.add_argument("--base-code", default="0101")
+    parser.add_argument("--base-source", default="고등교육통계")
     parser.add_argument(
         "--output-csv",
         type=Path,
@@ -371,8 +418,13 @@ def main() -> int:
     catalog = read_catalog(args.catalog)
     checksum_results = []
     if not args.skip_input_checksums:
-        checksum_results = validate_catalog_checksums(args.catalog, catalog)
-    summary, records = build_bridge(args.catalog, args.base_code)
+        checksum_results = validate_catalog_checksums(args.catalog, catalog, show_progress=True)
+    summary, records = build_bridge(
+        args.catalog,
+        args.base_code,
+        base_source=args.base_source,
+        show_progress=True,
+    )
     summary["input_checksum_validation"] = {
         "status": "skipped" if args.skip_input_checksums else "pass",
         "checked_file_count": len(checksum_results),
@@ -383,7 +435,22 @@ def main() -> int:
     summary["output_csv_bytes"] = args.output_csv.stat().st_size
     summary["output_csv_sha256"] = sha256_file(args.output_csv)
     atomic_write_json(args.output_json, summary)
-    print(json.dumps(summary, ensure_ascii=False))
+    print(
+        json.dumps(
+            {
+                "status": summary["status"],
+                "bridge_row_count": summary["bridge_validation"]["row_count"],
+                "source_dataset_count": summary["source_dataset_count"],
+                "source_input_row_count": summary["source_input_row_count"],
+                "source_missing_join_key_row_count": summary["source_missing_join_key_row_count"],
+                "source_unmatched_0101_row_count": summary["source_unmatched_0101_row_count"],
+                "row_expansion_count": summary["left_join_validation"]["row_expansion_count"],
+                "checked_file_count": summary["input_checksum_validation"]["checked_file_count"],
+                "output_csv_sha256": summary["output_csv_sha256"],
+            },
+            ensure_ascii=False,
+        )
+    )
     return 0
 
 

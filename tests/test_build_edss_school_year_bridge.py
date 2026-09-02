@@ -22,19 +22,28 @@ def write_panel(path: Path, rows: list[tuple[str, str, str, str, str, str]]) -> 
         writer.writerows(rows)
 
 
-def write_catalog(path: Path, panels: list[tuple[str, str, Path]]) -> None:
+def write_catalog(path: Path, panels: list[tuple]) -> None:
     with path.open("w", encoding="utf-8", newline="") as handle:
         writer = csv.DictWriter(
             handle,
-            fieldnames=["catalog_code", "dataset", "access_tier", "output_path"],
+            fieldnames=["source", "catalog_code", "dataset", "access_tier", "row_count", "output_path"],
         )
         writer.writeheader()
-        for code, dataset, panel_path in panels:
+        for panel in panels:
+            if len(panel) == 3:
+                code, dataset, panel_path = panel
+                source = ""
+            else:
+                source, code, dataset, panel_path = panel
+            with gzip.open(panel_path, "rt", encoding="utf-8", newline="") as panel_handle:
+                row_count = sum(1 for _ in panel_handle) - 1
             writer.writerow(
                 {
+                    "source": source,
                     "catalog_code": code,
                     "dataset": dataset,
                     "access_tier": "panel",
+                    "row_count": row_count,
                     "output_path": panel_path,
                 }
             )
@@ -137,6 +146,54 @@ class BuildEdssSchoolYearBridgeTests(unittest.TestCase):
             write_catalog(catalog, [("0101", "base", base)])
             with self.assertRaises(RuntimeError):
                 bridge.build_bridge(catalog)
+
+    def test_source_qualified_codes_keep_distinct_panels(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            base = root / "base.csv.gz"
+            other = root / "other.csv.gz"
+            write_panel(base, [("2010", "A", "대학", "서울", "서울", "본교")])
+            write_panel(other, [("2010", "A", "대학", "", "", "")])
+            catalog = root / "catalog.csv"
+            write_catalog(
+                catalog,
+                [
+                    ("고등교육통계", "0101", "고등교육학교개황", base),
+                    ("대학정보공시", "0101", "학교개황", other),
+                ],
+            )
+
+            summary, records = bridge.build_bridge(
+                catalog,
+                base_code="0101",
+                base_source="고등교육통계",
+            )
+
+            self.assertEqual(summary["base_dataset"], "고등교육통계 0101 고등교육학교개황")
+            self.assertEqual(summary["source_dataset_count"], 2)
+            self.assertEqual(records[0]["_source_dataset_count"], 2)
+            self.assertEqual(
+                records[0]["_source_catalog_codes"],
+                "고등교육통계:0101|대학정보공시:0101",
+            )
+
+    def test_builder_rejects_ambiguous_base_code(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            first = root / "first.csv.gz"
+            second = root / "second.csv.gz"
+            write_panel(first, [("2010", "A", "대학", "서울", "서울", "본교")])
+            write_panel(second, [("2010", "B", "대학", "부산", "부산", "본교")])
+            catalog = root / "catalog.csv"
+            write_catalog(
+                catalog,
+                [
+                    ("고등교육통계", "0101", "first", first),
+                    ("대학정보공시", "0101", "second", second),
+                ],
+            )
+            with self.assertRaisesRegex(RuntimeError, "exactly one"):
+                bridge.build_bridge(catalog, base_code="0101")
 
 
 if __name__ == "__main__":
