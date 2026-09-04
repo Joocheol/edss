@@ -4,7 +4,8 @@
 Each logical panel is stored as a separate table so incompatible grains and
 schemas are never flattened into one relation.  The full database is restricted
 because it contains the historical employment panel.  A privacy-safe resolved
-2023–2024 employment table is loaded alongside it for ordinary analysis.
+2023–2024 employment table is retained only for standalone reference analysis;
+it is excluded from legacy OpenID longitudinal integration.
 """
 
 from __future__ import annotations

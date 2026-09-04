@@ -110,6 +110,22 @@ HIGH_MANUAL_DECISION_FIELDS = (
     "evidence_summary",
     "recommended_handling",
 )
+EMPLOYMENT_SCOPE_DECISION_FIELDS = (
+    "source",
+    "catalog_code",
+    "dataset",
+    "excluded_years",
+    "expected_source_row_count",
+    "expected_school_year_identity_count",
+    "expected_inferred_applied_row_count",
+    "expected_remaining_missing_open_id_row_count",
+    "decision_status",
+    "decision_classification",
+    "excluded_from_scope",
+    "evidence_artifacts",
+    "evidence_summary",
+    "recommended_handling",
+)
 CLASSIFICATION_MAP = {
     "before_first_0101_year": "boundary",
     "after_last_0101_year": "boundary",
@@ -174,7 +190,9 @@ def read_bridge(path: Path) -> dict[tuple[str, str], dict[str, str]]:
     return lookup
 
 
-def load_high_panel_manual_decisions(path: Path) -> dict[tuple[str, str, str, str], dict[str, str]]:
+def load_high_panel_manual_decisions(
+    path: Path,
+) -> dict[tuple[str, str, str, str], dict[str, str]]:
     """Load approved high-panel decisions without changing any source row or OpenID."""
 
     with path.open(encoding="utf-8-sig", newline="") as handle:
@@ -207,6 +225,141 @@ def load_high_panel_manual_decisions(path: Path) -> dict[tuple[str, str, str, st
             raise RuntimeError(f"high-panel decision lacks evidence for {key}")
         decisions[key] = {field: row[field].strip() for field in HIGH_MANUAL_DECISION_FIELDS}
     return decisions
+
+
+def load_employment_scope_decision(path: Path) -> dict[str, str]:
+    """Load the approved 2023-2024 schema-break scope decision."""
+
+    with path.open(encoding="utf-8-sig", newline="") as handle:
+        rows = list(csv.DictReader(handle))
+    if len(rows) != 1:
+        raise RuntimeError(
+            f"employment scope decision must contain exactly one row: {path}"
+        )
+    missing = set(EMPLOYMENT_SCOPE_DECISION_FIELDS) - set(rows[0])
+    if missing:
+        raise RuntimeError(
+            f"employment scope decision fields missing: {sorted(missing)}"
+        )
+
+    decision = {
+        field: rows[0][field].strip() for field in EMPLOYMENT_SCOPE_DECISION_FIELDS
+    }
+    if decision["source"] != "취업통계" or decision["catalog_code"] != "0001":
+        raise RuntimeError("employment scope decision targets an unexpected dataset")
+    if set(decision["excluded_years"].split("|")) != {"2023", "2024"}:
+        raise RuntimeError("employment scope decision must exclude exactly 2023 and 2024")
+    if decision["decision_status"] != "approved":
+        raise RuntimeError("employment scope decision is not approved")
+    if decision["decision_classification"] != "schema_break_excluded":
+        raise RuntimeError("employment scope decision classification is not schema_break_excluded")
+    if decision["excluded_from_scope"] != "legacy_open_id_longitudinal_panel":
+        raise RuntimeError("employment scope decision has an unexpected excluded scope")
+    for field in (
+        "expected_source_row_count",
+        "expected_school_year_identity_count",
+        "expected_inferred_applied_row_count",
+        "expected_remaining_missing_open_id_row_count",
+    ):
+        try:
+            value = int(decision[field])
+        except ValueError as error:
+            raise RuntimeError(f"invalid employment scope decision count: {field}") from error
+        if value < 0:
+            raise RuntimeError(f"negative employment scope decision count: {field}")
+    handling = decision["recommended_handling"]
+    required_actions = (
+        "preserve_raw",
+        "exclude_from_legacy_panel",
+        "no_canonical_imputation",
+    )
+    if any(action not in handling for action in required_actions):
+        raise RuntimeError(f"unsafe employment scope handling: {handling!r}")
+    if not decision["evidence_artifacts"] or not decision["evidence_summary"]:
+        raise RuntimeError("employment scope decision lacks evidence")
+    return decision
+
+
+def apply_employment_scope_decision(
+    employment_summary: dict,
+    decision_path: Path,
+    official_crosswalk_audit_path: Path,
+    application_audit_path: Path,
+) -> dict:
+    """Validate and apply the exclusion without deleting or rewriting source rows."""
+
+    decision = load_employment_scope_decision(decision_path)
+    official_audit = json.loads(
+        official_crosswalk_audit_path.read_text(encoding="utf-8")
+    )
+    application_audit = json.loads(application_audit_path.read_text(encoding="utf-8"))
+
+    expected_source_rows = int(decision["expected_source_row_count"])
+    expected_identities = int(decision["expected_school_year_identity_count"])
+    expected_applied_rows = int(decision["expected_inferred_applied_row_count"])
+    expected_missing_rows = int(
+        decision["expected_remaining_missing_open_id_row_count"]
+    )
+    observed_source_rows = int(employment_summary["source_missing_open_id_row_count"])
+    observed_identities = int(employment_summary["current_school_year_identity_count"])
+    if observed_source_rows != expected_source_rows:
+        raise RuntimeError(
+            "employment scope decision source-row mismatch: "
+            f"expected {expected_source_rows}, observed {observed_source_rows}"
+        )
+    if observed_identities != expected_identities:
+        raise RuntimeError(
+            "employment scope decision identity-count mismatch: "
+            f"expected {expected_identities}, observed {observed_identities}"
+        )
+
+    crosswalk = official_audit["crosswalk_conclusion"]
+    if crosswalk["official_crosswalk_available"] is not False:
+        raise RuntimeError("official crosswalk audit no longer supports scope exclusion")
+    raw_headers = official_audit["employment_raw_headers"]
+    raw_years = {str(row["year"]) for row in raw_headers}
+    if raw_years != {"2023", "2024"} or any(
+        row["has_open_id"] or row["column_count"] != 24 for row in raw_headers
+    ):
+        raise RuntimeError("official audit raw-header evidence changed")
+
+    application = application_audit["application"]
+    observed_application_counts = (
+        int(application["source_row_count"]),
+        int(application["source_school_year_identity_count"]),
+        int(application["applied_row_count"]),
+        int(application["remaining_missing_open_id_row_count"]),
+    )
+    expected_application_counts = (
+        expected_source_rows,
+        expected_identities,
+        expected_applied_rows,
+        expected_missing_rows,
+    )
+    if observed_application_counts != expected_application_counts:
+        raise RuntimeError(
+            "employment scope decision does not match the application audit"
+        )
+    if expected_applied_rows + expected_missing_rows != expected_source_rows:
+        raise RuntimeError("employment scope decision row partition is inconsistent")
+
+    return {
+        **employment_summary,
+        "status": "complete_with_scope_exclusion",
+        "decision_classification": decision["decision_classification"],
+        "excluded_from_scope": decision["excluded_from_scope"],
+        "excluded_years": sorted(decision["excluded_years"].split("|")),
+        "scope_excluded_row_count": expected_source_rows,
+        "scope_excluded_school_year_identity_count": expected_identities,
+        "reference_only_inferred_open_id_row_count": expected_applied_rows,
+        "unresolved_open_id_row_count_at_exclusion": expected_missing_rows,
+        "legacy_panel_eligible_row_count": 0,
+        "raw_and_derived_records_preserved": True,
+        "scope_rule": (
+            "The 2023-2024 aggregate is retained as a standalone reference dataset "
+            "and excluded from legacy OpenID longitudinal integration."
+        ),
+    }
 
 
 def split_normalized(value: str, normalizer=normalize_text) -> set[str]:
@@ -576,6 +729,21 @@ def main() -> int:
         default=Path("data/metadata/edss_high_orphan_manual_decisions.csv"),
     )
     parser.add_argument(
+        "--employment-scope-decision",
+        type=Path,
+        default=Path("data/metadata/edss_employment_schema_break_decision.csv"),
+    )
+    parser.add_argument(
+        "--official-crosswalk-audit",
+        type=Path,
+        default=Path("data/metadata/edss_official_crosswalk_audit.json"),
+    )
+    parser.add_argument(
+        "--employment-application-audit",
+        type=Path,
+        default=Path("data/metadata/edss_employment_open_id_application.json"),
+    )
+    parser.add_argument(
         "--summary-output",
         type=Path,
         default=Path("data/metadata/edss_remaining_identity_gap_resolution.json"),
@@ -588,6 +756,12 @@ def main() -> int:
         args.bridge,
         minimum_signature_size=args.minimum_signature_size,
     )
+    employment_summary = apply_employment_scope_decision(
+        employment_summary,
+        args.employment_scope_decision,
+        args.official_crosswalk_audit,
+        args.employment_application_audit,
+    )
     high_reviews, high_summary = review_high_panels(
         args.audit_summary,
         args.audit_orphans,
@@ -598,8 +772,26 @@ def main() -> int:
     atomic_write_csv(args.high_review_output, high_reviews, HIGH_REVIEW_FIELDS)
     summary = {
         "generated_at": utc_now(),
-        "status": "review_required",
+        "status": (
+            "complete_with_scope_exclusion"
+            if employment_summary["status"] == "complete_with_scope_exclusion"
+            and high_summary["status"] == "complete"
+            else "review_required"
+        ),
         "inputs": {
+            "employment_scope_decision": {
+                "path": str(args.employment_scope_decision),
+                "row_count": 1,
+                "sha256": sha256_file(args.employment_scope_decision),
+            },
+            "official_crosswalk_audit": {
+                "path": str(args.official_crosswalk_audit),
+                "sha256": sha256_file(args.official_crosswalk_audit),
+            },
+            "employment_application_audit": {
+                "path": str(args.employment_application_audit),
+                "sha256": sha256_file(args.employment_application_audit),
+            },
             "high_panel_manual_decisions": {
                 "path": str(args.high_manual_decisions),
                 "row_count": len(load_high_panel_manual_decisions(args.high_manual_decisions)),

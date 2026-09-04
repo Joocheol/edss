@@ -20,7 +20,7 @@ DB 크기는 16,044,535,808 bytes이며 SHA-256은 `5a019a6844a8ce4960a4e736fccb
 - `higher_education.panel_{catalog_code}`: 고등교육통계 패널
 - `university_disclosure.panel_{catalog_code}`: 대학정보공시 패널
 - `employment.panel_0001`: 전체 취업통계 제한 패널
-- `employment.safe_2023_2024_resolved`: 개인형 열을 제거하고 검토된 OpenID 후보만 적용한 2023–2024 안전 패널
+- `employment.safe_2023_2024_resolved`: 개인형 열을 제거하고 추론 OpenID 적용 기록을 보존한 2023–2024 독립 참고 패널. 기존 OpenID 종단 분석에서는 제외한다.
 - `meta.panel_catalog`: 원본 카탈로그와 DuckDB 테이블의 대응표
 - `meta.load_manifest`: 적재 입력 SHA-256, 기대·실제 행과 열, 적재 시각
 - `meta.database_summary`: 완전성 요약 한 행
@@ -54,7 +54,7 @@ FROM higher_education.panel_0101
 WHERE 조사년도 = '2024'
 LIMIT 100;
 
--- 개인정보형 열이 없는 2023–2024 취업 분석 자료
+-- 개인정보형 열이 없는 2023–2024 독립 참고 자료(종단 결합 금지)
 SELECT _panel_year, 개방ID, 학교명, 학과명, 취업비율,
        _open_id_resolution_status
 FROM analysis.employment_2023_2024_resolved
@@ -67,4 +67,4 @@ LIMIT 100;
 
 전체 빌드 후 읽기 전용 연결에서 233개 테이블 각각을 카탈로그와 대조했다. 행·열 불일치는 0건이고 적재 합계는 180,119,183행이다. 원본 패널 열은 모두 `VARCHAR`이며 빈 문자열을 SQL `NULL`로 바꾸지 않는다. 안전 취업 패널은 46,962행이고 이 중 검토된 추론 교차표로 OpenID가 적용된 행은 13,920행, 여전히 빈 행은 33,042행이다.
 
-전체 DB에는 2010–2022 취업통계의 민감 가능 개인형 열이 포함된다. 따라서 파일 전체를 외부 공유하거나 일반 분석 경로에 복사하지 않는다. 일반 취업 분석은 `analysis.employment_2023_2024_resolved`를 사용하고, 과거 취업 원본 접근은 제한 환경에서 목적·권한을 확인한 뒤 수행한다.
+전체 DB에는 2010–2022 취업통계의 민감 가능 개인형 열이 포함된다. 따라서 파일 전체를 외부 공유하거나 일반 분석 경로에 복사하지 않는다. `analysis.employment_2023_2024_resolved`는 2023–2024년 내부의 학교명·학과 단위 기술통계와 추론 감사에만 사용하고 과거 OpenID 패널과 결합하지 않는다. 과거 취업 원본 접근은 제한 환경에서 목적·권한을 확인한 뒤 수행한다.

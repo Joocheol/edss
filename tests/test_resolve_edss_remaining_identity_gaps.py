@@ -84,6 +84,72 @@ def write_high_panel_decision(path: Path, expected_row_count: str = "16") -> Non
         )
 
 
+def write_employment_scope_decision(
+    path: Path,
+    expected_source_row_count: str = "4",
+) -> None:
+    with path.open("w", encoding="utf-8", newline="") as handle:
+        writer = csv.DictWriter(
+            handle,
+            fieldnames=resolution.EMPLOYMENT_SCOPE_DECISION_FIELDS,
+        )
+        writer.writeheader()
+        writer.writerow(
+            {
+                "source": "취업통계",
+                "catalog_code": "0001",
+                "dataset": "학생인적취업정보",
+                "excluded_years": "2023|2024",
+                "expected_source_row_count": expected_source_row_count,
+                "expected_school_year_identity_count": "2",
+                "expected_inferred_applied_row_count": "1",
+                "expected_remaining_missing_open_id_row_count": "3",
+                "decision_status": "approved",
+                "decision_classification": "schema_break_excluded",
+                "excluded_from_scope": "legacy_open_id_longitudinal_panel",
+                "evidence_artifacts": "official.json|application.json",
+                "evidence_summary": "원천 스키마와 식별자 제공 범위가 바뀌었다.",
+                "recommended_handling": (
+                    "preserve_raw_exclude_from_legacy_panel_"
+                    "no_canonical_imputation_standalone_reference_only"
+                ),
+            }
+        )
+
+
+def write_employment_scope_audits(root: Path) -> tuple[Path, Path]:
+    official_path = root / "official.json"
+    official_path.write_text(
+        json.dumps(
+            {
+                "crosswalk_conclusion": {"official_crosswalk_available": False},
+                "employment_raw_headers": [
+                    {"year": "2023", "has_open_id": False, "column_count": 24},
+                    {"year": "2024", "has_open_id": False, "column_count": 24},
+                ],
+            },
+            ensure_ascii=False,
+        ),
+        encoding="utf-8",
+    )
+    application_path = root / "application.json"
+    application_path.write_text(
+        json.dumps(
+            {
+                "application": {
+                    "source_row_count": 4,
+                    "source_school_year_identity_count": 2,
+                    "applied_row_count": 1,
+                    "remaining_missing_open_id_row_count": 3,
+                }
+            },
+            ensure_ascii=False,
+        ),
+        encoding="utf-8",
+    )
+    return official_path, application_path
+
+
 class RemainingIdentityGapTests(unittest.TestCase):
     def test_employment_candidates_never_impute_canonical_open_id(self):
         with tempfile.TemporaryDirectory() as temp_dir:
@@ -108,6 +174,55 @@ class RemainingIdentityGapTests(unittest.TestCase):
             self.assertEqual(by_school["소규모대학교"]["resolution_status"], "unresolved_signature_too_small")
             self.assertEqual(summary["canonical_open_id_imputed_row_count"], 0)
             self.assertNotIn("개방ID", derived[0])
+
+    def test_approved_schema_break_excludes_all_rows_from_legacy_panel(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            decision_path = root / "decision.csv"
+            write_employment_scope_decision(decision_path)
+            official_path, application_path = write_employment_scope_audits(root)
+            employment_summary = {
+                "source_missing_open_id_row_count": 4,
+                "current_school_year_identity_count": 2,
+                "canonical_open_id_imputed_row_count": 0,
+            }
+
+            result = resolution.apply_employment_scope_decision(
+                employment_summary,
+                decision_path,
+                official_path,
+                application_path,
+            )
+
+            self.assertEqual(result["status"], "complete_with_scope_exclusion")
+            self.assertEqual(result["scope_excluded_row_count"], 4)
+            self.assertEqual(result["scope_excluded_school_year_identity_count"], 2)
+            self.assertEqual(result["reference_only_inferred_open_id_row_count"], 1)
+            self.assertEqual(result["unresolved_open_id_row_count_at_exclusion"], 3)
+            self.assertEqual(result["legacy_panel_eligible_row_count"], 0)
+            self.assertTrue(result["raw_and_derived_records_preserved"])
+
+    def test_schema_break_decision_rejects_source_row_drift(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            decision_path = root / "decision.csv"
+            write_employment_scope_decision(
+                decision_path,
+                expected_source_row_count="5",
+            )
+            official_path, application_path = write_employment_scope_audits(root)
+            employment_summary = {
+                "source_missing_open_id_row_count": 4,
+                "current_school_year_identity_count": 2,
+            }
+
+            with self.assertRaisesRegex(RuntimeError, "source-row mismatch"):
+                resolution.apply_employment_scope_decision(
+                    employment_summary,
+                    decision_path,
+                    official_path,
+                    application_path,
+                )
 
     def test_high_panel_review_separates_boundary_and_internal_gap(self):
         with tempfile.TemporaryDirectory() as temp_dir:

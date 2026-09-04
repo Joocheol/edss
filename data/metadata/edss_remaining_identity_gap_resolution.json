@@ -1,7 +1,20 @@
 {
-  "generated_at": "2026-09-04T01:12:18.980501+00:00",
-  "status": "review_required",
+  "generated_at": "2026-09-04T01:33:43.844447+00:00",
+  "status": "complete_with_scope_exclusion",
   "inputs": {
+    "employment_scope_decision": {
+      "path": "data/metadata/edss_employment_schema_break_decision.csv",
+      "row_count": 1,
+      "sha256": "e7755f9718d006a55772c60ef9605f0dce80315912b51354760aef3416c75e0c"
+    },
+    "official_crosswalk_audit": {
+      "path": "data/metadata/edss_official_crosswalk_audit.json",
+      "sha256": "e7d5f4a26d7bf744c7ab5ec8a047b39c11066da169e46a548b99d50266ce0497"
+    },
+    "employment_application_audit": {
+      "path": "data/metadata/edss_employment_open_id_application.json",
+      "sha256": "4bdffbe17b9bbe735f636912925507e5141b2c9f70dc6eb4f29e055778ff77b1"
+    },
     "high_panel_manual_decisions": {
       "path": "data/metadata/edss_high_orphan_manual_decisions.csv",
       "row_count": 1,
@@ -30,7 +43,21 @@
     "candidate_open_id_count": 15,
     "canonical_open_id_imputed_row_count": 0,
     "privacy_rule": "Only the 2023-2024 aggregate schema and provenance fields are written; individual-level fields are excluded.",
-    "imputation_rule": "The canonical 개방ID remains absent. Candidate IDs are evidence labels and must not be treated as confirmed mappings."
+    "imputation_rule": "The canonical 개방ID remains absent. Candidate IDs are evidence labels and must not be treated as confirmed mappings.",
+    "status": "complete_with_scope_exclusion",
+    "decision_classification": "schema_break_excluded",
+    "excluded_from_scope": "legacy_open_id_longitudinal_panel",
+    "excluded_years": [
+      "2023",
+      "2024"
+    ],
+    "scope_excluded_row_count": 46962,
+    "scope_excluded_school_year_identity_count": 3281,
+    "reference_only_inferred_open_id_row_count": 13920,
+    "unresolved_open_id_row_count_at_exclusion": 33042,
+    "legacy_panel_eligible_row_count": 0,
+    "raw_and_derived_records_preserved": true,
+    "scope_rule": "The 2023-2024 aggregate is retained as a standalone reference dataset and excluded from legacy OpenID longitudinal integration."
   },
   "high_orphan_panels": {
     "reviewed_panel_count": 4,
