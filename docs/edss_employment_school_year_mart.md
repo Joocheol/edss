@@ -62,7 +62,7 @@
 
 ## 안전한 사용법
 
-취업 자료가 있는 학교만 집계하려면 다음 뷰를 사용한다. 2022년은 추세 비교에서 제외한다.
+`_panel_year`는 실제 졸업 코호트가 아니라 원본 파일 연도다. 코호트 감사 결과 2014·2015년은 같은 2014 코호트의 서로 다른 파동이고, 2016–2021년은 실제 코호트보다 파일 연도가 1년 뒤이며, 2022년은 2021년 파일과 같은 2020 코호트다. 따라서 다음 쿼리는 원본 파일 연도별 품질 확인에만 사용하고 졸업 코호트 추세로 해석하지 않는다.
 
 ```sql
 SELECT _panel_year,
@@ -75,7 +75,7 @@ GROUP BY _panel_year
 ORDER BY _panel_year;
 ```
 
-진학자 수를 분석할 때는 `further_study_quality_status='as_reported'`를 추가한다. 취업 자료가 없는 16,986개 핵심 마트 행의 취업 지표는 `NULL`이며 0으로 대체하지 않는다.
+코호트 분석을 준비할 때는 `data/metadata/edss_employment_cohort_year_audit.csv`에서 `cohort_analysis_eligible=true`인 파일만 선택하고 `inferred_cohort_year`로 재키잉한다. 단, 이 규칙을 구현한 최종 DuckDB 뷰가 생성되기 전까지는 수동 결합을 분석 결과로 배포하지 않는다. 진학자 수를 분석할 때는 `further_study_quality_status='as_reported'`도 적용한다. 취업 자료가 없는 16,986개 핵심 마트 행의 취업 지표는 `NULL`이며 0으로 대체하지 않는다.
 
 ## 산출물과 다음 단계
 
@@ -83,6 +83,7 @@ ORDER BY _panel_year;
 - 핵심 결합 뷰: `analysis.school_year_core_with_employment_2010_2022`
 - 데이터 사전: `data/metadata/edss_employment_school_year_data_dictionary.csv`
 - 빌드 감사: `data/metadata/edss_duckdb_build.json`
+- 코호트 연도 감사: `data/metadata/edss_employment_cohort_year_audit.csv`
 - 검산 노트북: `notebooks/edss_employment_school_year_mart_validation.ipynb`
 
 공식 검증 결과 2022년 파일을 독립 2022년 관측치로 사용할 수 없다는 판단은 확정했다. 원본 오류인지 의도된 후속 파동인지에 대한 제공기관 설명은 찾지 못했으므로, 원인 규명이 필요하면 EDSS 업무 담당자에게 두 원본 ZIP의 체크섬과 졸업년월 분포를 첨부해 질의한다.

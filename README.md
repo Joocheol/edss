@@ -114,6 +114,8 @@ SELECT * FROM analysis.employment_2023_2024_standalone LIMIT 10;
 
 2010–2022 취업통계는 `analysis.employment_school_year_2010_2022`에서 같은 grain으로 사전 집계하며, `analysis.school_year_core_with_employment_2010_2022`에서 핵심 마트와 안전하게 결합한다. 2022년은 2021년 학교별 집계와 완전히 같아 시계열 비교 부적격으로 표시하며 공식 취업률은 생성하지 않는다.
 
+취업통계의 `_panel_year`는 실제 졸업 코호트 연도가 아니다. 2010–2022년의 졸업월을 전수 감사한 `data/metadata/edss_employment_cohort_year_audit.csv`를 기준으로 파일 연도와 추론 코호트를 분리한다. 2014·2015년은 같은 코호트의 서로 다른 파동이므로 기준일 확인 전 보류하고, 2016–2021년은 코호트 연도로 1년 앞당기며, 2022년은 2021년과 같은 2020 코호트의 정확 반복으로 제외한다.
+
 테이블 명명법, 소스별 스키마와 검증 결과는 `docs/edss_duckdb.md`에 기록합니다.
 
 ## 대학알리미 Open API 사후 검증

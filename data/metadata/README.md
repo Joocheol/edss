@@ -21,6 +21,8 @@
 - `edss_school_year_core_data_dictionary.csv`: `analysis.school_year_core_2010_2022`의 31개 열에 대한 자료형·원천·변환·결측 처리 규칙
 - `edss_employment_school_year_data_dictionary.csv`: 2010–2022 제한 취업통계를 7,058개 학교연도로 집계한 17개 열의 자료형·원천·품질 상태·결측 규칙
 - `edss_employment_2022_official_verification.json`: 공식 2021·2022년 조사대상 정의와 EDSS 2021·2022년 원본의 조사년도·졸업년월·학교 집계를 대조한 감사. 2022년 원본의 공식 코호트 불일치와 시계열 제외 결정을 기록한다.
+- `edss_employment_cohort_year_audit.csv`: 2010–2022 취업 파일 연도별 원천 행 수, 졸업월 범위, 추론 코호트, 반복 파동, 공식 동일 연도 정의 충돌과 안전 사용 판정
+- `edss_employment_cohort_year_audit.json`: 7,277,987행의 코호트 시간축 감사 요약, 반복 코호트 비교 수치, 공식 정의와 방법론 출처, 안전 사용 규칙
 - `edss_full_panel_key_audit.json`·`.csv`: 전체 233개 패널·180,119,183행의 무결성, grain, `개방ID` 완전성, `0101` 연결 및 원시 조인 증식 위험 감사 결과
 - `edss_full_panel_key_audit_by_year.csv`: 패널·연도별 행 수, `개방ID` 결측 행과 `0101` 미연결 행
 - `edss_full_panel_orphan_school_year_keys.csv`: 전체 패널에서 관찰된 `0101` 미연결 학교연도 키 3,322건과 시간적 분류

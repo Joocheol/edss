@@ -22,6 +22,7 @@ EDSS 다운로드, 압축 해제, 원본 목록 작성, 표준화, 품질검사 
 - `build_edss_full_rebuild_inventory.py`: 실시간 265개 `domnCd`와 두 다운로드 기록을 결합해 233개 논리 테이블의 전체 재구성 입력을 만들고, 현재 15개 패널의 범위와 파일·SHA-256 상태를 대조한다.
 - `scan_edss_full_rebuild_inputs.py`: 전체 재구성 인벤토리의 명시적 ZIP 경로를 스트리밍으로 읽어 CSV 멤버·행 수·헤더 변형·관찰 연도·행 폭 오류를 물리 단위별로 기록한다.
 - `build_edss_duckdb.py`: 233개 이질적 패널을 소스별 독립 테이블로 하나의 제한 DuckDB에 재개 가능하게 적재한다. 업무열 수와 공통 출처열 12개를 분리 검증하고, 취업통계 조회 계층·학교–연도 핵심 마트·취업 학교–연도 사전 집계와 무증식 결합 뷰를 함께 만든다.
+- `audit_edss_employment_cohort_years.py`: 제한 취업통계의 파일 연도와 실제 졸업 코호트를 분리하고, 반복 코호트의 졸업월 분포와 학교 집계 일치율을 검증한다. 결과에는 연도·학교 집계 건수만 기록하며 개인 수준 값은 출력하지 않는다.
 
 전체 233개 패널 빌드는 저장소 루트에서 다음과 같이 실행한다.
 
@@ -36,4 +37,5 @@ python3 scripts/audit_edss_full_panel_keys.py --repo-root .
 
 ```bash
 uv run --offline --with duckdb==1.4.1 python scripts/build_edss_duckdb.py
+uv run --with duckdb==1.4.1 python scripts/audit_edss_employment_cohort_years.py
 ```

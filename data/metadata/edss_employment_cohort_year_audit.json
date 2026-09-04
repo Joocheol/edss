@@ -1,0 +1,89 @@
+{
+  "audit_version": 1,
+  "generated_at": "2026-09-04T03:08:02.040758+00:00",
+  "status": "review_required",
+  "source_view": "analysis.employment_legacy_2010_2022",
+  "grain": "one row per source year in CSV; year-level and school-aggregate evidence only",
+  "source_year_range": [
+    "2010",
+    "2022"
+  ],
+  "source_year_count": 13,
+  "source_row_count": 7277987,
+  "inferred_cohort_year_range": [
+    "2010",
+    "2020"
+  ],
+  "inferred_cohort_year_count": 11,
+  "repeated_cohort_groups": {
+    "2014": [
+      "2014",
+      "2015"
+    ],
+    "2020": [
+      "2021",
+      "2022"
+    ]
+  },
+  "cohort_use_status_counts": {
+    "eligible_first_of_exact_repeat": 1,
+    "eligible_unique_cohort": 9,
+    "exclude_exact_repeat": 1,
+    "review_repeated_distinct_wave": 2
+  },
+  "cohort_analysis_eligible_source_year_count": 10,
+  "official_same_label_conflict_years": [
+    "2021",
+    "2022"
+  ],
+  "same_cohort_comparisons": [
+    {
+      "previous_source_year": "2014",
+      "current_source_year": "2015",
+      "previous_open_id_count": 552,
+      "current_open_id_count": 552,
+      "shared_open_id_count": 552,
+      "exact_school_aggregate_match_count": 20,
+      "exact_school_aggregate_match_share": 0.036231884,
+      "graduation_month_distribution_equal": false,
+      "complete_exact_repeat": false,
+      "inferred_cohort_year": "2014"
+    },
+    {
+      "previous_source_year": "2021",
+      "current_source_year": "2022",
+      "previous_open_id_count": 537,
+      "current_open_id_count": 537,
+      "shared_open_id_count": 537,
+      "exact_school_aggregate_match_count": 537,
+      "exact_school_aggregate_match_share": 1.0,
+      "graduation_month_distribution_equal": true,
+      "complete_exact_repeat": true,
+      "inferred_cohort_year": "2020"
+    }
+  ],
+  "official_same_label_definitions": {
+    "2021": {
+      "target_months": [
+        "202008",
+        "202102"
+      ],
+      "reference_date": "2021-12-31",
+      "source_url": "https://kess.kedi.re.kr/publ/fileDownload.do?fileSeq=1064949&publItemId=95638"
+    },
+    "2022": {
+      "target_months": [
+        "202108",
+        "202202"
+      ],
+      "reference_date": "2022-12-31",
+      "source_url": "https://kess.kedi.re.kr/publ/fileDownload.do?fileSeq=1075201&publItemId=102507"
+    }
+  },
+  "methodology_context": {
+    "finding": "2012년부터 6월 1일과 12월 31일 기준 연 2회 조사, 2015년부터 12월 31일 기준 조사로 일원화",
+    "source_url": "https://kess.kedi.re.kr/publ/fileDownload.do?fileSeq=1012636&publItemId=69896"
+  },
+  "safe_use_rule": "Never interpret _panel_year as the graduation cohort without this audit. Filter to cohort_analysis_eligible=true and group by inferred_cohort_year. Do not select either 2014-cohort wave until its reference date and methodology are resolved.",
+  "privacy": "Outputs contain only year-level counts and school-level comparison counts. No person identifier, company, thesis, or row-level value is emitted."
+}
