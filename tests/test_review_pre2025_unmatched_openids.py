@@ -1,0 +1,73 @@
+import csv
+import importlib.util
+import tempfile
+import unittest
+from pathlib import Path
+
+
+SCRIPT = Path(__file__).resolve().parents[1] / "scripts" / "review_pre2025_unmatched_openids.py"
+SPEC = importlib.util.spec_from_file_location("review_pre2025", SCRIPT)
+review = importlib.util.module_from_spec(SPEC)
+assert SPEC.loader is not None
+SPEC.loader.exec_module(review)
+
+
+class ApprovedIdentityProposalTests(unittest.TestCase):
+    def test_project_proposals_promote_all_thirty_without_auto_merge(self):
+        path = (
+            Path(__file__).resolve().parents[1]
+            / "data/metadata/edss_remaining_unnamed_openid_identity_proposals.csv"
+        )
+        overrides = review.load_approved_identity_proposals(path)
+
+        self.assertEqual(len(overrides), 30)
+        self.assertEqual(overrides["7579953312"]["name"], "인천가톨릭대학교 조형대학원")
+        self.assertEqual(
+            overrides["7579953312"]["years"],
+            "2009|2010|2011|2012|2013|2014|2015|2016|2017",
+        )
+        self.assertTrue(
+            all(
+                "separate" in row["safe_action"] or "no_auto_join" in row["safe_action"]
+                for row in overrides.values()
+            )
+        )
+
+    def test_rejects_unapproved_or_unsafe_proposal(self):
+        fields = [
+            "open_id",
+            "proposed_entity_name",
+            "decision_bucket",
+            "proposed_manual_classification",
+            "evidence_window",
+            "kedi_match_evidence",
+            "safe_join_action",
+            "notes",
+        ]
+        with tempfile.TemporaryDirectory() as temporary:
+            path = Path(temporary) / "proposals.csv"
+            with path.open("w", encoding="utf-8-sig", newline="") as handle:
+                writer = csv.DictWriter(handle, fieldnames=fields)
+                writer.writeheader()
+                writer.writerow(
+                    {
+                        "open_id": "1234",
+                        "proposed_entity_name": "테스트대학원",
+                        "decision_bucket": "needs_user_judgment",
+                        "proposed_manual_classification": "candidate",
+                        "evidence_window": "2020-2021",
+                        "kedi_match_evidence": "검토 필요",
+                        "safe_join_action": "merge",
+                        "notes": "",
+                    }
+                )
+            with self.assertRaisesRegex(RuntimeError, "not approved"):
+                review.load_approved_identity_proposals(path)
+
+    def test_rejects_reversed_year_window(self):
+        with self.assertRaisesRegex(RuntimeError, "reversed"):
+            review.expand_year_window("2025-2024")
+
+
+if __name__ == "__main__":
+    unittest.main()

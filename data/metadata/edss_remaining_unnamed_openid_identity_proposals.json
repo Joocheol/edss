@@ -1,0 +1,39 @@
+{
+  "generated_at": "2026-09-03T16:50:00+09:00",
+  "status": "approved_and_applied_to_canonical_manual_review",
+  "approved_and_applied_at": "2026-09-04T09:37:32+09:00",
+  "scope": "all rows with candidate_status=no_reliable_name_candidate in edss_pre2025_unmatched_openid_manual_review.csv",
+  "row_count": 30,
+  "unique_open_id_count": 30,
+  "decision_bucket_counts": {
+    "ready_to_record": 30,
+    "needs_user_judgment": 0
+  },
+  "classification_counts": {
+    "confirmed_identity_closed_name_change_predecessor_id": 5,
+    "confirmed_identity_closed_school_residual_id": 20,
+    "confirmed_identity_department_residual_id": 2,
+    "confirmed_identity_historical_reorganization_predecessor_id": 3
+  },
+  "missing_target_ids": [],
+  "extra_output_ids": [],
+  "duplicate_open_ids": [],
+  "source_checksums": {
+    "data/metadata/edss_pre2025_unmatched_openid_manual_review.csv": "70f4a3d6ece49a13df3cef098d39b957e876973a2a4e30d16e2d5301791dfb55",
+    "data/processed/edss_0101_kedi_openid_identity_2009_2025.csv": "868be411610e1b815b01a8fde3017335c7a3389206b9b1698ba549454082cd83",
+    "data/processed/edss_0101_kedi_crosswalk_2009_2025.csv": "6006985ef83b2c96d89aeb77bb638a80a63214cf989325ddb5c461efafd9abfc",
+    "/Users/joocheol/Documents/GitHub/edss/data/processed/edss/restricted/edss_all.duckdb": "5a019a6844a8ce4960a4e736fccb497cf278b55b36e09ca46e405e24dd04a101",
+    "kedi_higher_education_school_2009_2025_manifest": "029a4c1efbf460528e29c79cfb486a1f5834e14d10a1341e5a3d3185f21b1470"
+  },
+  "outputs": {
+    "data/metadata/edss_remaining_unnamed_openid_identity_proposals.csv": "c0e57fd8293e000c3d3c05f18091cf812935c881747cf0640d8a8cd662798b0e",
+    "docs/edss_remaining_unnamed_openid_identity_review.md": "12ecdd9ee41d5bbf1d5045a6116a332e44fc261e6af158331099cec08a832b5e",
+    "data/metadata/edss_pre2025_unmatched_openid_manual_review.csv": "e02d7d49447edd1fe02220a4d9b06adf858f26dd6dca45412f67fea99bbbb0a6",
+    "data/metadata/edss_pre2025_unmatched_openid_manual_review.json": "b6819a492d2cc9e95e038de8b0de80d2f1171cedff507905d61fb6892f0454f0"
+  },
+  "caveats": [
+    "The proposal identifies historical entities but does not authorize automatic OpenID merging.",
+    "Zero core activity is distinct from missing, non-applicable, or undisclosed values.",
+    "The approved identities were applied to the canonical manual-review CSV without merging any OpenIDs."
+  ]
+}

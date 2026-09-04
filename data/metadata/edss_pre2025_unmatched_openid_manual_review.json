@@ -1,0 +1,63 @@
+{
+  "generated_at": "2026-09-04T00:37:32.064541+00:00",
+  "scope": "all unmatched EDSS 0101 OpenIDs not already reviewed in the 2025-ending batch",
+  "row_count": 84,
+  "unique_open_id_count": 84,
+  "missing_target_ids": [],
+  "extra_output_ids": [],
+  "duplicate_open_ids": [],
+  "classification_counts": {
+    "closed_school_or_department_residual_id": 12,
+    "confirmed_identity_closed_campus_conversion_predecessor_id": 1,
+    "confirmed_identity_closed_campus_residual_id": 1,
+    "confirmed_identity_closed_name_change_predecessor_id": 8,
+    "confirmed_identity_closed_school_residual_id": 46,
+    "confirmed_identity_department_residual_id": 2,
+    "confirmed_identity_historical_reorganization_predecessor_id": 3,
+    "confirmed_identity_institution_type_conversion_predecessor_id": 1,
+    "confirmed_identity_merger_residual_predecessor_id": 4,
+    "confirmed_identity_name_change_predecessor_id": 2,
+    "historical_reorganization_or_successor_candidate_id": 4
+  },
+  "candidate_status_counts": {
+    "confirmed_exact_longitudinal_kedi_name_metrics_and_closed_departments": 1,
+    "confirmed_exact_longitudinal_metrics_and_closed_status": 1,
+    "confirmed_exact_longitudinal_metrics_and_official_name_change": 1,
+    "confirmed_exact_metric_and_official_history": 1,
+    "confirmed_final_graduation_department_and_official_closure": 1,
+    "confirmed_final_graduation_department_and_official_conversion": 1,
+    "confirmed_kedi_metric_and_exact_department_signature": 1,
+    "confirmed_kedi_metric_and_official_kaist_merger": 3,
+    "confirmed_kedi_metric_department_and_official_name_change": 1,
+    "confirmed_kedi_metric_department_and_official_name_lineage": 1,
+    "confirmed_kedi_metric_location_and_department_context": 18,
+    "confirmed_kedi_residual_and_exact_department_signature": 1,
+    "confirmed_location_closed_status_departments_and_official_name_history": 1,
+    "confirmed_longitudinal_metrics_and_official_merger": 1,
+    "confirmed_longitudinal_metrics_and_official_type_conversion": 1,
+    "confirmed_manual_reviewed_kedi_identity": 30,
+    "confirmed_residual_metric_department_and_official_history": 1,
+    "confirmed_unique_department_signature_location_and_official_closure": 1,
+    "confirmed_unique_exact_department_signature_and_location": 2,
+    "probable_repeated_candidate": 3,
+    "probable_same_year_context_candidate": 8,
+    "unconfirmed_candidate": 5
+  },
+  "source_checksums": {
+    "data/processed/edss_0101_kedi_openid_identity_2009_2025.csv": "868be411610e1b815b01a8fde3017335c7a3389206b9b1698ba549454082cd83",
+    "data/processed/edss_0101_kedi_crosswalk_2009_2025.csv": "6006985ef83b2c96d89aeb77bb638a80a63214cf989325ddb5c461efafd9abfc",
+    "data/processed/edss_0101_kedi_row_match_evidence_2009_2025.csv": "ebf9bfff259aa3a5c51ddfe89325b7410b12747c70c0c61e84a97cfc176cc47d",
+    "data/metadata/edss_2025_unmatched_openid_manual_review.csv": "f44963eda94ac38f8588905223ad3c03ec5ef007919961aefec7c5b4f01c7aa0",
+    "data/metadata/edss_remaining_unnamed_openid_identity_proposals.csv": "c0e57fd8293e000c3d3c05f18091cf812935c881747cf0640d8a8cd662798b0e",
+    "/Users/joocheol/Documents/GitHub/edss/data/processed/edss/restricted/edss_all.duckdb": "5a019a6844a8ce4960a4e736fccb497cf278b55b36e09ca46e405e24dd04a101"
+  },
+  "output": {
+    "path": "data/metadata/edss_pre2025_unmatched_openid_manual_review.csv",
+    "sha256": "e02d7d49447edd1fe02220a4d9b06adf858f26dd6dca45412f67fea99bbbb0a6"
+  },
+  "caveats": [
+    "A KEDI candidate is supporting evidence, not an automatic identity join.",
+    "Zero, missing, not-applicable, and disclosure restrictions remain distinct in source data.",
+    "OpenIDs are retained as strings and historical predecessor IDs remain separate."
+  ]
+}
