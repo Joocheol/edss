@@ -1,0 +1,51 @@
+output_file,field_name,data_type,definition,null_handling
+attribute_quality,employment_cohort_year,string,졸업 코호트 연도,결측 불가
+attribute_quality,employment_reference_date_basis,string,취업 관찰 기준일 규칙,결측 불가
+attribute_quality,comparison_interval,string,동일 기준일을 사용하는 비교 구간,결측 불가
+attribute_quality,attribute,string,school_type 또는 province,결측 불가
+attribute_quality,source_field,string,동일 연도 0101 마트의 원천 속성 열,결측 불가
+attribute_quality,total_school_count,integer,해당 코호트 취업 학교 수,결측 불가
+attribute_quality,matched_attribute_school_count,integer,비어 있지 않은 속성을 가진 학교 수,결측 불가
+attribute_quality,missing_attribute_school_count,integer,속성없음으로 보존한 학교 수,0은 실제 결측 없음
+attribute_quality,multi_value_school_count,integer,동일 학교연도에 복수 원천값이 있는 학교 수,0은 복수값 없음
+attribute_quality,attribute_school_coverage_share,float,속성 보유 학교 수 나누기 전체 학교 수,결측 불가
+attribute_quality,total_reported_graduate_count,integer,코호트 원천 보고 졸업자 합계,결측 불가
+attribute_quality,matched_attribute_reported_graduate_count,integer,속성 보유 학교의 원천 보고 졸업자 합계,결측 불가
+attribute_quality,attribute_graduate_coverage_share,float,속성 보유 졸업자 합계 나누기 전체 졸업자 합계,결측 불가
+attribute_quality,distinct_stratum_count,integer,속성없음과 복수시도를 포함한 연도별 층 수,결측 불가
+attribute_stability,attribute,string,school_type 또는 province,결측 불가
+attribute_stability,comparison_interval,string,동일 기준일을 사용하는 비교 구간,결측 불가
+attribute_stability,first_cohort_year,string,비교 구간 첫 졸업 코호트,결측 불가
+attribute_stability,last_cohort_year,string,비교 구간 마지막 졸업 코호트,결측 불가
+attribute_stability,interval_balanced_school_count,integer,구간 모든 코호트에 관측된 학교 수,결측 불가
+attribute_stability,complete_attribute_balanced_school_count,integer,구간 모든 코호트에 속성이 있는 균형 학교 수,결측 불가
+attribute_stability,stable_attribute_balanced_school_count,integer,구간 내내 같은 층에 속한 균형 학교 수,결측 불가
+attribute_stability,unstable_attribute_balanced_school_count,integer,구간 내 층이 바뀐 균형 학교 수,0은 변경 없음
+attribute_stability,stable_attribute_school_share,float,안정 속성 균형 학교 수 나누기 전체 균형 학교 수,결측 불가
+attribute_stability,attribute_transition_count,integer,균형 학교의 인접 코호트 간 층 변경 횟수,0은 변경 없음
+attribute_stability,stable_attribute_stratum_count,integer,안정 속성 균형 학교가 속한 층 수,결측 불가
+attribute_stability,minimum_stable_attribute_graduate_coverage_share,float,구간별 안정 속성 학교의 졸업자 포괄률 최솟값,결측 불가
+stratified_trends,attribute,string,school_type 또는 province,결측 불가
+stratified_trends,stratum,string,원천 학교유형·단일 시도 또는 파생 복수시도·속성없음,결측 불가
+stratified_trends,employment_cohort_year,string,졸업 코호트 연도,결측 불가
+stratified_trends,employment_source_panel_year,string,선택된 취업 원천 파일 연도,결측 불가
+stratified_trends,employment_reference_date,string,취업 관찰 기준일,결측 불가
+stratified_trends,employment_reference_date_basis,string,취업 관찰 기준일 규칙,결측 불가
+stratified_trends,comparison_interval,string,동일 기준일을 사용하는 비교 구간,결측 불가
+stratified_trends,previous_comparable_cohort_year,string,같은 구간·층의 직전 인접 코호트,구간 시작 또는 직전 층 미존재시 공란
+stratified_trends,all_available_school_count,integer,현재 연도 해당 층의 모든 관측 학교 수,결측 불가
+stratified_trends,stratum_balanced_school_count,integer,구간 내내 같은 층에 있는 학교 수,0은 자격 학교 없음
+stratified_trends,stratum_balanced_school_coverage_share,float,층 고정 균형 학교 수 나누기 전체 층 학교 수,전체 학교 0시 공란
+stratified_trends,all_available_source_record_count,integer,현재 층의 선택 원천 행 수,결측 불가
+stratified_trends,stratum_balanced_source_record_count,integer,층 고정 균형 학교의 선택 원천 행 수,0은 자격 학교 없음
+stratified_trends,all_available_reported_graduate_count,integer,현재 층의 원천 보고 졸업자 합계,결측 불가
+stratified_trends,stratum_balanced_reported_graduate_count,integer,층 고정 균형 학교의 원천 보고 졸업자 합계,0은 자격 학교 없음
+stratified_trends,stratum_balanced_graduate_coverage_share,float,층 고정 졸업자 합계 나누기 전체 층 졸업자 합계,전체 졸업자 0시 공란
+stratified_trends,all_available_reported_employed_count,integer,현재 층의 원천 보고 취업자 합계,결측 불가
+stratified_trends,stratum_balanced_reported_employed_count,integer,층 고정 균형 학교의 원천 보고 취업자 합계,0은 자격 학교 없음
+stratified_trends,all_available_reported_employed_share_of_graduates,float,취업자 합계 나누기 졸업자 합계,졸업자 0시 공란
+stratified_trends,stratum_balanced_reported_employed_share_of_graduates,float,균형 취업자 합계 나누기 균형 졸업자 합계,균형 졸업자 0시 공란
+stratified_trends,balanced_minus_all_reported_employed_share_pp,float,균형 비율 빼기 전체 비율의 퍼센트포인트 차이,둘 중 하나가 공란이면 공란
+stratified_trends,all_available_share_change_pp_from_previous_comparable_cohort,float,같은 구간·층 직전 인접 코호트 대비 전체 비율 변화,비교 불가시 공란
+stratified_trends,stratum_balanced_share_change_pp_from_previous_comparable_cohort,float,같은 구간·층 직전 인접 코호트 대비 균형 비율 변화,비교 불가시 공란
+stratified_trends,balanced_minus_all_yoy_change_pp,float,균형 변화량 빼기 전체 변화량,비교 불가시 공란

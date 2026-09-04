@@ -27,6 +27,11 @@
 - `edss_employment_balanced_panel_sensitivity.csv`: 동일 기준일 구간의 연속 관측 학교로 구성한 균형 패널과 전체 표본의 11개 코호트 설명적 비율·포괄률·전년 변화 비교
 - `edss_employment_balanced_panel_sensitivity.json`: 균형 패널 정의, 구간별 학교 수, 2016→2020 민감도 결과, 방향 일치 검사, 한계와 CSV SHA-256
 - `edss_employment_balanced_panel_data_dictionary.csv`: 균형 패널 민감도 표 25개 열의 자료형·변환·의미·결측 규칙
+- `edss_employment_stratified_attribute_quality.csv`: 2010–2020 취업 코호트의 학교유형·시도 속성 결측, 복수값, 학교·졸업자 포괄률 연도별 검사
+- `edss_employment_stratified_attribute_stability.csv`: 기준일 구간별 균형 학교의 학교유형·시도 완전성, 층 변경, 안정 학교·졸업자 포괄률
+- `edss_employment_stratified_trends.csv`: 학교유형 4개와 시도 계열 18개 층의 합계 가중 설명적 취업자 비율, 인접 코호트 변화, 층 고정 균형 패널 민감도
+- `edss_employment_stratified_trends.json`: 속성 정의, 결측·안정성 요약, 2016→2020 층별 변화, 합계 재조정 검사, 한계와 세 출력 CSV의 SHA-256
+- `edss_employment_stratified_data_dictionary.csv`: 속성 품질·안정성·층화 추세 출력 열의 자료형·의미·결측 규칙
 - `edss_employment_2022_official_verification.json`: 공식 2021·2022년 조사대상 정의와 EDSS 2021·2022년 원본의 조사년도·졸업년월·학교 집계를 대조한 감사. 2022년 원본의 공식 코호트 불일치와 시계열 제외 결정을 기록한다.
 - `edss_employment_cohort_year_audit.csv`: 2010–2022 취업 파일 연도별 원천 행 수, 졸업월 범위, 추론 코호트, 관측 기준일, 반복 파동, 공식 동일 연도 정의 충돌과 최종 선택 판정
 - `edss_employment_cohort_year_audit.json`: 7,277,987행의 코호트 시간축 감사 요약, 2014년 6월·12월 파동 해소, 2022년 정확 반복 제외, 공식 정의와 안전 사용 규칙

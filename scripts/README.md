@@ -25,6 +25,7 @@ EDSS 다운로드, 압축 해제, 원본 목록 작성, 표준화, 품질검사 
 - `audit_edss_employment_cohort_years.py`: 제한 취업통계의 파일 연도와 실제 졸업 코호트를 분리하고, 반복 코호트의 졸업월 분포와 학교 집계 일치율을 검증한다. 2014년 6월 파동과 12월 파동을 구분해 후자를 선택하고 2022년 정확 반복을 제외한다. 결과에는 연도·학교 집계 건수만 기록하며 개인 수준 값은 출력하지 않는다.
 - `build_edss_employment_cohort_trends.py`: 최종 2010–2020 학교–코호트 마트를 11개 코호트 기초 추세로 집계한다. 6월 1일과 12월 31일 비교 구간을 분리해 구간 내부에서만 전년 증감을 계산하고, 공식 취업률이 아닌 설명적 원천 비율과 품질 가드레일을 출력한다.
 - `analyze_edss_employment_balanced_panel.py`: 같은 기준일 구간의 모든 코호트에 관측된 학교만 남겨 전체 표본과 균형 패널의 설명적 취업자 비율을 비교한다. 학교 진입·이탈과 포괄률을 집계하고 OpenID는 출력하지 않는다.
+- `analyze_edss_employment_stratified_trends.py`: 동일 연도 학교유형·시도 속성의 결측과 구간 내 안정성을 먼저 검증한 뒤 층화 추세를 만든다. 복수 캠퍼스 시도를 별도 층으로 보존하고, 같은 비교 구간·합계 가중·층 고정 균형 패널 민감도 규칙을 적용한다.
 
 전체 233개 패널 빌드는 저장소 루트에서 다음과 같이 실행한다.
 
@@ -42,4 +43,5 @@ uv run --offline --with duckdb==1.4.1 python scripts/build_edss_duckdb.py
 uv run --with duckdb==1.4.1 python scripts/audit_edss_employment_cohort_years.py
 uv run --with duckdb==1.4.1 python scripts/build_edss_employment_cohort_trends.py
 uv run --with duckdb==1.4.1 python scripts/analyze_edss_employment_balanced_panel.py
+uv run --with duckdb==1.4.1 python scripts/analyze_edss_employment_stratified_trends.py
 ```

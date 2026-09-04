@@ -1,0 +1,295 @@
+{
+  "version": 1,
+  "generated_at": "2026-09-04T05:14:16.172943+00:00",
+  "status": "share_with_caveats",
+  "question": "How do reported-employed descriptive shares vary by school type and province, and do 2016-to-2020 directions persist in stratum-balanced panels?",
+  "source": {
+    "database": "data/processed/edss/restricted/edss_all.duckdb",
+    "view": "analysis.school_year_core_with_employment_cohort_2010_2020",
+    "grain": "one row per school and employment graduation cohort",
+    "quality_profile": {
+      "row_count": 5969,
+      "blank_open_id_row_count": 0,
+      "duplicate_school_cohort_key_count": 0,
+      "negative_measure_value_count": 0,
+      "cohort_count": 11,
+      "first_cohort_year": "2010",
+      "last_cohort_year": "2020"
+    }
+  },
+  "attribute_definitions": {
+    "school_type": "The exact single school_types value from the same-year 0101 school record; missing values remain 속성없음.",
+    "province": "The exact single provinces value from the same-year 0101 school record; schools spanning more than one province are 복수시도 and missing values remain 속성없음."
+  },
+  "attribute_quality": {
+    "missing_by_attribute": {
+      "school_type": {
+        "school_cohort_count": 3,
+        "reported_graduate_count": 1441
+      },
+      "province": {
+        "school_cohort_count": 3,
+        "reported_graduate_count": 1441
+      }
+    },
+    "stability_by_interval": [
+      {
+        "attribute": "province",
+        "comparison_interval": "december_31_2014_2020",
+        "first_cohort_year": "2014",
+        "last_cohort_year": "2020",
+        "interval_balanced_school_count": 515,
+        "complete_attribute_balanced_school_count": 515,
+        "stable_attribute_balanced_school_count": 505,
+        "unstable_attribute_balanced_school_count": 10,
+        "stable_attribute_school_share": 0.980582524,
+        "attribute_transition_count": 12,
+        "stable_attribute_stratum_count": 18,
+        "minimum_stable_attribute_graduate_coverage_share": 0.981272513
+      },
+      {
+        "attribute": "province",
+        "comparison_interval": "june_1_2010_2013",
+        "first_cohort_year": "2010",
+        "last_cohort_year": "2013",
+        "interval_balanced_school_count": 496,
+        "complete_attribute_balanced_school_count": 496,
+        "stable_attribute_balanced_school_count": 484,
+        "unstable_attribute_balanced_school_count": 12,
+        "stable_attribute_school_share": 0.975806452,
+        "attribute_transition_count": 12,
+        "stable_attribute_stratum_count": 17,
+        "minimum_stable_attribute_graduate_coverage_share": 0.969116081
+      },
+      {
+        "attribute": "school_type",
+        "comparison_interval": "december_31_2014_2020",
+        "first_cohort_year": "2014",
+        "last_cohort_year": "2020",
+        "interval_balanced_school_count": 515,
+        "complete_attribute_balanced_school_count": 515,
+        "stable_attribute_balanced_school_count": 515,
+        "unstable_attribute_balanced_school_count": 0,
+        "stable_attribute_school_share": 1.0,
+        "attribute_transition_count": 0,
+        "stable_attribute_stratum_count": 4,
+        "minimum_stable_attribute_graduate_coverage_share": 1.0
+      },
+      {
+        "attribute": "school_type",
+        "comparison_interval": "june_1_2010_2013",
+        "first_cohort_year": "2010",
+        "last_cohort_year": "2013",
+        "interval_balanced_school_count": 496,
+        "complete_attribute_balanced_school_count": 496,
+        "stable_attribute_balanced_school_count": 496,
+        "unstable_attribute_balanced_school_count": 0,
+        "stable_attribute_school_share": 1.0,
+        "attribute_transition_count": 0,
+        "stable_attribute_stratum_count": 4,
+        "minimum_stable_attribute_graduate_coverage_share": 1.0
+      }
+    ]
+  },
+  "metric_definition": "sum(reported_employed_count) / sum(reported_graduate_count) within attribute, stratum, and cohort; this is not the official employment rate",
+  "stratum_balanced_definition": "A school OpenID must be observed in the same nonmissing stratum in every cohort of the reference-date interval.",
+  "findings": {
+    "changes_2016_to_2020_by_attribute": {
+      "school_type": [
+        {
+          "stratum": "대학",
+          "all_available_change_pp": -3.400761,
+          "stratum_balanced_change_pp": -3.350393,
+          "balanced_school_count": 190,
+          "minimum_endpoint_balanced_graduate_coverage_share": 0.964425827
+        },
+        {
+          "stratum": "대학원",
+          "all_available_change_pp": -2.0243,
+          "stratum_balanced_change_pp": -2.011519,
+          "balanced_school_count": 164,
+          "minimum_endpoint_balanced_graduate_coverage_share": 0.999104685
+        },
+        {
+          "stratum": "대학원대학",
+          "all_available_change_pp": -4.054054,
+          "stratum_balanced_change_pp": -4.054054,
+          "balanced_school_count": 1,
+          "minimum_endpoint_balanced_graduate_coverage_share": 1.0
+        },
+        {
+          "stratum": "전문대학",
+          "all_available_change_pp": -4.427616,
+          "stratum_balanced_change_pp": -4.458248,
+          "balanced_school_count": 160,
+          "minimum_endpoint_balanced_graduate_coverage_share": 0.988030392
+        }
+      ],
+      "province": [
+        {
+          "stratum": "강원",
+          "all_available_change_pp": -3.339572,
+          "stratum_balanced_change_pp": -3.2403,
+          "balanced_school_count": 23,
+          "minimum_endpoint_balanced_graduate_coverage_share": 0.9789064
+        },
+        {
+          "stratum": "경기",
+          "all_available_change_pp": -4.812551,
+          "stratum_balanced_change_pp": -4.816419,
+          "balanced_school_count": 78,
+          "minimum_endpoint_balanced_graduate_coverage_share": 0.939915016
+        },
+        {
+          "stratum": "경남",
+          "all_available_change_pp": -4.64277,
+          "stratum_balanced_change_pp": -5.071659,
+          "balanced_school_count": 25,
+          "minimum_endpoint_balanced_graduate_coverage_share": 0.965765597
+        },
+        {
+          "stratum": "경북",
+          "all_available_change_pp": -3.778403,
+          "stratum_balanced_change_pp": -3.93692,
+          "balanced_school_count": 47,
+          "minimum_endpoint_balanced_graduate_coverage_share": 0.952359483
+        },
+        {
+          "stratum": "광주",
+          "all_available_change_pp": -4.342858,
+          "stratum_balanced_change_pp": -4.260286,
+          "balanced_school_count": 25,
+          "minimum_endpoint_balanced_graduate_coverage_share": 0.969556759
+        },
+        {
+          "stratum": "대구",
+          "all_available_change_pp": -4.711658,
+          "stratum_balanced_change_pp": -4.577825,
+          "balanced_school_count": 14,
+          "minimum_endpoint_balanced_graduate_coverage_share": 0.978522369
+        },
+        {
+          "stratum": "대전",
+          "all_available_change_pp": -2.083223,
+          "stratum_balanced_change_pp": -2.306432,
+          "balanced_school_count": 25,
+          "minimum_endpoint_balanced_graduate_coverage_share": 0.960455627
+        },
+        {
+          "stratum": "복수시도",
+          "all_available_change_pp": -2.003564,
+          "stratum_balanced_change_pp": -2.229535,
+          "balanced_school_count": 31,
+          "minimum_endpoint_balanced_graduate_coverage_share": 0.964029879
+        },
+        {
+          "stratum": "부산",
+          "all_available_change_pp": -5.625128,
+          "stratum_balanced_change_pp": -5.625128,
+          "balanced_school_count": 35,
+          "minimum_endpoint_balanced_graduate_coverage_share": 1.0
+        },
+        {
+          "stratum": "서울",
+          "all_available_change_pp": -3.474753,
+          "stratum_balanced_change_pp": -3.062413,
+          "balanced_school_count": 72,
+          "minimum_endpoint_balanced_graduate_coverage_share": 0.906916016
+        },
+        {
+          "stratum": "세종",
+          "all_available_change_pp": -2.023352,
+          "stratum_balanced_change_pp": -2.023352,
+          "balanced_school_count": 3,
+          "minimum_endpoint_balanced_graduate_coverage_share": 1.0
+        },
+        {
+          "stratum": "울산",
+          "all_available_change_pp": -3.754915,
+          "stratum_balanced_change_pp": -3.754915,
+          "balanced_school_count": 7,
+          "minimum_endpoint_balanced_graduate_coverage_share": 1.0
+        },
+        {
+          "stratum": "인천",
+          "all_available_change_pp": -5.167117,
+          "stratum_balanced_change_pp": -5.167117,
+          "balanced_school_count": 10,
+          "minimum_endpoint_balanced_graduate_coverage_share": 1.0
+        },
+        {
+          "stratum": "전남",
+          "all_available_change_pp": -0.651816,
+          "stratum_balanced_change_pp": -0.384708,
+          "balanced_school_count": 25,
+          "minimum_endpoint_balanced_graduate_coverage_share": 0.941148325
+        },
+        {
+          "stratum": "전북",
+          "all_available_change_pp": -1.246611,
+          "stratum_balanced_change_pp": -0.559124,
+          "balanced_school_count": 25,
+          "minimum_endpoint_balanced_graduate_coverage_share": 0.964214154
+        },
+        {
+          "stratum": "제주",
+          "all_available_change_pp": -5.223061,
+          "stratum_balanced_change_pp": -5.424396,
+          "balanced_school_count": 4,
+          "minimum_endpoint_balanced_graduate_coverage_share": 0.938193344
+        },
+        {
+          "stratum": "충남",
+          "all_available_change_pp": -3.957509,
+          "stratum_balanced_change_pp": -3.84664,
+          "balanced_school_count": 31,
+          "minimum_endpoint_balanced_graduate_coverage_share": 0.875841486
+        },
+        {
+          "stratum": "충북",
+          "all_available_change_pp": -2.676236,
+          "stratum_balanced_change_pp": -2.749922,
+          "balanced_school_count": 25,
+          "minimum_endpoint_balanced_graduate_coverage_share": 0.980174292
+        }
+      ]
+    },
+    "all_vs_balanced_direction_agreement_count": 22,
+    "all_vs_balanced_comparable_stratum_count": 22
+  },
+  "validation": {
+    "unique_attribute_stratum_cohort_keys": true,
+    "school_type_strata_reconcile_to_source_by_cohort": true,
+    "province_strata_reconcile_to_source_by_cohort": true,
+    "interval_start_changes_are_null": true
+  },
+  "guardrails": [
+    "Do not label the derived share as the official employment rate.",
+    "Do not calculate a 2013-to-2014 change because the reference date changes.",
+    "Do not interpret the descriptive differences as causal effects.",
+    "Treat 복수시도 as a separate campus-footprint category, not as one province.",
+    "Treat small strata, especially 대학원대학 and 세종, as unstable estimates.",
+    "Do not use 2015-2018 further-study fields; they are outside this output and unreliable."
+  ],
+  "outputs": {
+    "attribute_quality_csv": {
+      "path": "data/metadata/edss_employment_stratified_attribute_quality.csv",
+      "row_count": 22,
+      "column_count": 14,
+      "sha256": "951de53c7018c07704a92007651370f456f9ab5825bebb31598ec8db43c5b4f2"
+    },
+    "attribute_stability_csv": {
+      "path": "data/metadata/edss_employment_stratified_attribute_stability.csv",
+      "row_count": 4,
+      "column_count": 12,
+      "sha256": "324ae32519bfb29fb2cc255c68e715dbdba9504fc4dbad63a9d66cf4c4dcc9fd"
+    },
+    "stratified_trends_csv": {
+      "path": "data/metadata/edss_employment_stratified_trends.csv",
+      "row_count": 241,
+      "column_count": 24,
+      "sha256": "07dcd57ca4e525d2b30a20e8bc7377e20d063e6cc83453e6cb92634593c5b4c0"
+    }
+  },
+  "privacy": "Outputs contain attribute-stratum aggregates only; OpenIDs are used in memory for panel membership and are not exported."
+}

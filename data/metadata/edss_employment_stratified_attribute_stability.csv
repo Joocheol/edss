@@ -1,0 +1,5 @@
+attribute,comparison_interval,first_cohort_year,last_cohort_year,interval_balanced_school_count,complete_attribute_balanced_school_count,stable_attribute_balanced_school_count,unstable_attribute_balanced_school_count,stable_attribute_school_share,attribute_transition_count,stable_attribute_stratum_count,minimum_stable_attribute_graduate_coverage_share
+province,december_31_2014_2020,2014,2020,515,515,505,10,0.980582524,12,18,0.981272513
+province,june_1_2010_2013,2010,2013,496,496,484,12,0.975806452,12,17,0.969116081
+school_type,december_31_2014_2020,2014,2020,515,515,515,0,1.0,0,4,1.0
+school_type,june_1_2010_2013,2010,2013,496,496,496,0,1.0,0,4,1.0
