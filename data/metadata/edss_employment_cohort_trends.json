@@ -1,0 +1,56 @@
+{
+  "version": 1,
+  "generated_at": "2026-09-04T03:44:24.777311+00:00",
+  "status": "complete_with_comparability_caveat",
+  "source": {
+    "database": "data/processed/edss/restricted/edss_all.duckdb",
+    "view": "analysis.employment_cohort_school_2010_2020",
+    "grain": "one row per employment graduation cohort"
+  },
+  "coverage": {
+    "cohort_count": 11,
+    "first_cohort_year": "2010",
+    "last_cohort_year": "2020",
+    "school_cohort_key_count": 5969,
+    "selected_source_record_count": 6167230
+  },
+  "comparison_intervals": [
+    {
+      "name": "june_1_2010_2013",
+      "reference_date_basis": "june_1",
+      "first_cohort_year": "2010",
+      "last_cohort_year": "2013",
+      "cohort_count": 4
+    },
+    {
+      "name": "december_31_2014_2020",
+      "reference_date_basis": "december_31",
+      "first_cohort_year": "2014",
+      "last_cohort_year": "2020",
+      "cohort_count": 7
+    }
+  ],
+  "metric_definitions": {
+    "reported_employed_share_of_graduates": "sum(reported_employed_count) / sum(reported_graduate_count); descriptive source share, not the official employment rate",
+    "reported_employed_share_change_pp_from_previous_comparable_cohort": "percentage-point change from the prior cohort only within the same reference-date interval",
+    "reported_further_study_share_of_graduates": "sum(reported_further_study_count) / sum(reported_graduate_count); null when the source field is all zero and not trustworthy"
+  },
+  "guardrails": [
+    "Do not label any derived share as the official employment rate.",
+    "Do not calculate a 2013-to-2014 year-over-year change because the reference date changes from June 1 to December 31.",
+    "Do not use the further-study share for cohorts 2015-2018; the source field is entirely zero.",
+    "Treat all results as descriptive aggregates; they do not identify causal effects."
+  ],
+  "validation": {
+    "expected_cohorts_present": true,
+    "interval_start_yoy_is_null": true,
+    "unreliable_further_study_shares_are_null": true
+  },
+  "output": {
+    "csv": "data/metadata/edss_employment_cohort_trends.csv",
+    "row_count": 11,
+    "column_count": 28,
+    "sha256": "6d98f884a6487d55f347113a51f665b68bc7a1524cc553229485ef3ee424d961"
+  },
+  "privacy": "The output contains cohort-level totals only and no person-level, company, thesis, or direct identifier fields."
+}

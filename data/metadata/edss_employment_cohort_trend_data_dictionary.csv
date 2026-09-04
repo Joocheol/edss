@@ -1,0 +1,29 @@
+column_name,data_type,source,transformation,meaning,missingness_rule
+employment_cohort_year,VARCHAR,analysis.employment_cohort_school_2010_2020,group_key,졸업년월에서 확정한 취업 졸업 코호트 연도,공란 불가
+employment_source_panel_year,VARCHAR,analysis.employment_cohort_school_2010_2020,group_key,선택된 EDSS 원본 파일 연도,공란 불가
+employment_reference_date,VARCHAR,analysis.employment_cohort_school_2010_2020,group_key,선택된 관측 파동의 조사 기준일,공란 불가
+employment_reference_date_basis,VARCHAR,analysis.employment_cohort_school_2010_2020,group_key,조사 기준일 체계 june_1 또는 december_31,공란 불가
+employment_comparability_regime,VARCHAR,analysis.employment_cohort_school_2010_2020,group_key,원천 마트가 보존한 세부 비교 체계,공란 불가
+comparison_interval,VARCHAR,derived,reference_date_interval,전년 비교를 허용하는 동일 기준일 구간,공란 불가
+trend_use_status,VARCHAR,derived,previous_within_interval,구간 시작 또는 동일 기준일 전년 비교 가능 상태,공란 불가
+previous_comparable_cohort_year,VARCHAR,derived,lag_within_comparison_interval,동일 기준일 구간 안의 직전 코호트 연도,2010년과 2014년은 구간 시작이므로 공란
+reference_date_comparable_to_previous,BOOLEAN,derived,previous_within_interval,직전 코호트와 기준일이 같은지 여부,공란 불가
+school_count,BIGINT,analysis.employment_cohort_school_2010_2020,count_rows,코호트별 학교 OpenID 집계 행 수,공란 불가
+source_record_count,BIGINT,analysis.employment_cohort_school_2010_2020,sum,코호트에 선택된 제한 원천 레코드 수,공란 불가
+reported_graduate_count,BIGINT,analysis.employment_cohort_school_2010_2020,sum,원천 보고 졸업학생 수 합계,공란 불가
+reported_graduate_count_change_from_previous_comparable_cohort,BIGINT,derived,current_minus_previous_within_interval,같은 기준일 구간 직전 코호트 대비 졸업학생 수 변화,2010년과 2014년은 공란
+reported_employed_count,BIGINT,analysis.employment_cohort_school_2010_2020,sum,원천 보고 취업자 수 합계,공란 불가
+reported_employed_share_of_graduates,DOUBLE,derived,sum_reported_employed_divided_by_sum_reported_graduates,원천 보고 졸업학생 수 대비 원천 보고 취업자 수 설명적 비율이며 공식 취업률이 아님,공란 불가
+reported_employed_count_change_from_previous_comparable_cohort,BIGINT,derived,current_minus_previous_within_interval,같은 기준일 구간 직전 코호트 대비 원천 보고 취업자 수 변화,2010년과 2014년은 공란
+reported_employed_share_change_pp_from_previous_comparable_cohort,DOUBLE,derived,share_percentage_point_change_within_interval,같은 기준일 구간 직전 코호트 대비 설명적 취업자 비율 퍼센트포인트 변화,2010년과 2014년은 공란
+reported_health_insurance_employed_count,BIGINT,analysis.employment_cohort_school_2010_2020,sum,원천 보고 건강보험 취업자 수 합계,공란 불가
+reported_health_insurance_employed_share_of_graduates,DOUBLE,derived,sum_reported_health_insurance_employed_divided_by_sum_reported_graduates,졸업학생 수 대비 건강보험 취업자 수 설명적 비율,공란 불가
+reported_school_employed_count,BIGINT,analysis.employment_cohort_school_2010_2020,sum,원천 보고 교내 취업자 수 합계,공란 불가
+reported_further_study_count,BIGINT,analysis.employment_cohort_school_2010_2020,sum,원천 보고 진학자 수 합계,공란 불가이나 2015–2018 코호트는 원천 전부 0
+reported_further_study_share_of_graduates,DOUBLE,derived,sum_reported_further_study_divided_by_sum_reported_graduates,졸업학생 수 대비 진학자 수 설명적 비율,원천 전부 0인 2015–2018 코호트는 공란
+further_study_quality_status,VARCHAR,analysis.employment_cohort_school_2010_2020,cohort_constant,진학자수 원천 열의 코호트별 품질 상태,공란 불가
+reported_excluded_count,BIGINT,analysis.employment_cohort_school_2010_2020,sum,원천 보고 제외인정자 수 합계,공란 불가
+reported_excluded_share_of_graduates,DOUBLE,derived,sum_reported_excluded_divided_by_sum_reported_graduates,졸업학생 수 대비 제외인정자 수 설명적 비율,공란 불가
+reported_other_count,BIGINT,analysis.employment_cohort_school_2010_2020,sum,원천 보고 기타 총계 합계,공란 불가
+reported_unknown_count,BIGINT,analysis.employment_cohort_school_2010_2020,sum,원천 보고 미상 수 합계,공란 불가
+reported_other_unknown_share_of_graduates,DOUBLE,derived,sum_reported_other_plus_unknown_divided_by_sum_reported_graduates,졸업학생 수 대비 기타와 미상 합계의 설명적 비율,공란 불가

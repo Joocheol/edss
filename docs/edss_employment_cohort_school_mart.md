@@ -91,5 +91,7 @@ WHERE _employment_cohort_exists = 'true';
 - 빌드 감사: `data/metadata/edss_duckdb_build.json`
 - 검산 노트북: `notebooks/edss_employment_cohort_year_audit.ipynb`
 - 합성 회귀 테스트: `tests/test_build_edss_duckdb.py`
+- 코호트 기초 추세: `docs/edss_employment_cohort_trends.md`
+- 코호트 추세표: `data/metadata/edss_employment_cohort_trends.csv`
 
 연속 추세 그래프는 넣지 않았다. 2013↔2014 기준일 단절을 시각적으로 한 계열처럼 연결하면 잘못된 해석을 유도할 수 있어, 선택 매핑과 검증 수치를 정확한 표로 제시하는 편이 안전하다.

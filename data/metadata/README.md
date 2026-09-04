@@ -21,6 +21,9 @@
 - `edss_school_year_core_data_dictionary.csv`: `analysis.school_year_core_2010_2022`의 31개 열에 대한 자료형·원천·변환·결측 처리 규칙
 - `edss_employment_school_year_data_dictionary.csv`: 2010–2022 제한 취업통계를 7,058개 학교연도로 집계한 17개 열의 자료형·원천·품질 상태·결측 규칙
 - `edss_employment_cohort_school_data_dictionary.csv`: 승인된 원천 11개를 2010–2020 졸업 코호트 5,969개 학교 키로 재구성한 최종 취업 마트 22개 열의 자료형·기준일·선택 상태·비교 구간·결측 규칙
+- `edss_employment_cohort_trends.csv`: 최종 학교–코호트 마트를 2010–2020 코호트 11행으로 집계한 기초 추세표. 기준일이 같은 구간 안에서만 전년 변화값을 가지며 공식 취업률은 포함하지 않는다.
+- `edss_employment_cohort_trends.json`: 기초 추세표의 비교 구간·지표 정의·안전 규칙·검증 결과와 CSV SHA-256
+- `edss_employment_cohort_trend_data_dictionary.csv`: 코호트 추세표 28개 열의 자료형·변환·의미·결측 규칙
 - `edss_employment_2022_official_verification.json`: 공식 2021·2022년 조사대상 정의와 EDSS 2021·2022년 원본의 조사년도·졸업년월·학교 집계를 대조한 감사. 2022년 원본의 공식 코호트 불일치와 시계열 제외 결정을 기록한다.
 - `edss_employment_cohort_year_audit.csv`: 2010–2022 취업 파일 연도별 원천 행 수, 졸업월 범위, 추론 코호트, 관측 기준일, 반복 파동, 공식 동일 연도 정의 충돌과 최종 선택 판정
 - `edss_employment_cohort_year_audit.json`: 7,277,987행의 코호트 시간축 감사 요약, 2014년 6월·12월 파동 해소, 2022년 정확 반복 제외, 공식 정의와 안전 사용 규칙
