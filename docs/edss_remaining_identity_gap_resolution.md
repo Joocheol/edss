@@ -85,3 +85,5 @@ python3 scripts/resolve_edss_remaining_identity_gaps.py
 ```
 
 `apply_edss_employment_open_id_candidates.py --approve-inferred-crosswalk`는 기존 추론 적용 결과를 재현할 때만 사용한다. 그 출력은 종단 패널 통합 대상이 아니다.
+
+DuckDB 기본 조회 계층은 이 결정을 강제한다. `analysis.employment_legacy_2010_2022`는 2010–2022년만 포함하고, `analysis.employment_2023_2024_standalone`은 정식·후보 OpenID 열 없이 독립 기술통계만 제공한다. 이전 `analysis.employment_2023_2024_resolved` 뷰는 제거한다.

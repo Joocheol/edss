@@ -1,11 +1,21 @@
 {
   "status": "complete",
-  "generated_at": "2026-09-02T04:28:34.475508+00:00",
+  "generated_at": "2026-09-04T01:45:52.746729+00:00",
   "duckdb_version": "1.4.1",
+  "inputs": {
+    "standalone_employment": {
+      "relative_path": "data/processed/edss/derived/employment_2023_2024_school_department.csv.gz",
+      "sha256": "ee68db81e54ac5b0bcb01362d2f1067af33d066f53a629d0df186fc12426afc5"
+    },
+    "identity_resolution_summary": {
+      "relative_path": "data/metadata/edss_remaining_identity_gap_resolution.json",
+      "sha256": "e999d549af8c437db156bdeab081bb216f3d096e61fae6a7fd826e9740d83d90"
+    }
+  },
   "database": {
     "relative_path": "data/processed/edss/restricted/edss_all.duckdb",
-    "bytes": 16044535808,
-    "sha256": "5a019a6844a8ce4960a4e736fccb497cf278b55b36e09ca46e405e24dd04a101"
+    "bytes": 16048992256,
+    "sha256": "a7c68f21f624eda07230bdf4ce9b5ef74bb9532ece76b770da1bb1c53f2db3de"
   },
   "catalog": {
     "relative_path": "data/metadata/edss_panel_catalog.csv",
@@ -24,20 +34,39 @@
     }
   },
   "build": {
-    "loaded_this_run": 231,
-    "skipped_current_this_run": 2,
+    "loaded_this_run": 0,
+    "skipped_current_this_run": 233,
     "manifest_table_count": 233,
     "manifest_panel_row_count": 180119183,
-    "elapsed_seconds": 502.3
+    "elapsed_seconds": 13.3
   },
-  "resolved_employment": {
-    "schema": "employment",
-    "table": "safe_2023_2024_resolved",
-    "rows": 46962,
-    "columns": 36,
-    "applied_open_id_rows": 13920,
-    "remaining_missing_open_id_rows": 33042,
-    "sha256": "662d76392e62d2cf45735119d37cde6aefeb1c60eae3ef71eea064e299e22fd3"
+  "employment_analysis_views": {
+    "status": "complete_with_scope_exclusion",
+    "legacy": {
+      "view": "analysis.employment_legacy_2010_2022",
+      "rows": 7277987,
+      "columns": 179,
+      "first_year": "2010",
+      "last_year": "2022",
+      "scope_excluded_year_rows": 0,
+      "missing_open_id_rows": 0
+    },
+    "standalone": {
+      "schema": "employment",
+      "table": "safe_2023_2024_standalone",
+      "view": "analysis.employment_2023_2024_standalone",
+      "rows": 46962,
+      "columns": 31,
+      "years": [
+        "2023",
+        "2024"
+      ],
+      "canonical_open_id_column_present": false,
+      "candidate_open_id_column_present": false,
+      "blank_school_name_rows": 0,
+      "sha256": "ee68db81e54ac5b0bcb01362d2f1067af33d066f53a629d0df186fc12426afc5"
+    },
+    "removed_default_analysis_view": "analysis.employment_2023_2024_resolved"
   },
   "validation": {
     "catalog_paths_missing": 0,
@@ -46,6 +75,9 @@
     "blank_strings_preserved_as_empty_strings": true,
     "all_source_columns_loaded_as_varchar": true,
     "incompatible_panel_grains_concatenated": false,
+    "legacy_employment_year_boundary_enforced": true,
+    "standalone_employment_open_id_columns_removed": true,
+    "schema_break_scope_excluded_rows": 46962,
     "database_access_tier": "restricted"
   }
 }

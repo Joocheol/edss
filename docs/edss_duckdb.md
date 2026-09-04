@@ -4,7 +4,7 @@
 
 `data/processed/edss/restricted/edss_all.duckdb`는 EDSS 세 필수 분야의 233개 논리 패널을 하나의 파일에서 조회할 수 있게 만든 DuckDB 1.4.1 데이터베이스다. 패널마다 grain과 열 구성이 다르므로 서로 연결하지 않고 독립 테이블로 보존했다.
 
-2026-09-02 전체 빌드 결과는 다음과 같다.
+2026-09-04 전체 재검증 결과는 다음과 같다.
 
 | 소스 | 스키마 | 패널 테이블 | 행 수 |
 |---|---|---:|---:|
@@ -13,19 +13,22 @@
 | 취업통계 | `employment` | 1 | 7,324,949 |
 | 합계 |  | 233 | 180,119,183 |
 
-DB 크기는 16,044,535,808 bytes이며 SHA-256은 `5a019a6844a8ce4960a4e736fccb497cf278b55b36e09ca46e405e24dd04a101`이다. 데이터 파일 자체는 Git에서 제외하고 빌드 감사 결과만 `data/metadata/edss_duckdb_build.json`에 보존한다.
+DB 크기는 16,048,992,256 bytes이며 SHA-256은 `a7c68f21f624eda07230bdf4ce9b5ef74bb9532ece76b770da1bb1c53f2db3de`이다. 데이터 파일 자체는 Git에서 제외하고 빌드 감사 결과만 `data/metadata/edss_duckdb_build.json`에 보존한다.
 
 ## 스키마와 테이블
 
 - `higher_education.panel_{catalog_code}`: 고등교육통계 패널
 - `university_disclosure.panel_{catalog_code}`: 대학정보공시 패널
 - `employment.panel_0001`: 전체 취업통계 제한 패널
-- `employment.safe_2023_2024_resolved`: 개인형 열을 제거하고 추론 OpenID 적용 기록을 보존한 2023–2024 독립 참고 패널. 기존 OpenID 종단 분석에서는 제외한다.
+- `employment.safe_2023_2024_standalone`: 개인형 열과 정식·후보 OpenID 열을 모두 제거한 2023–2024 독립 참고 패널
 - `meta.panel_catalog`: 원본 카탈로그와 DuckDB 테이블의 대응표
 - `meta.load_manifest`: 적재 입력 SHA-256, 기대·실제 행과 열, 적재 시각
 - `meta.database_summary`: 완전성 요약 한 행
 - `analysis.panel_inventory`: 패널 카탈로그 조회 뷰
-- `analysis.employment_2023_2024_resolved`: 안전 취업 패널 분석 뷰
+- `analysis.employment_legacy_2010_2022`: 연도가 2010–2022로 고정되고 OpenID 결측이 없는 제한 종단 분석 뷰
+- `analysis.employment_2023_2024_standalone`: OpenID 열이 없는 2023–2024 학교·학과 기술통계 뷰
+
+이전 `analysis.employment_2023_2024_resolved` 뷰와 `employment.safe_2023_2024_resolved` 테이블은 기본 조회 계층에서 제거한다. 추론 적용 파일은 파일 기반 감사 산출물로만 보존한다.
 
 동일한 카탈로그 코드가 출처마다 반복될 수 있으므로 반드시 스키마까지 포함한 이름을 사용한다. 카탈로그의 `domain_column_count`는 원래 업무열 수이고 `loaded_column_count`는 공통 출처 추적열 12개를 포함한 실제 테이블 열 수다.
 
@@ -54,10 +57,15 @@ FROM higher_education.panel_0101
 WHERE 조사년도 = '2024'
 LIMIT 100;
 
--- 개인정보형 열이 없는 2023–2024 독립 참고 자료(종단 결합 금지)
-SELECT _panel_year, 개방ID, 학교명, 학과명, 취업비율,
-       _open_id_resolution_status
-FROM analysis.employment_2023_2024_resolved
+-- 2010–2022 OpenID 종단 분석(제한 자료)
+SELECT _panel_year, 개방ID, count(*) AS rows
+FROM analysis.employment_legacy_2010_2022
+GROUP BY _panel_year, 개방ID
+LIMIT 100;
+
+-- 개인정보형·OpenID 열이 없는 2023–2024 독립 참고 자료
+SELECT _panel_year, 학교명, 학과명, 취업비율
+FROM analysis.employment_2023_2024_standalone
 LIMIT 100;
 ```
 
@@ -65,6 +73,6 @@ LIMIT 100;
 
 ## 검증과 제한사항
 
-전체 빌드 후 읽기 전용 연결에서 233개 테이블 각각을 카탈로그와 대조했다. 행·열 불일치는 0건이고 적재 합계는 180,119,183행이다. 원본 패널 열은 모두 `VARCHAR`이며 빈 문자열을 SQL `NULL`로 바꾸지 않는다. 안전 취업 패널은 46,962행이고 이 중 검토된 추론 교차표로 OpenID가 적용된 행은 13,920행, 여전히 빈 행은 33,042행이다.
+전체 빌드 후 읽기 전용 연결에서 233개 테이블 각각을 카탈로그와 대조한다. 원본 패널 열은 모두 `VARCHAR`이며 빈 문자열을 SQL `NULL`로 바꾸지 않는다. 취업 조회 계층은 2010–2022년 종단 뷰 7,277,987행과 2023–2024년 독립 뷰 46,962행으로 분리한다. 종단 뷰의 2023–2024년 행과 OpenID 결측은 각각 0건이어야 하고, 독립 뷰에는 `개방ID`와 `_open_id_candidate` 열이 모두 없어야 한다.
 
-전체 DB에는 2010–2022 취업통계의 민감 가능 개인형 열이 포함된다. 따라서 파일 전체를 외부 공유하거나 일반 분석 경로에 복사하지 않는다. `analysis.employment_2023_2024_resolved`는 2023–2024년 내부의 학교명·학과 단위 기술통계와 추론 감사에만 사용하고 과거 OpenID 패널과 결합하지 않는다. 과거 취업 원본 접근은 제한 환경에서 목적·권한을 확인한 뒤 수행한다.
+전체 DB에는 2010–2022 취업통계의 민감 가능 개인형 열이 포함된다. 따라서 파일 전체를 외부 공유하거나 일반 분석 경로에 복사하지 않는다. `analysis.employment_2023_2024_standalone`은 2023–2024년 내부의 학교명·학과 단위 기술통계에만 사용하며 과거 OpenID 패널과 결합하지 않는다. 과거 취업 원본과 `analysis.employment_legacy_2010_2022` 접근은 제한 환경에서 목적·권한을 확인한 뒤 수행한다.

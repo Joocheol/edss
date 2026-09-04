@@ -3,9 +3,9 @@
 
 Each logical panel is stored as a separate table so incompatible grains and
 schemas are never flattened into one relation.  The full database is restricted
-because it contains the historical employment panel.  A privacy-safe resolved
-2023–2024 employment table is retained only for standalone reference analysis;
-it is excluded from legacy OpenID longitudinal integration.
+because it contains the historical employment panel.  The analysis layer
+enforces the 2023–2024 schema break: the legacy view ends in 2022, while the
+standalone 2023–2024 view contains no canonical or candidate OpenID column.
 """
 
 from __future__ import annotations
@@ -46,10 +46,12 @@ PROVENANCE_COLUMNS = (
 DEFAULT_CATALOG = Path("data/metadata/edss_panel_catalog.csv")
 DEFAULT_DATABASE = Path("data/processed/edss/restricted/edss_all.duckdb")
 DEFAULT_AUDIT = Path("data/metadata/edss_duckdb_build.json")
-DEFAULT_RESOLVED_EMPLOYMENT = Path(
-    "data/processed/edss/derived/employment_2023_2024_school_department_resolved.csv.gz"
+DEFAULT_STANDALONE_EMPLOYMENT = Path(
+    "data/processed/edss/derived/employment_2023_2024_school_department.csv.gz"
 )
-DEFAULT_APPLICATION_AUDIT = Path("data/metadata/edss_employment_open_id_application.json")
+DEFAULT_IDENTITY_RESOLUTION_SUMMARY = Path(
+    "data/metadata/edss_remaining_identity_gap_resolution.json"
+)
 
 
 def utc_now() -> str:
@@ -368,25 +370,46 @@ def replace_panel_catalog(connection, rows: list[dict[str, str]]) -> None:
     connection.executemany("INSERT INTO meta.panel_catalog VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", values)
 
 
-def load_resolved_employment(connection, source_path: Path, application_audit_path: Path) -> dict[str, object]:
+def load_employment_analysis_views(
+    connection,
+    source_path: Path,
+    resolution_summary_path: Path,
+) -> dict[str, object]:
+    """Load the standalone aggregate and enforce the legacy year boundary."""
+
     if not source_path.is_file():
-        raise RuntimeError(f"resolved employment panel is missing: {source_path}")
-    audit = json.loads(application_audit_path.read_text(encoding="utf-8"))
-    expected_sha256 = audit["output"]["sha256"]
+        raise RuntimeError(f"standalone employment panel is missing: {source_path}")
+    summary = json.loads(resolution_summary_path.read_text(encoding="utf-8"))
+    if summary["status"] != "complete_with_scope_exclusion":
+        raise RuntimeError("employment scope exclusion is not complete")
+    employment_summary = summary["employment"]
+    if employment_summary["legacy_panel_eligible_row_count"] != 0:
+        raise RuntimeError("employment scope summary still allows legacy-eligible rows")
+    expected_output = summary["outputs"]["derived_employment"]
+    expected_sha256 = expected_output["sha256"]
     actual_sha256 = sha256_file(source_path)
     if actual_sha256 != expected_sha256:
-        raise RuntimeError("resolved employment checksum does not match application audit")
+        raise RuntimeError(
+            "standalone employment checksum does not match identity-resolution summary"
+        )
+
+    with gzip.open(source_path, "rt", encoding="utf-8", newline="") as handle:
+        source_fields = next(csv.reader(handle))
+    if "개방ID" in source_fields:
+        raise RuntimeError("standalone employment source unexpectedly has canonical OpenID")
+    if "_open_id_candidate" not in source_fields:
+        raise RuntimeError("standalone employment source lacks the expected audit candidate field")
 
     schema_name = "employment"
-    relation_name = "safe_2023_2024_resolved"
-    temporary_name = "__loading_safe_2023_2024_resolved"
+    relation_name = "safe_2023_2024_standalone"
+    temporary_name = "__loading_safe_2023_2024_standalone"
     qualified = f"{quote_identifier(schema_name)}.{quote_identifier(relation_name)}"
     temporary_qualified = f"{quote_identifier(schema_name)}.{quote_identifier(temporary_name)}"
     connection.execute(f"DROP TABLE IF EXISTS {temporary_qualified}")
     connection.execute(
         f"""
         CREATE TABLE {temporary_qualified} AS
-        SELECT * FROM read_csv(
+        SELECT * EXCLUDE (_open_id_candidate) FROM read_csv(
             ?, header = true, all_varchar = true, compression = 'gzip',
             encoding = 'utf-8', nullstr = '{NULL_SENTINEL}', strict_mode = true
         )
@@ -394,47 +417,117 @@ def load_resolved_employment(connection, source_path: Path, application_audit_pa
         [str(source_path)],
     )
     rows, columns = relation_dimensions(connection, schema_name, temporary_name)
-    expected_rows = int(audit["output"]["row_count"])
-    expected_columns = int(audit["output"]["column_count"])
+    expected_rows = int(expected_output["row_count"])
+    expected_columns = len(source_fields) - 1
     if (rows, columns) != (expected_rows, expected_columns):
         connection.execute(f"DROP TABLE {temporary_qualified}")
-        raise RuntimeError("resolved employment dimensions do not match application audit")
-    applied_rows = int(
+        raise RuntimeError(
+            "standalone employment dimensions do not match identity-resolution summary"
+        )
+    years = [
+        row[0]
+        for row in connection.execute(
+            f"SELECT DISTINCT _panel_year FROM {temporary_qualified} ORDER BY 1"
+        ).fetchall()
+    ]
+    if years != ["2023", "2024"]:
+        connection.execute(f"DROP TABLE {temporary_qualified}")
+        raise RuntimeError(f"unexpected standalone employment years: {years}")
+    blank_school_rows = int(
         connection.execute(
-            f"SELECT count(*) FROM {temporary_qualified} WHERE coalesce(개방ID, '') <> ''"
+            f"SELECT count(*) FROM {temporary_qualified} WHERE coalesce(학교명, '') = ''"
         ).fetchone()[0]
     )
-    expected_applied = int(audit["application"]["applied_row_count"])
-    if applied_rows != expected_applied:
+    if blank_school_rows != 0:
         connection.execute(f"DROP TABLE {temporary_qualified}")
-        raise RuntimeError("resolved employment OpenID coverage does not match application audit")
+        raise RuntimeError("standalone employment contains blank school names")
+
+    if not relation_exists(connection, "employment", "panel_0001"):
+        connection.execute(f"DROP TABLE {temporary_qualified}")
+        raise RuntimeError("historical employment panel is required for analysis views")
 
     connection.execute("BEGIN TRANSACTION")
     try:
         connection.execute(f"DROP VIEW IF EXISTS analysis.employment_2023_2024_resolved")
+        connection.execute(f"DROP VIEW IF EXISTS analysis.employment_2023_2024_standalone")
+        connection.execute(f"DROP VIEW IF EXISTS analysis.employment_legacy_2010_2022")
+        connection.execute("DROP TABLE IF EXISTS employment.safe_2023_2024_resolved")
         connection.execute(f"DROP TABLE IF EXISTS {qualified}")
         connection.execute(
             f"ALTER TABLE {temporary_qualified} RENAME TO {quote_identifier(relation_name)}"
         )
         connection.execute(
-            f"CREATE VIEW analysis.employment_2023_2024_resolved AS SELECT * FROM {qualified}"
+            f"CREATE VIEW analysis.employment_2023_2024_standalone AS SELECT * FROM {qualified}"
+        )
+        connection.execute(
+            """
+            CREATE VIEW analysis.employment_legacy_2010_2022 AS
+            SELECT *
+            FROM employment.panel_0001
+            WHERE _panel_year BETWEEN '2010' AND '2022'
+            """
         )
         connection.execute("COMMIT")
     except Exception:
         connection.execute("ROLLBACK")
         raise
+
+    legacy_rows, legacy_columns = relation_dimensions(
+        connection,
+        "analysis",
+        "employment_legacy_2010_2022",
+    )
+    legacy_years = connection.execute(
+        """
+        SELECT min(_panel_year), max(_panel_year),
+               count(*) FILTER (WHERE _panel_year IN ('2023', '2024')),
+               count(*) FILTER (WHERE coalesce(개방ID, '') = '')
+        FROM analysis.employment_legacy_2010_2022
+        """
+    ).fetchone()
+    expected_legacy_rows = int(
+        connection.execute("SELECT count(*) FROM employment.panel_0001").fetchone()[0]
+    ) - expected_rows
+    if legacy_rows != expected_legacy_rows:
+        raise RuntimeError(
+            "legacy employment row count does not reconcile with the scope exclusion"
+        )
+    if legacy_years != ("2010", "2022", 0, 0):
+        raise RuntimeError(f"legacy employment boundary validation failed: {legacy_years}")
+
     return {
-        "schema": schema_name,
-        "table": relation_name,
-        "rows": rows,
-        "columns": columns,
-        "applied_open_id_rows": applied_rows,
-        "remaining_missing_open_id_rows": rows - applied_rows,
-        "sha256": actual_sha256,
+        "status": "complete_with_scope_exclusion",
+        "legacy": {
+            "view": "analysis.employment_legacy_2010_2022",
+            "rows": legacy_rows,
+            "columns": legacy_columns,
+            "first_year": legacy_years[0],
+            "last_year": legacy_years[1],
+            "scope_excluded_year_rows": legacy_years[2],
+            "missing_open_id_rows": legacy_years[3],
+        },
+        "standalone": {
+            "schema": schema_name,
+            "table": relation_name,
+            "view": "analysis.employment_2023_2024_standalone",
+            "rows": rows,
+            "columns": columns,
+            "years": years,
+            "canonical_open_id_column_present": False,
+            "candidate_open_id_column_present": False,
+            "blank_school_name_rows": blank_school_rows,
+            "sha256": actual_sha256,
+        },
+        "removed_default_analysis_view": "analysis.employment_2023_2024_resolved",
     }
 
 
-def replace_build_summary(connection, rows: list[dict[str, str]], resolved: dict[str, object], status: str) -> None:
+def replace_build_summary(
+    connection,
+    rows: list[dict[str, str]],
+    employment_views: dict[str, object],
+    status: str,
+) -> None:
     connection.execute("DROP TABLE IF EXISTS meta.database_summary")
     connection.execute(
         """
@@ -443,15 +536,17 @@ def replace_build_summary(connection, rows: list[dict[str, str]], resolved: dict
             ?::VARCHAR AS status,
             ?::BIGINT AS panel_table_count,
             ?::BIGINT AS panel_row_count,
-            ?::BIGINT AS safe_resolved_employment_rows,
-            ?::BIGINT AS safe_resolved_employment_open_id_rows
+            ?::BIGINT AS legacy_employment_rows,
+            ?::BIGINT AS standalone_employment_rows,
+            ?::BIGINT AS scope_excluded_employment_rows
         """,
         [
             status,
             len(rows),
             sum(int(row["row_count"]) for row in rows),
-            int(resolved["rows"]),
-            int(resolved["applied_open_id_rows"]),
+            int(employment_views["legacy"]["rows"]),
+            int(employment_views["standalone"]["rows"]),
+            int(employment_views["standalone"]["rows"]),
         ],
     )
     connection.execute(
@@ -475,8 +570,16 @@ def main() -> int:
     parser.add_argument("--catalog", type=Path, default=DEFAULT_CATALOG)
     parser.add_argument("--database", type=Path, default=DEFAULT_DATABASE)
     parser.add_argument("--audit-output", type=Path, default=DEFAULT_AUDIT)
-    parser.add_argument("--resolved-employment", type=Path, default=DEFAULT_RESOLVED_EMPLOYMENT)
-    parser.add_argument("--application-audit", type=Path, default=DEFAULT_APPLICATION_AUDIT)
+    parser.add_argument(
+        "--standalone-employment",
+        type=Path,
+        default=DEFAULT_STANDALONE_EMPLOYMENT,
+    )
+    parser.add_argument(
+        "--identity-resolution-summary",
+        type=Path,
+        default=DEFAULT_IDENTITY_RESOLUTION_SUMMARY,
+    )
     parser.add_argument("--repo-root", type=Path, default=Path("."))
     parser.add_argument("--memory-limit", default="8GB")
     parser.add_argument("--threads", type=int, default=4)
@@ -488,15 +591,15 @@ def main() -> int:
     catalog_path = args.catalog if args.catalog.is_absolute() else repo_root / args.catalog
     database_path = args.database if args.database.is_absolute() else repo_root / args.database
     audit_path = args.audit_output if args.audit_output.is_absolute() else repo_root / args.audit_output
-    resolved_path = (
-        args.resolved_employment
-        if args.resolved_employment.is_absolute()
-        else repo_root / args.resolved_employment
+    standalone_path = (
+        args.standalone_employment
+        if args.standalone_employment.is_absolute()
+        else repo_root / args.standalone_employment
     )
-    application_audit_path = (
-        args.application_audit
-        if args.application_audit.is_absolute()
-        else repo_root / args.application_audit
+    resolution_summary_path = (
+        args.identity_resolution_summary
+        if args.identity_resolution_summary.is_absolute()
+        else repo_root / args.identity_resolution_summary
     )
     all_rows = read_catalog(catalog_path, repo_root)
     selected_rows = all_rows[: args.max_panels] if args.max_panels else all_rows
@@ -552,8 +655,12 @@ def main() -> int:
                 connection.execute("CHECKPOINT")
 
         replace_panel_catalog(connection, selected_rows)
-        resolved = load_resolved_employment(connection, resolved_path, application_audit_path)
-        replace_build_summary(connection, selected_rows, resolved, status)
+        employment_views = load_employment_analysis_views(
+            connection,
+            standalone_path,
+            resolution_summary_path,
+        )
+        replace_build_summary(connection, selected_rows, employment_views, status)
         connection.execute("CHECKPOINT")
         manifest_rows = int(connection.execute("SELECT count(*) FROM meta.load_manifest").fetchone()[0])
         manifest_total_rows = int(
@@ -584,6 +691,16 @@ def main() -> int:
         "status": status,
         "generated_at": utc_now(),
         "duckdb_version": duckdb.__version__,
+        "inputs": {
+            "standalone_employment": {
+                "relative_path": args.standalone_employment.as_posix(),
+                "sha256": employment_views["standalone"]["sha256"],
+            },
+            "identity_resolution_summary": {
+                "relative_path": args.identity_resolution_summary.as_posix(),
+                "sha256": sha256_file(resolution_summary_path),
+            },
+        },
         "database": database_record,
         "catalog": {
             "relative_path": args.catalog.as_posix(),
@@ -600,7 +717,7 @@ def main() -> int:
             "manifest_panel_row_count": manifest_total_rows,
             "elapsed_seconds": round(time.monotonic() - started, 1),
         },
-        "resolved_employment": resolved,
+        "employment_analysis_views": employment_views,
         "validation": {
             "catalog_paths_missing": 0,
             "catalog_size_mismatches": 0,
@@ -608,6 +725,9 @@ def main() -> int:
             "blank_strings_preserved_as_empty_strings": True,
             "all_source_columns_loaded_as_varchar": True,
             "incompatible_panel_grains_concatenated": False,
+            "legacy_employment_year_boundary_enforced": True,
+            "standalone_employment_open_id_columns_removed": True,
+            "schema_break_scope_excluded_rows": employment_views["standalone"]["rows"],
             "database_access_tier": "restricted",
         },
     }

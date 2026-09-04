@@ -102,12 +102,12 @@ python3 scripts/build_edss_school_year_bridge.py
 uv run --offline --with duckdb==1.4.1 python scripts/build_edss_duckdb.py
 ```
 
-결과는 `data/processed/edss/restricted/edss_all.duckdb`에 생성됩니다. 과거 취업통계의 민감 가능 열을 포함하므로 DB 전체는 제한 자료로 취급해야 합니다. 일반 분석에서는 개인형 열이 없는 `analysis.employment_2023_2024_resolved` 뷰를 우선 사용합니다.
+결과는 `data/processed/edss/restricted/edss_all.duckdb`에 생성됩니다. 과거 취업통계의 민감 가능 열을 포함하므로 DB 전체는 제한 자료로 취급해야 합니다. 종단 분석은 연도가 2010–2022로 고정된 `analysis.employment_legacy_2010_2022`를 사용하고, 2023–2024년 기술통계는 OpenID 열이 없는 `analysis.employment_2023_2024_standalone`에서 별도로 조회합니다.
 
 ```sql
 SELECT * FROM meta.panel_catalog ORDER BY source, catalog_code;
 SELECT * FROM analysis.panel_inventory ORDER BY source, catalog_code;
-SELECT * FROM analysis.employment_2023_2024_resolved LIMIT 10;
+SELECT * FROM analysis.employment_2023_2024_standalone LIMIT 10;
 ```
 
 테이블 명명법, 소스별 스키마와 검증 결과는 `docs/edss_duckdb.md`에 기록합니다.
