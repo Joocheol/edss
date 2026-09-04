@@ -1,7 +1,7 @@
 {
-  "audit_version": 1,
-  "generated_at": "2026-09-04T03:08:02.040758+00:00",
-  "status": "review_required",
+  "audit_version": 2,
+  "generated_at": "2026-09-04T03:25:27.037930+00:00",
+  "status": "complete",
   "source_view": "analysis.employment_legacy_2010_2022",
   "grain": "one row per source year in CSV; year-level and school-aggregate evidence only",
   "source_year_range": [
@@ -27,11 +27,12 @@
   },
   "cohort_use_status_counts": {
     "eligible_first_of_exact_repeat": 1,
+    "eligible_transition_december_wave": 1,
     "eligible_unique_cohort": 9,
     "exclude_exact_repeat": 1,
-    "review_repeated_distinct_wave": 2
+    "exclude_transition_june_wave": 1
   },
-  "cohort_analysis_eligible_source_year_count": 10,
+  "cohort_analysis_eligible_source_year_count": 11,
   "official_same_label_conflict_years": [
     "2021",
     "2022"
@@ -84,6 +85,26 @@
     "finding": "2012년부터 6월 1일과 12월 31일 기준 연 2회 조사, 2015년부터 12월 31일 기준 조사로 일원화",
     "source_url": "https://kess.kedi.re.kr/publ/fileDownload.do?fileSeq=1012636&publItemId=69896"
   },
-  "safe_use_rule": "Never interpret _panel_year as the graduation cohort without this audit. Filter to cohort_analysis_eligible=true and group by inferred_cohort_year. Do not select either 2014-cohort wave until its reference date and methodology are resolved.",
+  "transition_wave_resolution": {
+    "cohort_year": "2014",
+    "early_wave": {
+      "source_year": "2014",
+      "reference_date": "2014-06-01",
+      "reference_date_basis": "june_1",
+      "source_row_count": 557236,
+      "selected": false
+    },
+    "standardized_wave": {
+      "source_year": "2015",
+      "reference_date": "2014-12-31",
+      "reference_date_basis": "december_31",
+      "source_row_count": 557234,
+      "selected": true
+    },
+    "resolution": "2014 source is the June 1 wave and 2015 source is the December 31 wave for the same 2014 graduation cohort. Select the December 31 wave to align with the post-unification series.",
+    "official_transition_table_url": "https://kess.kedi.re.kr/publ/fileDownload.do?fileSeq=1032483&publItemId=79838",
+    "official_2014_december_release_url": "https://www.kedi.re.kr/khome/main/announce/selectBroadAnnounceForm.do?article_sq_no=30069&board_sq_no=3&currentPage=0&doc_use_yn=N&selectTp=0"
+  },
+  "safe_use_rule": "Never interpret _panel_year as the graduation cohort without this audit. Filter to cohort_analysis_eligible=true and group by inferred_cohort_year. For the 2014 cohort, use source year 2015 as the December 31 standardized wave and preserve source year 2014 only as the excluded June 1 transition wave.",
   "privacy": "Outputs contain only year-level counts and school-level comparison counts. No person identifier, company, thesis, or row-level value is emitted."
 }

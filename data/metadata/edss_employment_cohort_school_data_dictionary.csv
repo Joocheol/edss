@@ -1,0 +1,23 @@
+column_name,data_type,source,transformation,meaning,missingness_rule
+employment_cohort_year,VARCHAR,data/metadata/edss_employment_cohort_year_audit.csv,selected_inferred_cohort_year,졸업년월에서 확정한 취업 졸업 코호트 연도,공란 불가
+employment_source_panel_year,VARCHAR,analysis.employment_school_year_2010_2022,source_panel_year,선택된 EDSS 원본 파일 연도,공란 불가
+개방ID,VARCHAR,analysis.employment_school_year_2010_2022,identity,EDSS 원본 개방ID 문자열,공란 불가
+employment_reference_date,VARCHAR,data/metadata/edss_employment_cohort_year_audit.csv,official_wave_resolution,선택된 관측 파동의 조사 기준일,공란 불가
+employment_reference_date_basis,VARCHAR,data/metadata/edss_employment_cohort_year_audit.csv,official_wave_resolution,조사 기준일 체계 june_1 또는 december_31,공란 불가
+employment_cohort_selection_status,VARCHAR,data/metadata/edss_employment_cohort_year_audit.csv,approved_selection,코호트별 원본 선택 근거 상태,공란 불가
+employment_comparability_regime,VARCHAR,derived,reference_date_regime,기준일 전환을 반영한 비교 가능 구간,공란 불가
+employment_quality_status,VARCHAR,analysis.employment_school_year_2010_2022,identity,선택 원천의 일반 품질 상태,공란 불가
+employment_cohort_selected,BOOLEAN,derived,constant_true,최종 코호트 마트에 선택된 행 여부,공란 불가
+further_study_quality_status,VARCHAR,analysis.employment_school_year_2010_2022,identity,진학자수 원천 열의 연도별 품질 상태,공란 불가
+source_record_count,BIGINT,analysis.employment_school_year_2010_2022,identity,학교 코호트별 제한 원천 레코드 수,공란 불가
+reported_graduate_count,HUGEINT,analysis.employment_school_year_2010_2022,identity,원천 보고 졸업학생 수,공란 불가
+reported_employed_count,HUGEINT,analysis.employment_school_year_2010_2022,identity,원천 보고 취업자 수,공란 불가
+reported_health_insurance_employed_count,HUGEINT,analysis.employment_school_year_2010_2022,identity,원천 보고 건강보험 취업자 수,공란 불가
+reported_school_employed_count,HUGEINT,analysis.employment_school_year_2010_2022,identity,원천 보고 교내 취업자 수,공란 불가
+reported_further_study_count,HUGEINT,analysis.employment_school_year_2010_2022,identity,원천 보고 진학자 수,공란 불가이나 코호트 2015–2018 전부 0
+reported_military_service_count,HUGEINT,analysis.employment_school_year_2010_2022,identity,원천 보고 입대자 수,공란 불가
+reported_employment_unavailable_count,HUGEINT,analysis.employment_school_year_2010_2022,identity,원천 보고 취업불가능자 수,공란 불가
+reported_foreign_student_count,HUGEINT,analysis.employment_school_year_2010_2022,identity,원천 보고 외국인유학생 수,공란 불가
+reported_excluded_count,HUGEINT,analysis.employment_school_year_2010_2022,identity,원천 보고 제외인정자 수,공란 불가
+reported_other_count,HUGEINT,analysis.employment_school_year_2010_2022,identity,원천 보고 기타 총계,공란 불가
+reported_unknown_count,HUGEINT,analysis.employment_school_year_2010_2022,identity,원천 보고 미상 수,공란 불가

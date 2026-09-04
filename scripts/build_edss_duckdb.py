@@ -60,6 +60,12 @@ DEFAULT_SCHOOL_YEAR_CORE_DICTIONARY = Path(
 DEFAULT_EMPLOYMENT_SCHOOL_YEAR_DICTIONARY = Path(
     "data/metadata/edss_employment_school_year_data_dictionary.csv"
 )
+DEFAULT_EMPLOYMENT_COHORT_AUDIT = Path(
+    "data/metadata/edss_employment_cohort_year_audit.csv"
+)
+DEFAULT_EMPLOYMENT_COHORT_DICTIONARY = Path(
+    "data/metadata/edss_employment_cohort_school_data_dictionary.csv"
+)
 SCHOOL_YEAR_CORE_METRICS = (
     ("고등교육학교_재적학생수", "enrolled_student_count"),
     ("고등교육학교_재적여학생수", "female_enrolled_student_count"),
@@ -87,6 +93,19 @@ EMPLOYMENT_SCHOOL_YEAR_METRICS = (
     ("기타_총계", "reported_other_count"),
     ("미상", "reported_unknown_count"),
 )
+EMPLOYMENT_COHORT_EXPECTED_SELECTION = {
+    "2010": ("2010", "june_1", "eligible_unique_cohort"),
+    "2011": ("2011", "june_1", "eligible_unique_cohort"),
+    "2012": ("2012", "june_1", "eligible_unique_cohort"),
+    "2013": ("2013", "june_1", "eligible_unique_cohort"),
+    "2015": ("2014", "december_31", "eligible_transition_december_wave"),
+    "2016": ("2015", "december_31", "eligible_unique_cohort"),
+    "2017": ("2016", "december_31", "eligible_unique_cohort"),
+    "2018": ("2017", "december_31", "eligible_unique_cohort"),
+    "2019": ("2018", "december_31", "eligible_unique_cohort"),
+    "2020": ("2019", "december_31", "eligible_unique_cohort"),
+    "2021": ("2020", "december_31", "eligible_first_of_exact_repeat"),
+}
 
 
 def utc_now() -> str:
@@ -871,6 +890,10 @@ def build_school_year_core_mart(
     try:
         connection.execute(
             "DROP VIEW IF EXISTS "
+            "analysis.school_year_core_with_employment_cohort_2010_2020"
+        )
+        connection.execute(
+            "DROP VIEW IF EXISTS "
             "analysis.school_year_core_with_employment_2010_2022"
         )
         connection.execute("DROP TABLE IF EXISTS analysis.school_year_core_2010_2022")
@@ -1393,12 +1416,382 @@ def build_employment_school_year_mart(
     }
 
 
+def build_employment_cohort_school_mart(
+    connection,
+    cohort_audit_path: Path,
+    dictionary_path: Path,
+) -> dict[str, object]:
+    """Build the selected one-row-per-employment-cohort-and-school mart."""
+
+    if not cohort_audit_path.is_file():
+        raise RuntimeError(f"employment cohort audit is missing: {cohort_audit_path}")
+    if not dictionary_path.is_file():
+        raise RuntimeError(
+            f"employment cohort data dictionary is missing: {dictionary_path}"
+        )
+    if not relation_exists(connection, "analysis", "employment_school_year_2010_2022"):
+        raise RuntimeError("employment school-year mart is required for cohort selection")
+
+    with cohort_audit_path.open(encoding="utf-8-sig", newline="") as handle:
+        audit_rows = list(csv.DictReader(handle))
+    required_fields = {
+        "source_year",
+        "inferred_cohort_year",
+        "observation_reference_date",
+        "observation_reference_date_basis",
+        "cohort_use_status",
+        "cohort_analysis_eligible",
+    }
+    if not audit_rows or not required_fields.issubset(audit_rows[0]):
+        missing = sorted(required_fields - set(audit_rows[0] if audit_rows else {}))
+        raise RuntimeError(f"employment cohort audit fields are missing: {missing}")
+
+    selected_rows = [
+        row
+        for row in audit_rows
+        if row["cohort_analysis_eligible"].strip().lower() == "true"
+    ]
+    actual_selection = {
+        row["source_year"]: (
+            row["inferred_cohort_year"],
+            row["observation_reference_date_basis"],
+            row["cohort_use_status"],
+        )
+        for row in selected_rows
+    }
+    if actual_selection != EMPLOYMENT_COHORT_EXPECTED_SELECTION:
+        raise RuntimeError(
+            "employment cohort audit selection differs from the approved mapping: "
+            f"{actual_selection}"
+        )
+    if len({row["inferred_cohort_year"] for row in selected_rows}) != len(selected_rows):
+        raise RuntimeError("employment cohort audit selected more than one source per cohort")
+
+    map_temp = "meta.__loading_employment_cohort_source_map"
+    mart_temp = "analysis.__loading_employment_cohort_school_2010_2020"
+    connection.execute(f"DROP TABLE IF EXISTS {map_temp}")
+    connection.execute(f"DROP TABLE IF EXISTS {mart_temp}")
+    connection.execute(
+        f"""
+        CREATE TABLE {map_temp} (
+            employment_source_panel_year VARCHAR NOT NULL,
+            employment_cohort_year VARCHAR NOT NULL,
+            employment_reference_date VARCHAR NOT NULL,
+            employment_reference_date_basis VARCHAR NOT NULL,
+            employment_cohort_selection_status VARCHAR NOT NULL
+        )
+        """
+    )
+    connection.executemany(
+        f"INSERT INTO {map_temp} VALUES (?, ?, ?, ?, ?)",
+        [
+            (
+                row["source_year"],
+                row["inferred_cohort_year"],
+                row["observation_reference_date"],
+                row["observation_reference_date_basis"],
+                row["cohort_use_status"],
+            )
+            for row in selected_rows
+        ],
+    )
+    connection.execute(
+        f"""
+        CREATE TABLE {mart_temp} AS
+        SELECT
+            m.employment_cohort_year,
+            m.employment_source_panel_year,
+            e.개방ID,
+            m.employment_reference_date,
+            m.employment_reference_date_basis,
+            m.employment_cohort_selection_status,
+            CASE
+                WHEN m.employment_reference_date_basis = 'june_1'
+                    THEN 'june_1_pre_unification'
+                WHEN m.employment_source_panel_year = '2015'
+                    THEN 'december_31_transition_selected'
+                ELSE 'december_31_post_unification'
+            END::VARCHAR AS employment_comparability_regime,
+            e.employment_quality_status,
+            true::BOOLEAN AS employment_cohort_selected,
+            e.further_study_quality_status,
+            e.source_record_count,
+            e.reported_graduate_count,
+            e.reported_employed_count,
+            e.reported_health_insurance_employed_count,
+            e.reported_school_employed_count,
+            e.reported_further_study_count,
+            e.reported_military_service_count,
+            e.reported_employment_unavailable_count,
+            e.reported_foreign_student_count,
+            e.reported_excluded_count,
+            e.reported_other_count,
+            e.reported_unknown_count
+        FROM analysis.employment_school_year_2010_2022 AS e
+        JOIN {map_temp} AS m
+          ON e._panel_year = m.employment_source_panel_year
+        """
+    )
+
+    mart_rows, mart_columns = relation_dimensions(
+        connection,
+        "analysis",
+        "__loading_employment_cohort_school_2010_2020",
+    )
+    mart_stats = connection.execute(
+        f"""
+        SELECT
+            count(*),
+            count(DISTINCT (employment_cohort_year, 개방ID)),
+            count(*) FILTER (
+                WHERE coalesce(employment_cohort_year, '') = ''
+                   OR coalesce(employment_source_panel_year, '') = ''
+                   OR coalesce(개방ID, '') = ''
+            ),
+            min(employment_cohort_year),
+            max(employment_cohort_year),
+            count(DISTINCT employment_cohort_year),
+            sum(source_record_count),
+            count(*) FILTER (
+                WHERE employment_source_panel_year IN ('2014', '2022')
+            )
+        FROM {mart_temp}
+        """
+    ).fetchone()
+    selected_source_records = int(
+        connection.execute(
+            f"""
+            SELECT sum(e.source_record_count)
+            FROM analysis.employment_school_year_2010_2022 AS e
+            JOIN {map_temp} AS m
+              ON e._panel_year = m.employment_source_panel_year
+            """
+        ).fetchone()[0]
+    )
+    expected_stats = (
+        mart_rows,
+        mart_rows,
+        0,
+        "2010",
+        "2020",
+        11,
+        selected_source_records,
+        0,
+    )
+    if mart_stats != expected_stats:
+        raise RuntimeError(
+            f"employment cohort mart validation mismatch: {mart_stats} != {expected_stats}"
+        )
+
+    orphan_keys = int(
+        connection.execute(
+            f"""
+            SELECT count(*)
+            FROM {mart_temp} AS e
+            LEFT JOIN analysis.school_year_core_2010_2022 AS c
+              ON c._panel_year = e.employment_cohort_year
+             AND c.개방ID = e.개방ID
+            WHERE c.개방ID IS NULL
+            """
+        ).fetchone()[0]
+    )
+    if orphan_keys:
+        raise RuntimeError(f"employment cohort keys missing from core: {orphan_keys}")
+
+    metric_validation = {}
+    for _source_field, output_field in EMPLOYMENT_SCHOOL_YEAR_METRICS:
+        selected_sum = int(
+            connection.execute(
+                f"""
+                SELECT sum(e.{quote_identifier(output_field)})
+                FROM analysis.employment_school_year_2010_2022 AS e
+                JOIN {map_temp} AS m
+                  ON e._panel_year = m.employment_source_panel_year
+                """
+            ).fetchone()[0]
+        )
+        mart_sum = int(
+            connection.execute(
+                f"SELECT sum({quote_identifier(output_field)}) FROM {mart_temp}"
+            ).fetchone()[0]
+        )
+        if selected_sum != mart_sum:
+            raise RuntimeError(f"employment cohort sum mismatch: {output_field}")
+        metric_validation[output_field] = {
+            "selected_source_sum": selected_sum,
+            "cohort_mart_sum": mart_sum,
+            "sum_reconciles": True,
+        }
+
+    with dictionary_path.open(encoding="utf-8-sig", newline="") as handle:
+        dictionary_rows = list(csv.DictReader(handle))
+    mart_schema = connection.execute(
+        """
+        SELECT column_name, data_type
+        FROM information_schema.columns
+        WHERE table_schema = 'analysis'
+          AND table_name = '__loading_employment_cohort_school_2010_2020'
+        ORDER BY ordinal_position
+        """
+    ).fetchall()
+    dictionary_schema = [
+        (row["column_name"], row["data_type"]) for row in dictionary_rows
+    ]
+    if dictionary_schema != mart_schema:
+        raise RuntimeError("employment cohort dictionary does not match the mart")
+
+    connection.execute("BEGIN TRANSACTION")
+    try:
+        connection.execute(
+            "DROP VIEW IF EXISTS "
+            "analysis.school_year_core_with_employment_cohort_2010_2020"
+        )
+        connection.execute(
+            "DROP TABLE IF EXISTS analysis.employment_cohort_school_2010_2020"
+        )
+        connection.execute("DROP TABLE IF EXISTS meta.employment_cohort_source_map")
+        connection.execute(
+            "ALTER TABLE analysis.__loading_employment_cohort_school_2010_2020 "
+            "RENAME TO employment_cohort_school_2010_2020"
+        )
+        connection.execute(
+            "ALTER TABLE meta.__loading_employment_cohort_source_map "
+            "RENAME TO employment_cohort_source_map"
+        )
+        connection.execute(
+            """
+            CREATE VIEW analysis.school_year_core_with_employment_cohort_2010_2020 AS
+            SELECT
+                c.*,
+                CASE WHEN e.개방ID IS NULL THEN 'false' ELSE 'true' END::VARCHAR
+                    AS _employment_cohort_exists,
+                e.employment_source_panel_year,
+                e.employment_reference_date,
+                e.employment_reference_date_basis,
+                e.employment_cohort_selection_status,
+                e.employment_comparability_regime,
+                e.employment_quality_status,
+                e.employment_cohort_selected,
+                e.further_study_quality_status,
+                e.source_record_count AS employment_source_record_count,
+                e.reported_graduate_count AS employment_reported_graduate_count,
+                e.reported_employed_count AS employment_reported_employed_count,
+                e.reported_health_insurance_employed_count
+                    AS employment_reported_health_insurance_employed_count,
+                e.reported_school_employed_count
+                    AS employment_reported_school_employed_count,
+                e.reported_further_study_count
+                    AS employment_reported_further_study_count,
+                e.reported_military_service_count
+                    AS employment_reported_military_service_count,
+                e.reported_employment_unavailable_count
+                    AS employment_reported_employment_unavailable_count,
+                e.reported_foreign_student_count
+                    AS employment_reported_foreign_student_count,
+                e.reported_excluded_count AS employment_reported_excluded_count,
+                e.reported_other_count AS employment_reported_other_count,
+                e.reported_unknown_count AS employment_reported_unknown_count
+            FROM analysis.school_year_core_2010_2022 AS c
+            LEFT JOIN analysis.employment_cohort_school_2010_2020 AS e
+              ON c._panel_year = e.employment_cohort_year
+             AND c.개방ID = e.개방ID
+            WHERE c._panel_year BETWEEN '2010' AND '2020'
+            """
+        )
+        connection.execute("DROP TABLE IF EXISTS meta.employment_cohort_summary")
+        connection.execute(
+            f"""
+            CREATE TABLE meta.employment_cohort_summary AS
+            SELECT
+                'complete'::VARCHAR AS status,
+                {mart_rows}::BIGINT AS row_count,
+                {selected_source_records}::BIGINT AS selected_source_row_count,
+                11::BIGINT AS cohort_year_count,
+                {orphan_keys}::BIGINT AS orphan_key_count,
+                0::BIGINT AS duplicate_key_count
+            """
+        )
+        connection.execute("COMMIT")
+    except Exception:
+        connection.execute("ROLLBACK")
+        raise
+
+    joined_stats = connection.execute(
+        """
+        SELECT
+            count(*),
+            count(DISTINCT (_panel_year, 개방ID)),
+            count(*) FILTER (WHERE _employment_cohort_exists = 'true'),
+            count(*) FILTER (WHERE _employment_cohort_exists = 'false')
+        FROM analysis.school_year_core_with_employment_cohort_2010_2020
+        """
+    ).fetchone()
+    core_cohort_rows = int(
+        connection.execute(
+            """
+            SELECT count(*)
+            FROM analysis.school_year_core_2010_2022
+            WHERE _panel_year BETWEEN '2010' AND '2020'
+            """
+        ).fetchone()[0]
+    )
+    expected_joined_stats = (
+        core_cohort_rows,
+        core_cohort_rows,
+        mart_rows,
+        core_cohort_rows - mart_rows,
+    )
+    if joined_stats != expected_joined_stats:
+        raise RuntimeError(
+            f"employment cohort core join mismatch: {joined_stats} != {expected_joined_stats}"
+        )
+
+    return {
+        "status": "complete",
+        "table": "analysis.employment_cohort_school_2010_2020",
+        "joined_view": "analysis.school_year_core_with_employment_cohort_2010_2020",
+        "mapping_table": "meta.employment_cohort_source_map",
+        "grain": "one row per (employment_cohort_year, 개방ID)",
+        "cohort_years": ["2010", "2020"],
+        "source_panel_years": ["2010", "2021"],
+        "excluded_source_panel_years": ["2014", "2022"],
+        "row_count": mart_rows,
+        "column_count": mart_columns,
+        "distinct_key_count": mart_stats[1],
+        "duplicate_key_count": mart_rows - mart_stats[1],
+        "blank_key_count": mart_stats[2],
+        "selected_source_row_count": selected_source_records,
+        "orphan_employment_key_count": orphan_keys,
+        "joined_core_row_count": joined_stats[0],
+        "joined_core_distinct_key_count": joined_stats[1],
+        "joined_core_employment_matched_count": joined_stats[2],
+        "joined_core_employment_unmatched_count": joined_stats[3],
+        "join_expansion_count": joined_stats[0] - core_cohort_rows,
+        "reference_date_regime_break": {
+            "last_june_1_cohort": "2013",
+            "first_selected_december_31_cohort": "2014",
+            "cross_regime_comparison_requires_caveat": True,
+        },
+        "metric_validation": metric_validation,
+        "cohort_audit": {
+            "row_count": len(audit_rows),
+            "selected_source_year_count": len(selected_rows),
+            "sha256": sha256_file(cohort_audit_path),
+        },
+        "data_dictionary": {
+            "row_count": len(dictionary_rows),
+            "sha256": sha256_file(dictionary_path),
+        },
+    }
+
+
 def replace_build_summary(
     connection,
     rows: list[dict[str, str]],
     employment_views: dict[str, object],
     school_year_core: dict[str, object],
     employment_school_year: dict[str, object],
+    employment_cohort_school: dict[str, object],
     status: str,
 ) -> None:
     connection.execute("DROP TABLE IF EXISTS meta.database_summary")
@@ -1413,7 +1806,8 @@ def replace_build_summary(
             ?::BIGINT AS standalone_employment_rows,
             ?::BIGINT AS scope_excluded_employment_rows,
             ?::BIGINT AS school_year_core_rows,
-            ?::BIGINT AS employment_school_year_rows
+            ?::BIGINT AS employment_school_year_rows,
+            ?::BIGINT AS employment_cohort_school_rows
         """,
         [
             status,
@@ -1424,6 +1818,7 @@ def replace_build_summary(
             int(employment_views["standalone"]["rows"]),
             int(school_year_core["row_count"]),
             int(employment_school_year["row_count"]),
+            int(employment_cohort_school["row_count"]),
         ],
     )
     connection.execute(
@@ -1477,6 +1872,16 @@ def main() -> int:
         type=Path,
         default=DEFAULT_EMPLOYMENT_SCHOOL_YEAR_DICTIONARY,
     )
+    parser.add_argument(
+        "--employment-cohort-audit",
+        type=Path,
+        default=DEFAULT_EMPLOYMENT_COHORT_AUDIT,
+    )
+    parser.add_argument(
+        "--employment-cohort-dictionary",
+        type=Path,
+        default=DEFAULT_EMPLOYMENT_COHORT_DICTIONARY,
+    )
     parser.add_argument("--repo-root", type=Path, default=Path("."))
     parser.add_argument("--memory-limit", default="8GB")
     parser.add_argument("--threads", type=int, default=4)
@@ -1517,6 +1922,16 @@ def main() -> int:
         args.employment_school_year_dictionary
         if args.employment_school_year_dictionary.is_absolute()
         else repo_root / args.employment_school_year_dictionary
+    )
+    employment_cohort_audit_path = (
+        args.employment_cohort_audit
+        if args.employment_cohort_audit.is_absolute()
+        else repo_root / args.employment_cohort_audit
+    )
+    employment_cohort_dictionary_path = (
+        args.employment_cohort_dictionary
+        if args.employment_cohort_dictionary.is_absolute()
+        else repo_root / args.employment_cohort_dictionary
     )
     all_rows = read_catalog(catalog_path, repo_root)
     selected_rows = all_rows[: args.max_panels] if args.max_panels else all_rows
@@ -1587,12 +2002,18 @@ def main() -> int:
             connection,
             employment_dictionary_path,
         )
+        employment_cohort_school = build_employment_cohort_school_mart(
+            connection,
+            employment_cohort_audit_path,
+            employment_cohort_dictionary_path,
+        )
         replace_build_summary(
             connection,
             selected_rows,
             employment_views,
             school_year_core,
             employment_school_year,
+            employment_cohort_school,
             status,
         )
         connection.execute("CHECKPOINT")
@@ -1650,6 +2071,14 @@ def main() -> int:
                 "relative_path": args.employment_school_year_dictionary.as_posix(),
                 "sha256": employment_school_year["data_dictionary"]["sha256"],
             },
+            "employment_cohort_year_audit": {
+                "relative_path": args.employment_cohort_audit.as_posix(),
+                "sha256": employment_cohort_school["cohort_audit"]["sha256"],
+            },
+            "employment_cohort_school_data_dictionary": {
+                "relative_path": args.employment_cohort_dictionary.as_posix(),
+                "sha256": employment_cohort_school["data_dictionary"]["sha256"],
+            },
         },
         "database": database_record,
         "catalog": {
@@ -1670,6 +2099,7 @@ def main() -> int:
         "employment_analysis_views": employment_views,
         "school_year_core_mart": school_year_core,
         "employment_school_year_mart": employment_school_year,
+        "employment_cohort_school_mart": employment_cohort_school,
         "validation": {
             "catalog_paths_missing": 0,
             "catalog_size_mismatches": 0,
@@ -1691,6 +2121,18 @@ def main() -> int:
             "employment_core_join_expansion_count": (
                 employment_school_year["join_expansion_count"]
             ),
+            "employment_cohort_school_unique_key": (
+                employment_cohort_school["duplicate_key_count"] == 0
+            ),
+            "employment_cohort_school_orphan_key_count": (
+                employment_cohort_school["orphan_employment_key_count"]
+            ),
+            "employment_cohort_core_join_expansion_count": (
+                employment_cohort_school["join_expansion_count"]
+            ),
+            "employment_2014_transition_december_wave_selected": True,
+            "employment_2014_june_wave_excluded": True,
+            "employment_2022_exact_repeat_excluded": True,
             "employment_2022_time_comparison_eligible": (
                 employment_school_year["quality_findings"]
                 ["duplicate_year_comparison"]["comparison_eligible"]

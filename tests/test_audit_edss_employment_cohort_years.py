@@ -56,12 +56,20 @@ class EmploymentCohortYearAuditTests(unittest.TestCase):
         self.assertEqual(by_year["2015"]["inferred_cohort_year"], "2014")
         self.assertEqual(
             by_year["2014"]["cohort_use_status"],
-            "review_repeated_distinct_wave",
+            "exclude_transition_june_wave",
         )
         self.assertEqual(
             by_year["2015"]["cohort_use_status"],
-            "review_repeated_distinct_wave",
+            "eligible_transition_december_wave",
         )
+        self.assertEqual(
+            by_year["2014"]["observation_reference_date"], "2014-06-01"
+        )
+        self.assertEqual(
+            by_year["2015"]["observation_reference_date"], "2014-12-31"
+        )
+        self.assertEqual(by_year["2014"]["cohort_analysis_eligible"], "false")
+        self.assertEqual(by_year["2015"]["cohort_analysis_eligible"], "true")
         self.assertEqual(
             by_year["2021"]["cohort_use_status"],
             "eligible_first_of_exact_repeat",
@@ -81,7 +89,8 @@ class EmploymentCohortYearAuditTests(unittest.TestCase):
             summary["repeated_cohort_groups"],
             {"2014": ["2014", "2015"], "2020": ["2021", "2022"]},
         )
-        self.assertEqual(summary["status"], "review_required")
+        self.assertEqual(summary["status"], "complete")
+        self.assertEqual(summary["audit_version"], 2)
 
 
 if __name__ == "__main__":

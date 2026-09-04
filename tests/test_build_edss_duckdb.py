@@ -423,6 +423,82 @@ class BuildEdssDuckDBTests(unittest.TestCase):
                     ("2010", "X", "false", None, None),
                 ],
             )
+
+            cohort_audit = root / "employment_cohort_audit.csv"
+            with cohort_audit.open("w", encoding="utf-8", newline="") as handle:
+                fieldnames = [
+                    "source_year",
+                    "inferred_cohort_year",
+                    "observation_reference_date",
+                    "observation_reference_date_basis",
+                    "cohort_use_status",
+                    "cohort_analysis_eligible",
+                ]
+                writer = csv.DictWriter(handle, fieldnames=fieldnames)
+                writer.writeheader()
+                for source_year, (
+                    cohort_year,
+                    reference_basis,
+                    selection_status,
+                ) in builder.EMPLOYMENT_COHORT_EXPECTED_SELECTION.items():
+                    writer.writerow(
+                        {
+                            "source_year": source_year,
+                            "inferred_cohort_year": cohort_year,
+                            "observation_reference_date": (
+                                f"{cohort_year}-06-01"
+                                if reference_basis == "june_1"
+                                else f"{cohort_year}-12-31"
+                            ),
+                            "observation_reference_date_basis": reference_basis,
+                            "cohort_use_status": selection_status,
+                            "cohort_analysis_eligible": "true",
+                        }
+                    )
+
+            cohort_result = builder.build_employment_cohort_school_mart(
+                connection,
+                cohort_audit,
+                Path(__file__).resolve().parents[1]
+                / "data/metadata/edss_employment_cohort_school_data_dictionary.csv",
+            )
+            self.assertEqual(cohort_result["status"], "complete")
+            self.assertEqual(cohort_result["row_count"], 11)
+            self.assertEqual(cohort_result["distinct_key_count"], 11)
+            self.assertEqual(cohort_result["selected_source_row_count"], 11)
+            self.assertEqual(cohort_result["orphan_employment_key_count"], 0)
+            self.assertEqual(cohort_result["joined_core_row_count"], 12)
+            self.assertEqual(
+                cohort_result["joined_core_employment_matched_count"], 11
+            )
+            self.assertEqual(cohort_result["join_expansion_count"], 0)
+            selected_2014 = connection.execute(
+                """
+                SELECT employment_source_panel_year,
+                       employment_reference_date,
+                       employment_reference_date_basis,
+                       employment_comparability_regime
+                FROM analysis.employment_cohort_school_2010_2020
+                WHERE employment_cohort_year = '2014' AND 개방ID = 'A'
+                """
+            ).fetchone()
+            self.assertEqual(
+                selected_2014,
+                (
+                    "2015",
+                    "2014-12-31",
+                    "december_31",
+                    "december_31_transition_selected",
+                ),
+            )
+            excluded_source_years = connection.execute(
+                """
+                SELECT count(*)
+                FROM analysis.employment_cohort_school_2010_2020
+                WHERE employment_source_panel_year IN ('2014', '2022')
+                """
+            ).fetchone()[0]
+            self.assertEqual(excluded_source_years, 0)
             connection.close()
 
 

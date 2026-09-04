@@ -17,12 +17,13 @@
 - `edss_panel_data_dictionary.csv`: 원본 필드명, 한글 표기, 문자열 저장형, 관찰 자료형, 단위·결측 정의 상태
 - `edss_panel_quality_report.json`: 패널 빌드 중 수집한 구조·중복·식별자 품질 결과
 - `edss_panel_validation.json`: 최초 15개 우선 패널의 독립 재검산과 학교연도 키 연결 결과. 전체 233개 출력의 행 내용 재감사는 후속 실행에서 갱신한다.
-- `edss_duckdb_build.json`: 제한 DuckDB의 경로·크기·SHA-256, 233개 적재 테이블과 180,119,183행의 소스별 합계, 2010–2022 종단 취업 뷰와 OpenID 없는 2023–2024 독립 취업 뷰의 범위 분리 검증 결과
+- `edss_duckdb_build.json`: 제한 DuckDB의 경로·크기·SHA-256, 233개 적재 테이블과 180,119,183행의 소스별 합계, 원천 취업 조회 계층, OpenID 없는 2023–2024 독립 취업 뷰, 최종 2010–2020 취업 코호트 마트의 범위·유일키·합계·조인 검증 결과
 - `edss_school_year_core_data_dictionary.csv`: `analysis.school_year_core_2010_2022`의 31개 열에 대한 자료형·원천·변환·결측 처리 규칙
 - `edss_employment_school_year_data_dictionary.csv`: 2010–2022 제한 취업통계를 7,058개 학교연도로 집계한 17개 열의 자료형·원천·품질 상태·결측 규칙
+- `edss_employment_cohort_school_data_dictionary.csv`: 승인된 원천 11개를 2010–2020 졸업 코호트 5,969개 학교 키로 재구성한 최종 취업 마트 22개 열의 자료형·기준일·선택 상태·비교 구간·결측 규칙
 - `edss_employment_2022_official_verification.json`: 공식 2021·2022년 조사대상 정의와 EDSS 2021·2022년 원본의 조사년도·졸업년월·학교 집계를 대조한 감사. 2022년 원본의 공식 코호트 불일치와 시계열 제외 결정을 기록한다.
-- `edss_employment_cohort_year_audit.csv`: 2010–2022 취업 파일 연도별 원천 행 수, 졸업월 범위, 추론 코호트, 반복 파동, 공식 동일 연도 정의 충돌과 안전 사용 판정
-- `edss_employment_cohort_year_audit.json`: 7,277,987행의 코호트 시간축 감사 요약, 반복 코호트 비교 수치, 공식 정의와 방법론 출처, 안전 사용 규칙
+- `edss_employment_cohort_year_audit.csv`: 2010–2022 취업 파일 연도별 원천 행 수, 졸업월 범위, 추론 코호트, 관측 기준일, 반복 파동, 공식 동일 연도 정의 충돌과 최종 선택 판정
+- `edss_employment_cohort_year_audit.json`: 7,277,987행의 코호트 시간축 감사 요약, 2014년 6월·12월 파동 해소, 2022년 정확 반복 제외, 공식 정의와 안전 사용 규칙
 - `edss_full_panel_key_audit.json`·`.csv`: 전체 233개 패널·180,119,183행의 무결성, grain, `개방ID` 완전성, `0101` 연결 및 원시 조인 증식 위험 감사 결과
 - `edss_full_panel_key_audit_by_year.csv`: 패널·연도별 행 수, `개방ID` 결측 행과 `0101` 미연결 행
 - `edss_full_panel_orphan_school_year_keys.csv`: 전체 패널에서 관찰된 `0101` 미연결 학교연도 키 3,322건과 시간적 분류

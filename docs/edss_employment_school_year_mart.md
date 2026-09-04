@@ -46,7 +46,7 @@
 
 ## 집계 정의와 검증
 
-`analysis.employment_school_year_2010_2022`는 17개 열을 가진다. 두 키, 품질 상태 3개, 원천 레코드 수와 11개 보고 지표만 포함한다. 모든 11개 원천 지표는 7,277,987행 전부에서 공란 없이 0 또는 1이며, 비수치·음수·비이진 값은 0건이다.
+`analysis.employment_school_year_2010_2022`는 17개 열을 가진다. 두 키, 품질 상태 3개, 원천 레코드 수와 11개 보고 지표만 포함한다. 모든 11개 원천 지표는 7,277,987행 전부에서 공란 없이 0 또는 1이며, 비수치·음수·비이진 값은 0건이다. 이 표는 파일 연도 감사용이며 최종 코호트 분석 입력은 아니다.
 
 학교–연도 집계에서 다음 불변조건을 적용한다.
 
@@ -75,7 +75,7 @@ GROUP BY _panel_year
 ORDER BY _panel_year;
 ```
 
-코호트 분석을 준비할 때는 `data/metadata/edss_employment_cohort_year_audit.csv`에서 `cohort_analysis_eligible=true`인 파일만 선택하고 `inferred_cohort_year`로 재키잉한다. 단, 이 규칙을 구현한 최종 DuckDB 뷰가 생성되기 전까지는 수동 결합을 분석 결과로 배포하지 않는다. 진학자 수를 분석할 때는 `further_study_quality_status='as_reported'`도 적용한다. 취업 자료가 없는 16,986개 핵심 마트 행의 취업 지표는 `NULL`이며 0으로 대체하지 않는다.
+코호트 분석에는 이 파일 연도 표 대신 `analysis.employment_cohort_school_2010_2020`을 사용한다. 이 최종 마트는 감사표에서 승인된 11개 원천만 선택하고 `employment_cohort_year`로 재키잉한다. 핵심 학교 지표까지 필요하면 `analysis.school_year_core_with_employment_cohort_2010_2020`을 사용한다. 진학자 수 분석에는 `further_study_quality_status='as_reported'`를 적용하고, 취업 자료가 없는 핵심 마트 행의 취업 지표는 `NULL`로 유지한다.
 
 ## 산출물과 다음 단계
 
@@ -84,6 +84,9 @@ ORDER BY _panel_year;
 - 데이터 사전: `data/metadata/edss_employment_school_year_data_dictionary.csv`
 - 빌드 감사: `data/metadata/edss_duckdb_build.json`
 - 코호트 연도 감사: `data/metadata/edss_employment_cohort_year_audit.csv`
+- 최종 코호트 마트: `analysis.employment_cohort_school_2010_2020`
+- 최종 핵심 결합 뷰: `analysis.school_year_core_with_employment_cohort_2010_2020`
+- 최종 코호트 마트 설명: `docs/edss_employment_cohort_school_mart.md`
 - 검산 노트북: `notebooks/edss_employment_school_year_mart_validation.ipynb`
 
 공식 검증 결과 2022년 파일을 독립 2022년 관측치로 사용할 수 없다는 판단은 확정했다. 원본 오류인지 의도된 후속 파동인지에 대한 제공기관 설명은 찾지 못했으므로, 원인 규명이 필요하면 EDSS 업무 담당자에게 두 원본 ZIP의 체크섬과 졸업년월 분포를 첨부해 질의한다.

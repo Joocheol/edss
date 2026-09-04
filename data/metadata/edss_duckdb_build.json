@@ -1,6 +1,6 @@
 {
   "status": "complete",
-  "generated_at": "2026-09-04T02:34:07.289151+00:00",
+  "generated_at": "2026-09-04T03:31:48.653821+00:00",
   "duckdb_version": "1.4.1",
   "inputs": {
     "standalone_employment": {
@@ -26,12 +26,20 @@
     "employment_school_year_data_dictionary": {
       "relative_path": "data/metadata/edss_employment_school_year_data_dictionary.csv",
       "sha256": "58912e94b0da047dfa6b1ffff56f04c027e0f6a97725f588dc419e4f808d846d"
+    },
+    "employment_cohort_year_audit": {
+      "relative_path": "data/metadata/edss_employment_cohort_year_audit.csv",
+      "sha256": "13d4df5cf9514aec08ed65d213cdffac23faa8880252568bc4bf17f2516de87e"
+    },
+    "employment_cohort_school_data_dictionary": {
+      "relative_path": "data/metadata/edss_employment_cohort_school_data_dictionary.csv",
+      "sha256": "75d49e1967977cc9a68666f2a2071177cb355003297ac86db7eeacefd092ab8f"
     }
   },
   "database": {
     "relative_path": "data/processed/edss/restricted/edss_all.duckdb",
-    "bytes": 16080711680,
-    "sha256": "3d200cfb90b6118adfe9adf5d1f1405b9cc32acc01ef6b41332f66250ceee53a"
+    "bytes": 16079400960,
+    "sha256": "b134cc5557625b58ab228d1fa91c5852c85950bc4556c7411af0c312f41c8f95"
   },
   "catalog": {
     "relative_path": "data/metadata/edss_panel_catalog.csv",
@@ -54,7 +62,7 @@
     "skipped_current_this_run": 233,
     "manifest_table_count": 233,
     "manifest_panel_row_count": 180119183,
-    "elapsed_seconds": 15.7
+    "elapsed_seconds": 15.3
   },
   "employment_analysis_views": {
     "status": "complete_with_scope_exclusion",
@@ -394,6 +402,108 @@
       "sha256": "58912e94b0da047dfa6b1ffff56f04c027e0f6a97725f588dc419e4f808d846d"
     }
   },
+  "employment_cohort_school_mart": {
+    "status": "complete",
+    "table": "analysis.employment_cohort_school_2010_2020",
+    "joined_view": "analysis.school_year_core_with_employment_cohort_2010_2020",
+    "mapping_table": "meta.employment_cohort_source_map",
+    "grain": "one row per (employment_cohort_year, 개방ID)",
+    "cohort_years": [
+      "2010",
+      "2020"
+    ],
+    "source_panel_years": [
+      "2010",
+      "2021"
+    ],
+    "excluded_source_panel_years": [
+      "2014",
+      "2022"
+    ],
+    "row_count": 5969,
+    "column_count": 22,
+    "distinct_key_count": 5969,
+    "duplicate_key_count": 0,
+    "blank_key_count": 0,
+    "selected_source_row_count": 6167230,
+    "orphan_employment_key_count": 0,
+    "joined_core_row_count": 20226,
+    "joined_core_distinct_key_count": 20226,
+    "joined_core_employment_matched_count": 5969,
+    "joined_core_employment_unmatched_count": 14257,
+    "join_expansion_count": 0,
+    "reference_date_regime_break": {
+      "last_june_1_cohort": "2013",
+      "first_selected_december_31_cohort": "2014",
+      "cross_regime_comparison_requires_caveat": true
+    },
+    "metric_validation": {
+      "reported_graduate_count": {
+        "selected_source_sum": 6167230,
+        "cohort_mart_sum": 6167230,
+        "sum_reconciles": true
+      },
+      "reported_employed_count": {
+        "selected_source_sum": 3254755,
+        "cohort_mart_sum": 3254755,
+        "sum_reconciles": true
+      },
+      "reported_health_insurance_employed_count": {
+        "selected_source_sum": 3170493,
+        "cohort_mart_sum": 3170493,
+        "sum_reconciles": true
+      },
+      "reported_school_employed_count": {
+        "selected_source_sum": 83508,
+        "cohort_mart_sum": 83508,
+        "sum_reconciles": true
+      },
+      "reported_further_study_count": {
+        "selected_source_sum": 245188,
+        "cohort_mart_sum": 245188,
+        "sum_reconciles": true
+      },
+      "reported_military_service_count": {
+        "selected_source_sum": 73157,
+        "cohort_mart_sum": 73157,
+        "sum_reconciles": true
+      },
+      "reported_employment_unavailable_count": {
+        "selected_source_sum": 2519,
+        "cohort_mart_sum": 2519,
+        "sum_reconciles": true
+      },
+      "reported_foreign_student_count": {
+        "selected_source_sum": 167434,
+        "cohort_mart_sum": 167434,
+        "sum_reconciles": true
+      },
+      "reported_excluded_count": {
+        "selected_source_sum": 70810,
+        "cohort_mart_sum": 70810,
+        "sum_reconciles": true
+      },
+      "reported_other_count": {
+        "selected_source_sum": 1918044,
+        "cohort_mart_sum": 1918044,
+        "sum_reconciles": true
+      },
+      "reported_unknown_count": {
+        "selected_source_sum": 62229,
+        "cohort_mart_sum": 62229,
+        "sum_reconciles": true
+      }
+    },
+    "cohort_audit": {
+      "row_count": 13,
+      "selected_source_year_count": 11,
+      "sha256": "13d4df5cf9514aec08ed65d213cdffac23faa8880252568bc4bf17f2516de87e"
+    },
+    "data_dictionary": {
+      "row_count": 22,
+      "sha256": "75d49e1967977cc9a68666f2a2071177cb355003297ac86db7eeacefd092ab8f"
+    }
+  },
   "validation": {
     "catalog_paths_missing": 0,
     "catalog_size_mismatches": 0,
@@ -409,6 +519,12 @@
     "employment_school_year_unique_key": true,
     "employment_school_year_orphan_key_count": 0,
     "employment_core_join_expansion_count": 0,
+    "employment_cohort_school_unique_key": true,
+    "employment_cohort_school_orphan_key_count": 0,
+    "employment_cohort_core_join_expansion_count": 0,
+    "employment_2014_transition_december_wave_selected": true,
+    "employment_2014_june_wave_excluded": true,
+    "employment_2022_exact_repeat_excluded": true,
     "employment_2022_time_comparison_eligible": false,
     "official_employment_rate_derived": false,
     "database_access_tier": "restricted"

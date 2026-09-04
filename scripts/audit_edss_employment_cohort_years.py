@@ -70,6 +70,38 @@ METHODOLOGY_SOURCE = {
     ),
 }
 
+TRANSITION_WAVE_RESOLUTION = {
+    "cohort_year": "2014",
+    "early_wave": {
+        "source_year": "2014",
+        "reference_date": "2014-06-01",
+        "reference_date_basis": "june_1",
+        "source_row_count": 557236,
+        "selected": False,
+    },
+    "standardized_wave": {
+        "source_year": "2015",
+        "reference_date": "2014-12-31",
+        "reference_date_basis": "december_31",
+        "source_row_count": 557234,
+        "selected": True,
+    },
+    "resolution": (
+        "2014 source is the June 1 wave and 2015 source is the December 31 "
+        "wave for the same 2014 graduation cohort. Select the December 31 "
+        "wave to align with the post-unification series."
+    ),
+    "official_transition_table_url": (
+        "https://kess.kedi.re.kr/publ/fileDownload.do?"
+        "fileSeq=1032483&publItemId=79838"
+    ),
+    "official_2014_december_release_url": (
+        "https://www.kedi.re.kr/khome/main/announce/"
+        "selectBroadAnnounceForm.do?article_sq_no=30069&board_sq_no=3&"
+        "currentPage=0&doc_use_yn=N&selectTp=0"
+    ),
+}
+
 OUTPUT_FIELDS = (
     "source_year",
     "source_row_count",
@@ -88,6 +120,8 @@ OUTPUT_FIELDS = (
     "primary_august_february_share",
     "source_minus_cohort_years",
     "time_axis_status",
+    "observation_reference_date",
+    "observation_reference_date_basis",
     "cohort_source_year_count",
     "cohort_source_years",
     "same_cohort_previous_source_year",
@@ -384,6 +418,13 @@ def audit_connection(connection) -> tuple[dict, list[dict]]:
         else:
             time_axis_status = "source_year_other_cohort_offset"
 
+        if int(source_year) <= 2014:
+            observation_reference_date = f"{cohort_year}-06-01"
+            observation_reference_date_basis = "june_1"
+        else:
+            observation_reference_date = f"{cohort_year}-12-31"
+            observation_reference_date_basis = "december_31"
+
         if len(source_years) == 1:
             cohort_use_status = "eligible_unique_cohort"
             eligible = True
@@ -393,6 +434,17 @@ def audit_connection(connection) -> tuple[dict, list[dict]]:
                 if difference
                 else "use_source_year_as_cohort_year"
             )
+        elif cohort_year == "2014" and source_years == ["2014", "2015"]:
+            if source_year == "2014":
+                cohort_use_status = "exclude_transition_june_wave"
+                eligible = False
+                severity = "medium"
+                action = "preserve_as_early_wave_but_exclude_from_standardized_cohort_view"
+            else:
+                cohort_use_status = "eligible_transition_december_wave"
+                eligible = True
+                severity = "low"
+                action = "select_december_31_wave_and_rekey_to_2014_cohort"
         elif group_is_exact_repeat:
             if source_year == source_years[0]:
                 cohort_use_status = "eligible_first_of_exact_repeat"
@@ -429,6 +481,8 @@ def audit_connection(connection) -> tuple[dict, list[dict]]:
         record.update(
             {
                 "time_axis_status": time_axis_status,
+                "observation_reference_date": observation_reference_date,
+                "observation_reference_date_basis": observation_reference_date_basis,
                 "cohort_source_year_count": len(source_years),
                 "cohort_source_years": "|".join(source_years),
                 "same_cohort_previous_source_year": comparison[
@@ -478,7 +532,7 @@ def audit_connection(connection) -> tuple[dict, list[dict]]:
         record["cohort_use_status"] for record in public_records
     )
     summary = {
-        "audit_version": 1,
+        "audit_version": 2,
         "generated_at": utc_now(),
         "status": (
             "review_required"
@@ -511,11 +565,13 @@ def audit_connection(connection) -> tuple[dict, list[dict]]:
         "same_cohort_comparisons": comparisons,
         "official_same_label_definitions": OFFICIAL_SAME_LABEL_DEFINITIONS,
         "methodology_context": METHODOLOGY_SOURCE,
+        "transition_wave_resolution": TRANSITION_WAVE_RESOLUTION,
         "safe_use_rule": (
             "Never interpret _panel_year as the graduation cohort without this "
             "audit. Filter to cohort_analysis_eligible=true and group by "
-            "inferred_cohort_year. Do not select either 2014-cohort wave until "
-            "its reference date and methodology are resolved."
+            "inferred_cohort_year. For the 2014 cohort, use source year 2015 as "
+            "the December 31 standardized wave and preserve source year 2014 "
+            "only as the excluded June 1 transition wave."
         ),
         "privacy": (
             "Outputs contain only year-level counts and school-level comparison "

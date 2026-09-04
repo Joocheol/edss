@@ -102,7 +102,7 @@ python3 scripts/build_edss_school_year_bridge.py
 uv run --offline --with duckdb==1.4.1 python scripts/build_edss_duckdb.py
 ```
 
-결과는 `data/processed/edss/restricted/edss_all.duckdb`에 생성됩니다. 과거 취업통계의 민감 가능 열을 포함하므로 DB 전체는 제한 자료로 취급해야 합니다. 종단 분석은 연도가 2010–2022로 고정된 `analysis.employment_legacy_2010_2022`를 사용하고, 2023–2024년 기술통계는 OpenID 열이 없는 `analysis.employment_2023_2024_standalone`에서 별도로 조회합니다.
+결과는 `data/processed/edss/restricted/edss_all.duckdb`에 생성됩니다. 과거 취업통계의 민감 가능 열을 포함하므로 DB 전체는 제한 자료로 취급해야 합니다. 원천 감사는 연도가 2010–2022로 고정된 `analysis.employment_legacy_2010_2022`를 사용하고, 최종 코호트 분석은 `analysis.employment_cohort_school_2010_2020` 또는 핵심 마트와 결합한 `analysis.school_year_core_with_employment_cohort_2010_2020`에서 시작합니다. 2023–2024년 기술통계는 OpenID 열이 없는 `analysis.employment_2023_2024_standalone`에서 별도로 조회합니다.
 
 ```sql
 SELECT * FROM meta.panel_catalog ORDER BY source, catalog_code;
@@ -112,9 +112,9 @@ SELECT * FROM analysis.employment_2023_2024_standalone LIMIT 10;
 
 학교 단위 분석의 기본 시작점은 `analysis.school_year_core_2010_2022`다. 이 마트는 `(연도, OpenID)` 한 행이며 `0101` 캠퍼스 수치를 안전하게 합산하고 미연결 학교연도는 상태와 함께 보존한다.
 
-2010–2022 취업통계는 `analysis.employment_school_year_2010_2022`에서 같은 grain으로 사전 집계하며, `analysis.school_year_core_with_employment_2010_2022`에서 핵심 마트와 안전하게 결합한다. 2022년은 2021년 학교별 집계와 완전히 같아 시계열 비교 부적격으로 표시하며 공식 취업률은 생성하지 않는다.
+2010–2022 취업통계는 `analysis.employment_school_year_2010_2022`에서 파일 연도 grain으로 사전 집계하며, 이 표는 원천 품질 감사에 사용한다. 최종 코호트 마트는 승인된 11개 원천만 선택해 2010–2020 코호트로 재키잉하며 5,969개 유일키와 원천 합계 6,167,230행을 보존한다. 공식 취업률은 생성하지 않는다.
 
-취업통계의 `_panel_year`는 실제 졸업 코호트 연도가 아니다. 2010–2022년의 졸업월을 전수 감사한 `data/metadata/edss_employment_cohort_year_audit.csv`를 기준으로 파일 연도와 추론 코호트를 분리한다. 2014·2015년은 같은 코호트의 서로 다른 파동이므로 기준일 확인 전 보류하고, 2016–2021년은 코호트 연도로 1년 앞당기며, 2022년은 2021년과 같은 2020 코호트의 정확 반복으로 제외한다.
+취업통계의 `_panel_year`는 실제 졸업 코호트 연도가 아니다. 2010–2022년의 졸업월을 전수 감사한 `data/metadata/edss_employment_cohort_year_audit.csv`를 기준으로 파일 연도와 추론 코호트를 분리한다. 2014 파일은 2014년 6월 1일 파동이라 제외하고, 2015 파일을 같은 2014 코호트의 12월 31일 파동으로 선택한다. 2016–2021년은 코호트 연도로 1년 앞당기며, 2022년은 2021년과 같은 2020 코호트의 정확 반복이라 제외한다. 2013 코호트까지의 6월 1일 기준과 2014 코호트부터의 12월 31일 기준 사이 비교에는 제도 전환 주석이 필요하다.
 
 테이블 명명법, 소스별 스키마와 검증 결과는 `docs/edss_duckdb.md`에 기록합니다.
 
