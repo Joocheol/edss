@@ -42,6 +42,8 @@ DB 크기는 16,080,711,680 bytes이며 SHA-256은 `3d200cfb90b6118adfe9adf5d1f1
 
 코호트 수준 기초 추세는 `scripts/build_edss_employment_cohort_trends.py`로 별도 생성한다. 출력 `data/metadata/edss_employment_cohort_trends.csv`는 11행 집계만 포함하고, `june_1_2010_2013`과 `december_31_2014_2020` 구간 내부에서만 전년 변화를 계산한다. 이 비율은 공식 취업률이 아니라 원천 보고 취업자 수를 원천 보고 졸업학생 수로 나눈 설명적 지표다.
 
+학교 구성 민감도는 `scripts/analyze_edss_employment_balanced_panel.py`로 검증한다. 같은 기준일 구간의 모든 코호트에 관측된 OpenID만 내부적으로 선택하고, Git에는 학교 식별자 없이 11개 코호트 집계와 검증 요약만 기록한다.
+
 동일한 카탈로그 코드가 출처마다 반복될 수 있으므로 반드시 스키마까지 포함한 이름을 사용한다. 카탈로그의 `domain_column_count`는 원래 업무열 수이고 `loaded_column_count`는 공통 출처 추적열 12개를 포함한 실제 테이블 열 수다.
 
 ## 빌드와 재개

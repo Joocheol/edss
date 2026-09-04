@@ -1,0 +1,57 @@
+{
+  "version": 1,
+  "generated_at": "2026-09-04T03:59:55.855684+00:00",
+  "status": "share_with_caveats",
+  "question": "Does the reported-employed descriptive share trend persist when school composition is held fixed within each reference-date interval?",
+  "source": {
+    "database": "data/processed/edss/restricted/edss_all.duckdb",
+    "view": "analysis.employment_cohort_school_2010_2020",
+    "grain": "one aggregate row per employment graduation cohort"
+  },
+  "balanced_panel_definition": "A school OpenID must be observed in every cohort of its reference-date interval: 2010-2013 for June 1 or 2014-2020 for December 31.",
+  "coverage": {
+    "cohort_count": 11,
+    "balanced_school_count_by_interval": {
+      "june_1_2010_2013": 496,
+      "december_31_2014_2020": 515
+    },
+    "minimum_balanced_school_coverage_share": 0.913443831,
+    "minimum_balanced_graduate_coverage_share": 0.960614392
+  },
+  "findings": {
+    "all_available_2016_to_2020_change_pp": -3.584776,
+    "balanced_2016_to_2020_change_pp": -3.564585,
+    "sensitivity_difference_pp": 0.020191,
+    "direction_agreement_count": 9,
+    "comparable_transition_count": 9,
+    "maximum_absolute_balanced_minus_all_gap_pp": 0.29517,
+    "maximum_gap_cohort_year": "2013"
+  },
+  "validation": {
+    "source_mart_quality": {
+      "row_count": 5969,
+      "blank_open_id_row_count": 0,
+      "duplicate_school_cohort_key_count": 0,
+      "cohort_count": 11,
+      "first_cohort_year": "2010",
+      "last_cohort_year": "2020"
+    },
+    "expected_cohorts_present": true,
+    "interval_start_changes_are_null": true,
+    "balanced_school_count_constant_within_interval": true,
+    "all_comparable_transition_directions_agree": true
+  },
+  "caveats": [
+    "The derived share is not the official employment rate.",
+    "The 2013-to-2014 boundary is not compared because the reference date changes.",
+    "Balancing controls observed school composition but introduces survivorship selection and does not stabilize changing metric definitions.",
+    "The result is descriptive and does not identify a causal effect."
+  ],
+  "output": {
+    "csv": "data/metadata/edss_employment_balanced_panel_sensitivity.csv",
+    "row_count": 11,
+    "column_count": 25,
+    "sha256": "4aa9fda9d0298c4e2ba840ac843d95c61fac8b4ce75030dd0da7baeabdb46afd"
+  },
+  "privacy": "Only cohort-level totals are written; school OpenIDs are used in-memory for membership checks and are not exported."
+}
