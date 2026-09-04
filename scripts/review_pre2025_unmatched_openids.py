@@ -50,7 +50,7 @@ OUTPUT_FIELDS = (
 # override is supported by the same-year KEDI row plus location and department
 # context from EDSS.  They remain candidates and are never auto-joined.
 CONTEXT_OVERRIDES = {
-    "1139362752": ("한양대학교도시대학원", "2014", "existing_department_context"),
+    "1139362752": ("한양대학교 도시융합개발대학원", "2014", "existing_department_context"),
     "2031110882": ("남부대학교 태권도체육대학원", "2009", "all_zero_closed_kedi_context"),
     "4062185227": ("영산대학교 경영대학원", "2009", "all_zero_closed_duplicate_kedi_context"),
     "4468261480": ("협성대학교 행정대학원", "2013|2014|2015", "all_zero_existing_department_context"),
@@ -58,6 +58,25 @@ CONTEXT_OVERRIDES = {
     "6058101713": ("협성대학교 경영대학원", "2013|2014|2015", "all_zero_existing_department_context"),
     "7638497352": ("부산대학교 국제대학원", "2009|2010|2011", "all_zero_closed_kedi_context"),
     "8947065591": ("한북대학교 경영대학원", "2011", "staff_and_department_context"),
+}
+
+FINAL_REVIEW_IDS = {
+    "1139362752",
+    "2031110882",
+    "2118588984",
+    "2545302689",
+    "3042672216",
+    "3194591462",
+    "4062185227",
+    "4080095410",
+    "4468261480",
+    "5853597760",
+    "6058101713",
+    "6505783319",
+    "7470429599",
+    "7638497352",
+    "8947065591",
+    "9206062912",
 }
 
 CONFIRMED_IDENTITY_OVERRIDES = {
@@ -585,6 +604,61 @@ def load_approved_identity_proposals(path: Path) -> dict[str, dict[str, str]]:
     return overrides
 
 
+def load_final_identity_decisions(path: Path) -> dict[str, dict[str, str]]:
+    """Load the final reviewed names while keeping every historical OpenID separate."""
+
+    required = {
+        "open_id",
+        "confirmed_entity_name",
+        "decision_bucket",
+        "manual_classification",
+        "evidence_window",
+        "evidence_tier",
+        "kedi_statuses",
+        "official_source_url",
+        "safe_join_action",
+        "evidence_summary",
+    }
+    rows = read_csv(path)
+    if not rows:
+        raise RuntimeError(f"final identity decision file is empty: {path}")
+    missing_fields = required - set(rows[0])
+    if missing_fields:
+        raise RuntimeError(f"final identity decision fields missing: {sorted(missing_fields)}")
+
+    overrides: dict[str, dict[str, str]] = {}
+    for row in rows:
+        open_id = row["open_id"].strip()
+        if not re.fullmatch(r"\d+", open_id):
+            raise RuntimeError(f"invalid final-review OpenID: {open_id!r}")
+        if open_id in overrides:
+            raise RuntimeError(f"duplicate final-review OpenID: {open_id}")
+        if row["decision_bucket"].strip() != "ready_to_record":
+            raise RuntimeError(f"final decision is not approved for recording: {open_id}")
+        classification = row["manual_classification"].strip()
+        if not classification.startswith("confirmed_identity_"):
+            raise RuntimeError(f"unconfirmed final classification for {open_id}: {classification!r}")
+        safe_action = row["safe_join_action"].strip()
+        if "separate" not in safe_action and "no_auto_join" not in safe_action:
+            raise RuntimeError(f"unsafe final identity action for {open_id}: {safe_action!r}")
+        if not row["evidence_tier"].strip() or not row["evidence_summary"].strip():
+            raise RuntimeError(f"final decision lacks evidence for {open_id}")
+        overrides[open_id] = {
+            "name": row["confirmed_entity_name"].strip(),
+            "years": expand_year_window(row["evidence_window"]),
+            "candidate_status": "confirmed_final_manual_review_identity",
+            "classification": classification,
+            "kedi_statuses": row["kedi_statuses"].strip(),
+            "safe_action": safe_action,
+            "summary": (
+                f"최종 수동검토에서 {row['confirmed_entity_name'].strip()}으로 확정했다. "
+                f"{row['evidence_summary'].strip()} 학교명만 기록하며 역사 OpenID는 별도 "
+                "보존하고 자동 병합하지 않는다."
+            ),
+        }
+    return overrides
+
+
 def compact(values: set[str], limit: int = 8) -> str:
     cleaned = sorted({value.strip() for value in values if value and value.strip()})
     return "|".join(cleaned[:limit])
@@ -781,6 +855,7 @@ def main() -> None:
     parser.add_argument("--root", type=Path, default=Path.cwd())
     parser.add_argument("--duckdb", type=Path, default=DEFAULT_DUCKDB)
     parser.add_argument("--approved-identity-proposals", type=Path)
+    parser.add_argument("--final-identity-decisions", type=Path)
     args = parser.parse_args()
     root = args.root.resolve()
     identity_path = root / "data/processed/edss_0101_kedi_openid_identity_2009_2025.csv"
@@ -791,6 +866,11 @@ def main() -> None:
         args.approved_identity_proposals.resolve()
         if args.approved_identity_proposals
         else root / "data/metadata/edss_remaining_unnamed_openid_identity_proposals.csv"
+    )
+    final_decisions_path = (
+        args.final_identity_decisions.resolve()
+        if args.final_identity_decisions
+        else root / "data/metadata/edss_remaining_pre2025_openid_identity_decisions.csv"
     )
     output_path = root / "data/metadata/edss_pre2025_unmatched_openid_manual_review.csv"
     summary_path = root / "data/metadata/edss_pre2025_unmatched_openid_manual_review.json"
@@ -812,6 +892,22 @@ def main() -> None:
             f"approved identities are outside the review population: {sorted(unexpected_approved_ids)}"
         )
     confirmed_identity_overrides.update(approved_overrides)
+    final_overrides = load_final_identity_decisions(final_decisions_path)
+    if set(final_overrides) != FINAL_REVIEW_IDS:
+        raise RuntimeError(
+            "final identity decision population mismatch: "
+            f"missing={sorted(FINAL_REVIEW_IDS - set(final_overrides))}, "
+            f"extra={sorted(set(final_overrides) - FINAL_REVIEW_IDS)}"
+        )
+    unexpected_final_ids = set(final_overrides) - target_ids
+    if unexpected_final_ids:
+        raise RuntimeError(
+            f"final identities are outside the review population: {sorted(unexpected_final_ids)}"
+        )
+    overlap = set(approved_overrides) & set(final_overrides)
+    if overlap:
+        raise RuntimeError(f"duplicate identities across decision inputs: {sorted(overlap)}")
+    confirmed_identity_overrides.update(final_overrides)
     annual_rows = read_csv(annual_path)
     match_rows = read_csv(match_path)
     annual_lookup = {
@@ -952,7 +1048,7 @@ def main() -> None:
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
     with output_path.open("w", encoding="utf-8-sig", newline="") as handle:
-        writer = csv.DictWriter(handle, fieldnames=OUTPUT_FIELDS)
+        writer = csv.DictWriter(handle, fieldnames=OUTPUT_FIELDS, lineterminator="\n")
         writer.writeheader()
         writer.writerows(output_rows)
 
@@ -979,6 +1075,7 @@ def main() -> None:
             str(match_path.relative_to(root)): sha256(match_path),
             str(reviewed_2025_path.relative_to(root)): sha256(reviewed_2025_path),
             str(approved_proposals_path.relative_to(root)): sha256(approved_proposals_path),
+            str(final_decisions_path.relative_to(root)): sha256(final_decisions_path),
             str(args.duckdb): sha256(args.duckdb),
         },
         "output": {

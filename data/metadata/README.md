@@ -43,7 +43,8 @@
 - `edss_priority_school_history_candidates.json`·`.csv`: 우선 검토 ID 6개의 학과 집합·행 서명·`0101` 연결 후보 비교 결과
 - `edss_priority_school_history_validation.csv`: 통폐합·명칭 변경·학위과정 공백과 중복 ID를 공식 자료 및 뉴스로 교차검증한 수동 학교명 후보표
 - `edss_2025_unmatched_openid_manual_review.csv`: 2025년까지 계속 관측되는 미확인 OpenID 29개 전부의 잔존 유형·후보·비영 측정값·안전한 조인 처리를 기록한 수동 판정표. 판정 요약은 `../../docs/edss_2025_unmatched_openid_manual_review.md`에 있다.
-- `edss_pre2025_unmatched_openid_manual_review.csv`·`.json`: 2025년 이전에 `0101`에서 종료된 미확인 OpenID 84개 전부의 폐교·폐과/조직개편 판정, 다른 패널 최종 관측값, 학교명, 입력·출력 체크섬을 기록한다. 68개는 신원 확정, 16개는 학교명 후보 상태이며 학교명 공란은 0개다. 판정 요약은 `../../docs/edss_pre2025_unmatched_openid_manual_review.md`에 있다.
+- `edss_remaining_pre2025_openid_identity_decisions.csv`: 마지막 후보 상태 16개에 대한 확정 학교명, 근거 수준, 공식 출처, 안전한 비병합 처리를 기록한다.
+- `edss_pre2025_unmatched_openid_manual_review.csv`·`.json`: 2025년 이전에 `0101`에서 종료된 미확인 OpenID 84개 전부의 폐교·폐과/조직개편 판정, 다른 패널 최종 관측값, 확정 학교명, 입력·출력 체크섬을 기록한다. 84개 모두 신원 확정 상태이고 후보·학교명 공란은 0개다. 판정 요약은 `../../docs/edss_pre2025_unmatched_openid_manual_review.md`에 있다.
 - `edss_remaining_unnamed_openid_identity_proposals.csv`·`.json`: 종전 학교명 미확정 30개에 대한 승인 근거와 안전 처리값을 기록한다. 2026-09-04 정식 수동 검토표에 반영했으며 자동 병합은 허용하지 않는다.
 - `edss_priority_school_history_sources.json`: 학교이력 판정의 원본 파일·공식 자료·언론 교차검증 근거 목록
 - `edss_catalog_inventory.csv`: 기준 Excel 7개 시트의 행 단위 인벤토리

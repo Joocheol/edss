@@ -69,5 +69,68 @@ class ApprovedIdentityProposalTests(unittest.TestCase):
             review.expand_year_window("2025-2024")
 
 
+class FinalIdentityDecisionTests(unittest.TestCase):
+    def test_final_sixteen_are_confirmed_without_auto_merge(self):
+        path = (
+            Path(__file__).resolve().parents[1]
+            / "data/metadata/edss_remaining_pre2025_openid_identity_decisions.csv"
+        )
+        overrides = review.load_final_identity_decisions(path)
+
+        self.assertEqual(set(overrides), review.FINAL_REVIEW_IDS)
+        self.assertEqual(len(overrides), 16)
+        self.assertEqual(
+            overrides["1139362752"]["name"], "한양대학교 도시융합개발대학원"
+        )
+        self.assertNotEqual(overrides["1139362752"]["name"], "한양대학교도시대학원")
+        self.assertTrue(
+            all(
+                row["candidate_status"] == "confirmed_final_manual_review_identity"
+                for row in overrides.values()
+            )
+        )
+        self.assertTrue(
+            all(
+                "separate" in row["safe_action"] or "no_auto_join" in row["safe_action"]
+                for row in overrides.values()
+            )
+        )
+
+    def test_rejects_unconfirmed_final_decision(self):
+        fields = [
+            "open_id",
+            "confirmed_entity_name",
+            "decision_bucket",
+            "manual_classification",
+            "evidence_window",
+            "evidence_tier",
+            "kedi_statuses",
+            "official_source_url",
+            "safe_join_action",
+            "evidence_summary",
+        ]
+        with tempfile.TemporaryDirectory() as temporary:
+            path = Path(temporary) / "decisions.csv"
+            with path.open("w", encoding="utf-8-sig", newline="") as handle:
+                writer = csv.DictWriter(handle, fieldnames=fields)
+                writer.writeheader()
+                writer.writerow(
+                    {
+                        "open_id": "1234",
+                        "confirmed_entity_name": "테스트대학원",
+                        "decision_bucket": "ready_to_record",
+                        "manual_classification": "candidate",
+                        "evidence_window": "2020",
+                        "evidence_tier": "test",
+                        "kedi_statuses": "기존",
+                        "official_source_url": "",
+                        "safe_join_action": "retain_open_id_separately_no_auto_join",
+                        "evidence_summary": "검토 근거",
+                    }
+                )
+            with self.assertRaisesRegex(RuntimeError, "unconfirmed final classification"):
+                review.load_final_identity_decisions(path)
+
+
 if __name__ == "__main__":
     unittest.main()
