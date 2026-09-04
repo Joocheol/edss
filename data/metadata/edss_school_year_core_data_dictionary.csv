@@ -1,0 +1,32 @@
+column_name,data_type,source,transformation,meaning,missingness_rule
+_panel_year,VARCHAR,edss_school_year_bridge.csv,identity,분석 연도,공란 불가
+개방ID,VARCHAR,edss_school_year_bridge.csv,identity,EDSS 원본 개방ID 문자열,공란 불가
+_0101_exists,VARCHAR,edss_school_year_bridge.csv,identity,동일 학교연도 0101 관측 여부,공란 불가
+_0101_match_status,VARCHAR,edss_school_year_bridge.csv,identity,0101 연결 또는 시간 범위 상태,공란 불가
+_review_status,VARCHAR,edss_school_year_bridge.csv,identity,외부 검토 필요 상태,공란 불가
+source_0101_row_count,INTEGER,edss_school_year_bridge.csv,cast,학교연도에 대응하는 원시 0101 캠퍼스 행 수,0101 미관측이면 0
+branch_count,INTEGER,edss_school_year_bridge.csv,cast,서로 다른 본분교 값 수,0101 미관측이면 0
+branch_names,VARCHAR,edss_school_year_bridge.csv,identity,정렬된 본분교 값 목록,0101 미관측이면 공란
+province_count,INTEGER,edss_school_year_bridge.csv,cast,서로 다른 시도 값 수,0101 미관측이면 0
+provinces,VARCHAR,edss_school_year_bridge.csv,identity,정렬된 시도 값 목록,0101 미관측이면 공란
+region_count,INTEGER,edss_school_year_bridge.csv,cast,서로 다른 지역 값 수,0101 미관측이면 0
+regions,VARCHAR,edss_school_year_bridge.csv,identity,정렬된 지역 값 목록,0101 미관측이면 공란
+school_type_count,INTEGER,edss_school_year_bridge.csv,cast,서로 다른 학교구분 값 수,0101 미관측이면 0
+school_types,VARCHAR,edss_school_year_bridge.csv,identity,정렬된 학교구분 값 목록,0101 미관측이면 공란
+campus_scope,VARCHAR,edss_school_year_bridge.csv,identity,단일 캠퍼스 복수 캠퍼스 또는 미관측 상태,공란 불가
+observed_dataset_count,INTEGER,edss_school_year_bridge.csv,cast,같은 키가 관측된 논리 패널 수,공란 불가
+observed_catalog_codes,VARCHAR,edss_school_year_bridge.csv,identity,같은 키가 관측된 출처와 카탈로그 코드 목록,공란 불가
+observed_source_row_count,BIGINT,edss_school_year_bridge.csv,cast,전체 논리 패널에서 같은 키를 가진 원본 행 수,공란 불가
+metric_source_row_count,INTEGER,higher_education.panel_0101,count,수치 집계에 사용한 0101 캠퍼스 행 수,0101 미관측이면 NULL
+enrolled_student_count,HUGEINT,고등교육학교_재적학생수,sum_by_school_year,캠퍼스 합산 재적학생 수,0101 미관측이면 NULL
+female_enrolled_student_count,HUGEINT,고등교육학교_재적여학생수,sum_by_school_year,캠퍼스 합산 재적 여학생 수,0101 미관측이면 NULL
+entrant_count,HUGEINT,고등교육학교_입학생수,sum_by_school_year,캠퍼스 합산 입학생 수,0101 미관측이면 NULL
+female_entrant_count,HUGEINT,고등교육학교_여자입학생수,sum_by_school_year,캠퍼스 합산 여자 입학생 수,0101 미관측이면 NULL
+graduate_count,HUGEINT,고등교육학교_졸업생수,sum_by_school_year,캠퍼스 합산 졸업생 수,0101 미관측이면 NULL
+female_graduate_count,HUGEINT,고등교육학교_여자졸업생수,sum_by_school_year,캠퍼스 합산 여자 졸업생 수,0101 미관측이면 NULL
+faculty_count,HUGEINT,고등교육학교_교원수,sum_by_school_year,캠퍼스 합산 교원 수,0101 미관측이면 NULL
+female_faculty_count,HUGEINT,고등교육학교_여자교원수,sum_by_school_year,캠퍼스 합산 여자 교원 수,0101 미관측이면 NULL
+staff_count,HUGEINT,고등교육학교_사무직원수,sum_by_school_year,캠퍼스 합산 사무직원 수,0101 미관측이면 NULL
+female_staff_count,HUGEINT,고등교육학교_여자사무직원수,sum_by_school_year,캠퍼스 합산 여자 사무직원 수,0101 미관측이면 NULL
+building_area,HUGEINT,고등교육학교_건물면적,sum_by_school_year,캠퍼스 합산 건물면적 원천 단위,0101 미관측이면 NULL
+department_count,HUGEINT,고등교육학교_학과수,sum_by_school_year,캠퍼스 합산 학과 수,0101 미관측이면 NULL

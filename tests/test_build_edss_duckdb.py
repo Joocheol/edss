@@ -183,6 +183,163 @@ class BuildEdssDuckDBTests(unittest.TestCase):
             self.assertEqual(old_view_count, 0)
             connection.close()
 
+    def test_school_year_core_mart_aggregates_campuses_without_expansion(self):
+        duckdb = builder.require_duckdb()
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            bridge_path = root / "bridge.csv"
+            bridge_fields = [
+                "_panel_year",
+                "개방ID",
+                "_0101_exists",
+                "_0101_match_status",
+                "_review_status",
+                "_0101_source_row_count",
+                "_0101_branch_count",
+                "_0101_branch_names",
+                "_0101_province_count",
+                "_0101_provinces",
+                "_0101_region_count",
+                "_0101_regions",
+                "_0101_school_type_count",
+                "_0101_school_types",
+                "_0101_campus_scope",
+                "_source_dataset_count",
+                "_source_catalog_codes",
+                "_source_row_count",
+            ]
+            with bridge_path.open("w", encoding="utf-8", newline="") as handle:
+                writer = csv.DictWriter(handle, fieldnames=bridge_fields)
+                writer.writeheader()
+                writer.writerows(
+                    [
+                        {
+                            "_panel_year": "2010",
+                            "개방ID": "A",
+                            "_0101_exists": "true",
+                            "_0101_match_status": "matched",
+                            "_review_status": "not_required",
+                            "_0101_source_row_count": "2",
+                            "_0101_branch_count": "2",
+                            "_0101_branch_names": "본교|분교",
+                            "_0101_province_count": "1",
+                            "_0101_provinces": "서울",
+                            "_0101_region_count": "1",
+                            "_0101_regions": "서울 종로구",
+                            "_0101_school_type_count": "1",
+                            "_0101_school_types": "대학",
+                            "_0101_campus_scope": "multiple_campuses",
+                            "_source_dataset_count": "2",
+                            "_source_catalog_codes": "고등교육통계:0101|대학정보공시:0101",
+                            "_source_row_count": "5",
+                        },
+                        {
+                            "_panel_year": "2011",
+                            "개방ID": "X",
+                            "_0101_exists": "false",
+                            "_0101_match_status": "internal_base_gap",
+                            "_review_status": "external_crosscheck_required_internal_gap",
+                            "_0101_source_row_count": "0",
+                            "_0101_branch_count": "0",
+                            "_0101_branch_names": "",
+                            "_0101_province_count": "0",
+                            "_0101_provinces": "",
+                            "_0101_region_count": "0",
+                            "_0101_regions": "",
+                            "_0101_school_type_count": "0",
+                            "_0101_school_types": "",
+                            "_0101_campus_scope": "not_observed",
+                            "_source_dataset_count": "1",
+                            "_source_catalog_codes": "대학정보공시:1209",
+                            "_source_row_count": "1",
+                        },
+                        {
+                            "_panel_year": "2022",
+                            "개방ID": "B",
+                            "_0101_exists": "true",
+                            "_0101_match_status": "matched",
+                            "_review_status": "not_required",
+                            "_0101_source_row_count": "1",
+                            "_0101_branch_count": "1",
+                            "_0101_branch_names": "본교",
+                            "_0101_province_count": "1",
+                            "_0101_provinces": "부산",
+                            "_0101_region_count": "1",
+                            "_0101_regions": "부산 남구",
+                            "_0101_school_type_count": "1",
+                            "_0101_school_types": "대학",
+                            "_0101_campus_scope": "single_campus",
+                            "_source_dataset_count": "1",
+                            "_source_catalog_codes": "고등교육통계:0101",
+                            "_source_row_count": "1",
+                        },
+                    ]
+                )
+            bridge_summary_path = root / "bridge_summary.json"
+            bridge_summary_path.write_text(
+                json.dumps(
+                    {
+                        "bridge_validation": {
+                            "row_count": 3,
+                            "unique_key": True,
+                        }
+                    }
+                ),
+                encoding="utf-8",
+            )
+
+            connection = duckdb.connect(":memory:")
+            builder.initialize_database(connection, root / "tmp", "1GB", 1)
+            source_fields = [
+                "_panel_year",
+                "개방ID",
+                *(source for source, _output in builder.SCHOOL_YEAR_CORE_METRICS),
+            ]
+            column_sql = ", ".join(
+                f'{builder.quote_identifier(field)} VARCHAR' for field in source_fields
+            )
+            connection.execute(
+                f"CREATE TABLE higher_education.panel_0101 ({column_sql})"
+            )
+            placeholders = ", ".join("?" for _ in source_fields)
+            connection.executemany(
+                f"INSERT INTO higher_education.panel_0101 VALUES ({placeholders})",
+                [
+                    ("2010", "A", *(["1"] * len(builder.SCHOOL_YEAR_CORE_METRICS))),
+                    ("2010", "A", *(["2"] * len(builder.SCHOOL_YEAR_CORE_METRICS))),
+                    ("2022", "B", *(["4"] * len(builder.SCHOOL_YEAR_CORE_METRICS))),
+                ],
+            )
+
+            result = builder.build_school_year_core_mart(
+                connection,
+                bridge_path,
+                bridge_summary_path,
+                Path(__file__).resolve().parents[1]
+                / "data/metadata/edss_school_year_core_data_dictionary.csv",
+            )
+
+            self.assertEqual(result["status"], "complete")
+            self.assertEqual(result["row_count"], 3)
+            self.assertEqual(result["distinct_key_count"], 3)
+            self.assertEqual(result["duplicate_key_count"], 0)
+            self.assertEqual(result["matched_0101_row_count"], 2)
+            self.assertEqual(result["unmatched_0101_row_count"], 1)
+            self.assertEqual(result["multiple_campus_row_count"], 1)
+            self.assertEqual(result["source_0101_row_count"], 3)
+            self.assertEqual(result["aggregated_0101_key_count"], 2)
+            self.assertEqual(result["accounted_0101_source_row_count"], 3)
+            self.assertEqual(result["join_expansion_count"], 0)
+            values = connection.execute(
+                """
+                SELECT 개방ID, enrolled_student_count
+                FROM analysis.school_year_core_2010_2022
+                ORDER BY _panel_year
+                """
+            ).fetchall()
+            self.assertEqual(values, [("A", 3), ("X", None), ("B", 4)])
+            connection.close()
+
 
 if __name__ == "__main__":
     unittest.main()

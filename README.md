@@ -110,6 +110,8 @@ SELECT * FROM analysis.panel_inventory ORDER BY source, catalog_code;
 SELECT * FROM analysis.employment_2023_2024_standalone LIMIT 10;
 ```
 
+학교 단위 분석의 기본 시작점은 `analysis.school_year_core_2010_2022`다. 이 마트는 `(연도, OpenID)` 한 행이며 `0101` 캠퍼스 수치를 안전하게 합산하고 미연결 학교연도는 상태와 함께 보존한다.
+
 테이블 명명법, 소스별 스키마와 검증 결과는 `docs/edss_duckdb.md`에 기록합니다.
 
 ## 대학알리미 Open API 사후 검증

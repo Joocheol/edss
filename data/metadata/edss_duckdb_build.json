@@ -1,6 +1,6 @@
 {
   "status": "complete",
-  "generated_at": "2026-09-04T01:45:52.746729+00:00",
+  "generated_at": "2026-09-04T02:09:27.932107+00:00",
   "duckdb_version": "1.4.1",
   "inputs": {
     "standalone_employment": {
@@ -10,12 +10,24 @@
     "identity_resolution_summary": {
       "relative_path": "data/metadata/edss_remaining_identity_gap_resolution.json",
       "sha256": "e999d549af8c437db156bdeab081bb216f3d096e61fae6a7fd826e9740d83d90"
+    },
+    "school_year_bridge": {
+      "relative_path": "data/metadata/edss_school_year_bridge.csv",
+      "sha256": "edfbdbf2cc9c20da00f47d059d668eb8fa4469fae79c6c3105bb356ab644a27d"
+    },
+    "school_year_bridge_summary": {
+      "relative_path": "data/metadata/edss_school_year_bridge_summary.json",
+      "sha256": "c895e26f0b79476a46719559a2d84e6c9cb9aa89c9fc9e2b42761400c6a7cf41"
+    },
+    "school_year_core_data_dictionary": {
+      "relative_path": "data/metadata/edss_school_year_core_data_dictionary.csv",
+      "sha256": "ebb37bb6a351cb7067edec79f29baf6c6f16c5d71e3cad3a8f7f83827c32ec6c"
     }
   },
   "database": {
     "relative_path": "data/processed/edss/restricted/edss_all.duckdb",
-    "bytes": 16048992256,
-    "sha256": "a7c68f21f624eda07230bdf4ce9b5ef74bb9532ece76b770da1bb1c53f2db3de"
+    "bytes": 16078876672,
+    "sha256": "b4b5e3d748094b5a8209a3a2ba9471dc3cfb53087ff44620c55fc3748762d101"
   },
   "catalog": {
     "relative_path": "data/metadata/edss_panel_catalog.csv",
@@ -38,7 +50,7 @@
     "skipped_current_this_run": 233,
     "manifest_table_count": 233,
     "manifest_panel_row_count": 180119183,
-    "elapsed_seconds": 13.3
+    "elapsed_seconds": 14.7
   },
   "employment_analysis_views": {
     "status": "complete_with_scope_exclusion",
@@ -68,6 +80,145 @@
     },
     "removed_default_analysis_view": "analysis.employment_2023_2024_resolved"
   },
+  "school_year_core_mart": {
+    "status": "complete",
+    "table": "analysis.school_year_core_2010_2022",
+    "grain": "one row per (_panel_year, 개방ID)",
+    "years": [
+      "2010",
+      "2022"
+    ],
+    "row_count": 24044,
+    "column_count": 31,
+    "distinct_key_count": 24044,
+    "duplicate_key_count": 0,
+    "blank_key_count": 0,
+    "matched_0101_row_count": 23523,
+    "unmatched_0101_row_count": 521,
+    "multiple_campus_row_count": 710,
+    "source_0101_row_count": 24304,
+    "aggregated_0101_key_count": 23523,
+    "accounted_0101_source_row_count": 24304,
+    "matched_rows_with_missing_metrics": 0,
+    "unmatched_rows_with_populated_metrics": 0,
+    "bridge_left_join_output_row_count": 24044,
+    "join_expansion_count": 0,
+    "metric_validation": {
+      "enrolled_student_count": {
+        "source_field": "고등교육학교_재적학생수",
+        "invalid_nonblank_row_count": 0,
+        "negative_row_count": 0,
+        "source_sum": 50653379,
+        "mart_sum": 50653379,
+        "sum_reconciles": true
+      },
+      "female_enrolled_student_count": {
+        "source_field": "고등교육학교_재적여학생수",
+        "invalid_nonblank_row_count": 0,
+        "negative_row_count": 0,
+        "source_sum": 21469125,
+        "mart_sum": 21469125,
+        "sum_reconciles": true
+      },
+      "entrant_count": {
+        "source_field": "고등교육학교_입학생수",
+        "invalid_nonblank_row_count": 0,
+        "negative_row_count": 0,
+        "source_sum": 12538514,
+        "mart_sum": 12538514,
+        "sum_reconciles": true
+      },
+      "female_entrant_count": {
+        "source_field": "고등교육학교_여자입학생수",
+        "invalid_nonblank_row_count": 0,
+        "negative_row_count": 0,
+        "source_sum": 2208228,
+        "mart_sum": 2208228,
+        "sum_reconciles": true
+      },
+      "graduate_count": {
+        "source_field": "고등교육학교_졸업생수",
+        "invalid_nonblank_row_count": 0,
+        "negative_row_count": 0,
+        "source_sum": 8326410,
+        "mart_sum": 8326410,
+        "sum_reconciles": true
+      },
+      "female_graduate_count": {
+        "source_field": "고등교육학교_여자졸업생수",
+        "invalid_nonblank_row_count": 0,
+        "negative_row_count": 0,
+        "source_sum": 4365236,
+        "mart_sum": 4365236,
+        "sum_reconciles": true
+      },
+      "faculty_count": {
+        "source_field": "고등교육학교_교원수",
+        "invalid_nonblank_row_count": 0,
+        "negative_row_count": 0,
+        "source_sum": 1139871,
+        "mart_sum": 1139871,
+        "sum_reconciles": true
+      },
+      "female_faculty_count": {
+        "source_field": "고등교육학교_여자교원수",
+        "invalid_nonblank_row_count": 0,
+        "negative_row_count": 0,
+        "source_sum": 282781,
+        "mart_sum": 282781,
+        "sum_reconciles": true
+      },
+      "staff_count": {
+        "source_field": "고등교육학교_사무직원수",
+        "invalid_nonblank_row_count": 0,
+        "negative_row_count": 0,
+        "source_sum": 687242,
+        "mart_sum": 687242,
+        "sum_reconciles": true
+      },
+      "female_staff_count": {
+        "source_field": "고등교육학교_여자사무직원수",
+        "invalid_nonblank_row_count": 0,
+        "negative_row_count": 0,
+        "source_sum": 292408,
+        "mart_sum": 292408,
+        "sum_reconciles": true
+      },
+      "building_area": {
+        "source_field": "고등교육학교_건물면적",
+        "invalid_nonblank_row_count": 0,
+        "negative_row_count": 0,
+        "source_sum": 107485520,
+        "mart_sum": 107485520,
+        "sum_reconciles": true
+      },
+      "department_count": {
+        "source_field": "고등교육학교_학과수",
+        "invalid_nonblank_row_count": 0,
+        "negative_row_count": 0,
+        "source_sum": 393449,
+        "mart_sum": 393449,
+        "sum_reconciles": true
+      }
+    },
+    "subset_violations": {
+      "female_enrolled_student_count_le_enrolled_student_count": 0,
+      "female_entrant_count_le_entrant_count": 0,
+      "female_graduate_count_le_graduate_count": 0,
+      "female_faculty_count_le_faculty_count": 0,
+      "female_staff_count_le_staff_count": 0
+    },
+    "bridge": {
+      "table": "meta.school_year_bridge",
+      "row_count": 31336,
+      "column_count": 18,
+      "sha256": "edfbdbf2cc9c20da00f47d059d668eb8fa4469fae79c6c3105bb356ab644a27d"
+    },
+    "data_dictionary": {
+      "row_count": 31,
+      "sha256": "ebb37bb6a351cb7067edec79f29baf6c6f16c5d71e3cad3a8f7f83827c32ec6c"
+    }
+  },
   "validation": {
     "catalog_paths_missing": 0,
     "catalog_size_mismatches": 0,
@@ -78,6 +229,8 @@
     "legacy_employment_year_boundary_enforced": true,
     "standalone_employment_open_id_columns_removed": true,
     "schema_break_scope_excluded_rows": 46962,
+    "school_year_core_unique_key": true,
+    "school_year_core_join_expansion_count": 0,
     "database_access_tier": "restricted"
   }
 }

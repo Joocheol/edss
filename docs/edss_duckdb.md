@@ -13,7 +13,7 @@
 | 취업통계 | `employment` | 1 | 7,324,949 |
 | 합계 |  | 233 | 180,119,183 |
 
-DB 크기는 16,048,992,256 bytes이며 SHA-256은 `a7c68f21f624eda07230bdf4ce9b5ef74bb9532ece76b770da1bb1c53f2db3de`이다. 데이터 파일 자체는 Git에서 제외하고 빌드 감사 결과만 `data/metadata/edss_duckdb_build.json`에 보존한다.
+DB 크기는 16,078,876,672 bytes이며 SHA-256은 `b4b5e3d748094b5a8209a3a2ba9471dc3cfb53087ff44620c55fc3748762d101`이다. 데이터 파일 자체는 Git에서 제외하고 빌드 감사 결과만 `data/metadata/edss_duckdb_build.json`에 보존한다.
 
 ## 스키마와 테이블
 
@@ -27,6 +27,7 @@ DB 크기는 16,048,992,256 bytes이며 SHA-256은 `a7c68f21f624eda07230bdf4ce9b
 - `analysis.panel_inventory`: 패널 카탈로그 조회 뷰
 - `analysis.employment_legacy_2010_2022`: 연도가 2010–2022로 고정되고 OpenID 결측이 없는 제한 종단 분석 뷰
 - `analysis.employment_2023_2024_standalone`: OpenID 열이 없는 2023–2024 학교·학과 기술통계 뷰
+- `analysis.school_year_core_2010_2022`: 기준표 24,044개 학교연도와 `0101` 규모 지표 12개를 결합한 유일키 분석 마트
 
 이전 `analysis.employment_2023_2024_resolved` 뷰와 `employment.safe_2023_2024_resolved` 테이블은 기본 조회 계층에서 제거한다. 추론 적용 파일은 파일 기반 감사 산출물로만 보존한다.
 

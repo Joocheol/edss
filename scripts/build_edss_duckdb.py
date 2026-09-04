@@ -52,6 +52,25 @@ DEFAULT_STANDALONE_EMPLOYMENT = Path(
 DEFAULT_IDENTITY_RESOLUTION_SUMMARY = Path(
     "data/metadata/edss_remaining_identity_gap_resolution.json"
 )
+DEFAULT_SCHOOL_YEAR_BRIDGE = Path("data/metadata/edss_school_year_bridge.csv")
+DEFAULT_BRIDGE_SUMMARY = Path("data/metadata/edss_school_year_bridge_summary.json")
+DEFAULT_SCHOOL_YEAR_CORE_DICTIONARY = Path(
+    "data/metadata/edss_school_year_core_data_dictionary.csv"
+)
+SCHOOL_YEAR_CORE_METRICS = (
+    ("고등교육학교_재적학생수", "enrolled_student_count"),
+    ("고등교육학교_재적여학생수", "female_enrolled_student_count"),
+    ("고등교육학교_입학생수", "entrant_count"),
+    ("고등교육학교_여자입학생수", "female_entrant_count"),
+    ("고등교육학교_졸업생수", "graduate_count"),
+    ("고등교육학교_여자졸업생수", "female_graduate_count"),
+    ("고등교육학교_교원수", "faculty_count"),
+    ("고등교육학교_여자교원수", "female_faculty_count"),
+    ("고등교육학교_사무직원수", "staff_count"),
+    ("고등교육학교_여자사무직원수", "female_staff_count"),
+    ("고등교육학교_건물면적", "building_area"),
+    ("고등교육학교_학과수", "department_count"),
+)
 
 
 def utc_now() -> str:
@@ -522,10 +541,400 @@ def load_employment_analysis_views(
     }
 
 
+def build_school_year_core_mart(
+    connection,
+    bridge_path: Path,
+    bridge_summary_path: Path,
+    dictionary_path: Path,
+) -> dict[str, object]:
+    """Build a one-row-per-school-year mart without joining raw 0101 directly."""
+
+    if not bridge_path.is_file():
+        raise RuntimeError(f"school-year bridge is missing: {bridge_path}")
+    bridge_summary = json.loads(bridge_summary_path.read_text(encoding="utf-8"))
+    bridge_validation = bridge_summary["bridge_validation"]
+    if bridge_validation["unique_key"] is not True:
+        raise RuntimeError("school-year bridge summary does not certify a unique key")
+
+    bridge_temp = "meta.__loading_school_year_bridge"
+    mart_temp = "analysis.__loading_school_year_core_2010_2022"
+    connection.execute(f"DROP TABLE IF EXISTS {bridge_temp}")
+    connection.execute(f"DROP TABLE IF EXISTS {mart_temp}")
+    connection.execute(
+        f"""
+        CREATE TABLE {bridge_temp} AS
+        SELECT * FROM read_csv(
+            ?, header = true, all_varchar = true, encoding = 'utf-8',
+            nullstr = '{NULL_SENTINEL}', strict_mode = true
+        )
+        """,
+        [str(bridge_path)],
+    )
+    bridge_rows, bridge_columns = relation_dimensions(
+        connection,
+        "meta",
+        "__loading_school_year_bridge",
+    )
+    bridge_key_stats = connection.execute(
+        f"""
+        SELECT count(*), count(DISTINCT (_panel_year, 개방ID)),
+               count(*) FILTER (
+                   WHERE coalesce(_panel_year, '') = '' OR coalesce(개방ID, '') = ''
+               )
+        FROM {bridge_temp}
+        """
+    ).fetchone()
+    expected_bridge_rows = int(bridge_validation["row_count"])
+    if bridge_rows != expected_bridge_rows or bridge_key_stats != (
+        expected_bridge_rows,
+        expected_bridge_rows,
+        0,
+    ):
+        raise RuntimeError("school-year bridge failed row or key validation")
+
+    source_columns = {
+        row[0]
+        for row in connection.execute(
+            """
+            SELECT column_name
+            FROM information_schema.columns
+            WHERE table_schema = 'higher_education' AND table_name = 'panel_0101'
+            """
+        ).fetchall()
+    }
+    required_source_columns = {
+        "_panel_year",
+        "개방ID",
+        *(source for source, _output in SCHOOL_YEAR_CORE_METRICS),
+    }
+    missing_source_columns = sorted(required_source_columns - source_columns)
+    if missing_source_columns:
+        raise RuntimeError(
+            f"0101 is missing school-year core fields: {missing_source_columns}"
+        )
+
+    metric_validation = {}
+    for source_field, output_field in SCHOOL_YEAR_CORE_METRICS:
+        source_identifier = quote_identifier(source_field)
+        invalid_rows, negative_rows, source_sum = connection.execute(
+            f"""
+            SELECT
+                count(*) FILTER (
+                    WHERE coalesce(trim({source_identifier}), '') <> ''
+                      AND try_cast(replace(trim({source_identifier}), ',', '') AS BIGINT)
+                          IS NULL
+                ),
+                count(*) FILTER (
+                    WHERE try_cast(replace(trim({source_identifier}), ',', '') AS BIGINT) < 0
+                ),
+                sum(try_cast(replace(trim({source_identifier}), ',', '') AS BIGINT))
+            FROM higher_education.panel_0101
+            WHERE _panel_year BETWEEN '2010' AND '2022'
+            """
+        ).fetchone()
+        if invalid_rows or negative_rows:
+            raise RuntimeError(
+                f"invalid 0101 metric values for {source_field}: "
+                f"invalid={invalid_rows}, negative={negative_rows}"
+            )
+        metric_validation[output_field] = {
+            "source_field": source_field,
+            "invalid_nonblank_row_count": invalid_rows,
+            "negative_row_count": negative_rows,
+            "source_sum": int(source_sum) if source_sum is not None else None,
+        }
+
+    aggregate_expressions = ",\n".join(
+        (
+            "sum(try_cast(replace(trim("
+            f"{quote_identifier(source)}), ',', '') AS BIGINT)) AS "
+            f"{quote_identifier(output)}"
+        )
+        for source, output in SCHOOL_YEAR_CORE_METRICS
+    )
+    metric_select = ",\n".join(
+        f"a.{quote_identifier(output)}" for _source, output in SCHOOL_YEAR_CORE_METRICS
+    )
+    connection.execute(
+        f"""
+        CREATE TABLE {mart_temp} AS
+        WITH aggregated_0101 AS (
+            SELECT
+                _panel_year,
+                개방ID,
+                count(*)::INTEGER AS metric_source_row_count,
+                {aggregate_expressions}
+            FROM higher_education.panel_0101
+            WHERE _panel_year BETWEEN '2010' AND '2022'
+            GROUP BY _panel_year, 개방ID
+        )
+        SELECT
+            b._panel_year,
+            b.개방ID,
+            b._0101_exists,
+            b._0101_match_status,
+            b._review_status,
+            try_cast(b._0101_source_row_count AS INTEGER) AS source_0101_row_count,
+            try_cast(b._0101_branch_count AS INTEGER) AS branch_count,
+            b._0101_branch_names AS branch_names,
+            try_cast(b._0101_province_count AS INTEGER) AS province_count,
+            b._0101_provinces AS provinces,
+            try_cast(b._0101_region_count AS INTEGER) AS region_count,
+            b._0101_regions AS regions,
+            try_cast(b._0101_school_type_count AS INTEGER) AS school_type_count,
+            b._0101_school_types AS school_types,
+            b._0101_campus_scope AS campus_scope,
+            try_cast(b._source_dataset_count AS INTEGER) AS observed_dataset_count,
+            b._source_catalog_codes AS observed_catalog_codes,
+            try_cast(b._source_row_count AS BIGINT) AS observed_source_row_count,
+            a.metric_source_row_count,
+            {metric_select}
+        FROM {bridge_temp} AS b
+        LEFT JOIN aggregated_0101 AS a
+          ON b._panel_year = a._panel_year
+         AND b.개방ID = a.개방ID
+        WHERE b._panel_year BETWEEN '2010' AND '2022'
+        """
+    )
+
+    mart_rows, mart_columns = relation_dimensions(
+        connection,
+        "analysis",
+        "__loading_school_year_core_2010_2022",
+    )
+    mart_stats = connection.execute(
+        f"""
+        SELECT
+            count(*),
+            count(DISTINCT (_panel_year, 개방ID)),
+            count(*) FILTER (
+                WHERE coalesce(_panel_year, '') = '' OR coalesce(개방ID, '') = ''
+            ),
+            count(*) FILTER (WHERE _0101_exists = 'true'),
+            count(*) FILTER (WHERE _0101_exists = 'false'),
+            count(*) FILTER (WHERE campus_scope = 'multiple_campuses'),
+            min(_panel_year),
+            max(_panel_year),
+            sum(coalesce(metric_source_row_count, 0))
+        FROM {mart_temp}
+        """
+    ).fetchone()
+    expected_mart_rows = int(
+        connection.execute(
+            f"""
+            SELECT count(*) FROM {bridge_temp}
+            WHERE _panel_year BETWEEN '2010' AND '2022'
+            """
+        ).fetchone()[0]
+    )
+    expected_matched_rows = int(
+        connection.execute(
+            f"""
+            SELECT count(*) FROM {bridge_temp}
+            WHERE _panel_year BETWEEN '2010' AND '2022' AND _0101_exists = 'true'
+            """
+        ).fetchone()[0]
+    )
+    expected_multiple_campus_rows = int(
+        connection.execute(
+            f"""
+            SELECT count(*) FROM {bridge_temp}
+            WHERE _panel_year BETWEEN '2010' AND '2022'
+              AND _0101_campus_scope = 'multiple_campuses'
+            """
+        ).fetchone()[0]
+    )
+    source_0101_rows = int(
+        connection.execute(
+            """
+            SELECT count(*) FROM higher_education.panel_0101
+            WHERE _panel_year BETWEEN '2010' AND '2022'
+            """
+        ).fetchone()[0]
+    )
+    source_0101_key_count = int(
+        connection.execute(
+            """
+            SELECT count(DISTINCT (_panel_year, 개방ID))
+            FROM higher_education.panel_0101
+            WHERE _panel_year BETWEEN '2010' AND '2022'
+            """
+        ).fetchone()[0]
+    )
+    if source_0101_key_count != expected_matched_rows:
+        raise RuntimeError(
+            "0101 aggregated keys do not match the school-year bridge coverage: "
+            f"{source_0101_key_count} != {expected_matched_rows}"
+        )
+    expected_stats = (
+        expected_mart_rows,
+        expected_mart_rows,
+        0,
+        expected_matched_rows,
+        expected_mart_rows - expected_matched_rows,
+        expected_multiple_campus_rows,
+        "2010",
+        "2022",
+        source_0101_rows,
+    )
+    if mart_stats != expected_stats:
+        raise RuntimeError(
+            f"school-year core mart validation mismatch: {mart_stats} != {expected_stats}"
+        )
+
+    with dictionary_path.open(encoding="utf-8-sig", newline="") as handle:
+        dictionary_rows = list(csv.DictReader(handle))
+    dictionary_fields = [row["column_name"] for row in dictionary_rows]
+    mart_schema = connection.execute(
+        """
+        SELECT column_name, data_type
+        FROM information_schema.columns
+        WHERE table_schema = 'analysis'
+          AND table_name = '__loading_school_year_core_2010_2022'
+        ORDER BY ordinal_position
+        """
+    ).fetchall()
+    if dictionary_fields != [row[0] for row in mart_schema]:
+        raise RuntimeError("school-year core data dictionary columns do not match the mart")
+    dictionary_types = [row["data_type"] for row in dictionary_rows]
+    if dictionary_types != [row[1] for row in mart_schema]:
+        raise RuntimeError("school-year core data dictionary types do not match the mart")
+
+    metric_names = [output for _source, output in SCHOOL_YEAR_CORE_METRICS]
+    any_metric_null = " OR ".join(
+        f"{quote_identifier(field)} IS NULL" for field in metric_names
+    )
+    any_metric_nonnull = " OR ".join(
+        f"{quote_identifier(field)} IS NOT NULL" for field in metric_names
+    )
+    matched_missing_metrics, unmatched_populated_metrics = connection.execute(
+        f"""
+        SELECT
+            count(*) FILTER (WHERE _0101_exists = 'true' AND ({any_metric_null})),
+            count(*) FILTER (WHERE _0101_exists = 'false' AND ({any_metric_nonnull}))
+        FROM {mart_temp}
+        """
+    ).fetchone()
+    if matched_missing_metrics or unmatched_populated_metrics:
+        raise RuntimeError("school-year core metric missingness does not follow 0101 coverage")
+
+    subset_pairs = (
+        ("female_enrolled_student_count", "enrolled_student_count"),
+        ("female_entrant_count", "entrant_count"),
+        ("female_graduate_count", "graduate_count"),
+        ("female_faculty_count", "faculty_count"),
+        ("female_staff_count", "staff_count"),
+    )
+    subset_violations = {}
+    for subset, total in subset_pairs:
+        violations = int(
+            connection.execute(
+                f"""
+                SELECT count(*) FROM {mart_temp}
+                WHERE {quote_identifier(subset)} > {quote_identifier(total)}
+                """
+            ).fetchone()[0]
+        )
+        if violations:
+            raise RuntimeError(f"school-year core subset violation: {subset} > {total}")
+        subset_violations[f"{subset}_le_{total}"] = violations
+
+    for _source_field, output_field in SCHOOL_YEAR_CORE_METRICS:
+        mart_sum = connection.execute(
+            f"SELECT sum({quote_identifier(output_field)}) FROM {mart_temp}"
+        ).fetchone()[0]
+        mart_sum = int(mart_sum) if mart_sum is not None else None
+        metric_validation[output_field]["mart_sum"] = mart_sum
+        metric_validation[output_field]["sum_reconciles"] = (
+            mart_sum == metric_validation[output_field]["source_sum"]
+        )
+        if not metric_validation[output_field]["sum_reconciles"]:
+            raise RuntimeError(f"school-year core sum mismatch: {output_field}")
+
+    connection.execute("BEGIN TRANSACTION")
+    try:
+        connection.execute("DROP TABLE IF EXISTS analysis.school_year_core_2010_2022")
+        connection.execute("DROP TABLE IF EXISTS meta.school_year_bridge")
+        connection.execute(
+            "ALTER TABLE meta.__loading_school_year_bridge RENAME TO school_year_bridge"
+        )
+        connection.execute(
+            "ALTER TABLE analysis.__loading_school_year_core_2010_2022 "
+            "RENAME TO school_year_core_2010_2022"
+        )
+        connection.execute("DROP TABLE IF EXISTS meta.school_year_core_summary")
+        connection.execute(
+            f"""
+            CREATE TABLE meta.school_year_core_summary AS
+            SELECT
+                'complete'::VARCHAR AS status,
+                {mart_rows}::BIGINT AS row_count,
+                {expected_matched_rows}::BIGINT AS matched_0101_row_count,
+                {expected_mart_rows - expected_matched_rows}::BIGINT
+                    AS unmatched_0101_row_count,
+                0::BIGINT AS duplicate_key_count,
+                0::BIGINT AS join_expansion_count
+            """
+        )
+        connection.execute("COMMIT")
+    except Exception:
+        connection.execute("ROLLBACK")
+        raise
+
+    join_output_rows = int(
+        connection.execute(
+            """
+            SELECT count(*)
+            FROM meta.school_year_bridge AS b
+            LEFT JOIN analysis.school_year_core_2010_2022 AS m
+              ON b._panel_year = m._panel_year AND b.개방ID = m.개방ID
+            WHERE b._panel_year BETWEEN '2010' AND '2022'
+            """
+        ).fetchone()[0]
+    )
+    if join_output_rows != mart_rows:
+        raise RuntimeError("school-year core join expanded the bridge population")
+
+    return {
+        "status": "complete",
+        "table": "analysis.school_year_core_2010_2022",
+        "grain": "one row per (_panel_year, 개방ID)",
+        "years": ["2010", "2022"],
+        "row_count": mart_rows,
+        "column_count": mart_columns,
+        "distinct_key_count": mart_stats[1],
+        "duplicate_key_count": mart_rows - mart_stats[1],
+        "blank_key_count": mart_stats[2],
+        "matched_0101_row_count": mart_stats[3],
+        "unmatched_0101_row_count": mart_stats[4],
+        "multiple_campus_row_count": mart_stats[5],
+        "source_0101_row_count": source_0101_rows,
+        "aggregated_0101_key_count": source_0101_key_count,
+        "accounted_0101_source_row_count": mart_stats[8],
+        "matched_rows_with_missing_metrics": matched_missing_metrics,
+        "unmatched_rows_with_populated_metrics": unmatched_populated_metrics,
+        "bridge_left_join_output_row_count": join_output_rows,
+        "join_expansion_count": join_output_rows - mart_rows,
+        "metric_validation": metric_validation,
+        "subset_violations": subset_violations,
+        "bridge": {
+            "table": "meta.school_year_bridge",
+            "row_count": bridge_rows,
+            "column_count": bridge_columns,
+            "sha256": sha256_file(bridge_path),
+        },
+        "data_dictionary": {
+            "row_count": len(dictionary_rows),
+            "sha256": sha256_file(dictionary_path),
+        },
+    }
+
+
 def replace_build_summary(
     connection,
     rows: list[dict[str, str]],
     employment_views: dict[str, object],
+    school_year_core: dict[str, object],
     status: str,
 ) -> None:
     connection.execute("DROP TABLE IF EXISTS meta.database_summary")
@@ -538,7 +947,8 @@ def replace_build_summary(
             ?::BIGINT AS panel_row_count,
             ?::BIGINT AS legacy_employment_rows,
             ?::BIGINT AS standalone_employment_rows,
-            ?::BIGINT AS scope_excluded_employment_rows
+            ?::BIGINT AS scope_excluded_employment_rows,
+            ?::BIGINT AS school_year_core_rows
         """,
         [
             status,
@@ -547,6 +957,7 @@ def replace_build_summary(
             int(employment_views["legacy"]["rows"]),
             int(employment_views["standalone"]["rows"]),
             int(employment_views["standalone"]["rows"]),
+            int(school_year_core["row_count"]),
         ],
     )
     connection.execute(
@@ -580,6 +991,21 @@ def main() -> int:
         type=Path,
         default=DEFAULT_IDENTITY_RESOLUTION_SUMMARY,
     )
+    parser.add_argument(
+        "--school-year-bridge",
+        type=Path,
+        default=DEFAULT_SCHOOL_YEAR_BRIDGE,
+    )
+    parser.add_argument(
+        "--bridge-summary",
+        type=Path,
+        default=DEFAULT_BRIDGE_SUMMARY,
+    )
+    parser.add_argument(
+        "--school-year-core-dictionary",
+        type=Path,
+        default=DEFAULT_SCHOOL_YEAR_CORE_DICTIONARY,
+    )
     parser.add_argument("--repo-root", type=Path, default=Path("."))
     parser.add_argument("--memory-limit", default="8GB")
     parser.add_argument("--threads", type=int, default=4)
@@ -600,6 +1026,21 @@ def main() -> int:
         args.identity_resolution_summary
         if args.identity_resolution_summary.is_absolute()
         else repo_root / args.identity_resolution_summary
+    )
+    bridge_path = (
+        args.school_year_bridge
+        if args.school_year_bridge.is_absolute()
+        else repo_root / args.school_year_bridge
+    )
+    bridge_summary_path = (
+        args.bridge_summary
+        if args.bridge_summary.is_absolute()
+        else repo_root / args.bridge_summary
+    )
+    core_dictionary_path = (
+        args.school_year_core_dictionary
+        if args.school_year_core_dictionary.is_absolute()
+        else repo_root / args.school_year_core_dictionary
     )
     all_rows = read_catalog(catalog_path, repo_root)
     selected_rows = all_rows[: args.max_panels] if args.max_panels else all_rows
@@ -660,7 +1101,19 @@ def main() -> int:
             standalone_path,
             resolution_summary_path,
         )
-        replace_build_summary(connection, selected_rows, employment_views, status)
+        school_year_core = build_school_year_core_mart(
+            connection,
+            bridge_path,
+            bridge_summary_path,
+            core_dictionary_path,
+        )
+        replace_build_summary(
+            connection,
+            selected_rows,
+            employment_views,
+            school_year_core,
+            status,
+        )
         connection.execute("CHECKPOINT")
         manifest_rows = int(connection.execute("SELECT count(*) FROM meta.load_manifest").fetchone()[0])
         manifest_total_rows = int(
@@ -700,6 +1153,18 @@ def main() -> int:
                 "relative_path": args.identity_resolution_summary.as_posix(),
                 "sha256": sha256_file(resolution_summary_path),
             },
+            "school_year_bridge": {
+                "relative_path": args.school_year_bridge.as_posix(),
+                "sha256": school_year_core["bridge"]["sha256"],
+            },
+            "school_year_bridge_summary": {
+                "relative_path": args.bridge_summary.as_posix(),
+                "sha256": sha256_file(bridge_summary_path),
+            },
+            "school_year_core_data_dictionary": {
+                "relative_path": args.school_year_core_dictionary.as_posix(),
+                "sha256": school_year_core["data_dictionary"]["sha256"],
+            },
         },
         "database": database_record,
         "catalog": {
@@ -718,6 +1183,7 @@ def main() -> int:
             "elapsed_seconds": round(time.monotonic() - started, 1),
         },
         "employment_analysis_views": employment_views,
+        "school_year_core_mart": school_year_core,
         "validation": {
             "catalog_paths_missing": 0,
             "catalog_size_mismatches": 0,
@@ -728,6 +1194,8 @@ def main() -> int:
             "legacy_employment_year_boundary_enforced": True,
             "standalone_employment_open_id_columns_removed": True,
             "schema_break_scope_excluded_rows": employment_views["standalone"]["rows"],
+            "school_year_core_unique_key": school_year_core["duplicate_key_count"] == 0,
+            "school_year_core_join_expansion_count": school_year_core["join_expansion_count"],
             "database_access_tier": "restricted",
         },
     }
