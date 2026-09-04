@@ -63,6 +63,27 @@ def write_bridge(path: Path) -> None:
         )
 
 
+def write_high_panel_decision(path: Path, expected_row_count: str = "16") -> None:
+    with path.open("w", encoding="utf-8", newline="") as handle:
+        writer = csv.DictWriter(handle, fieldnames=resolution.HIGH_MANUAL_DECISION_FIELDS)
+        writer.writeheader()
+        writer.writerow(
+            {
+                "source": "대학정보공시",
+                "catalog_code": "1209",
+                "year": "2019",
+                "open_id": "X",
+                "expected_row_count": expected_row_count,
+                "decision_status": "approved",
+                "manual_classification": "confirmed_degree_program_scope_gap_same_open_id",
+                "confirmed_entity_name": "테스트캠퍼스",
+                "evidence_url": "https://example.edu/history",
+                "evidence_summary": "공식 연혁과 연도별 행을 대조했다.",
+                "recommended_handling": "retain_same_open_id_preserve_rows_no_imputation",
+            }
+        )
+
+
 class RemainingIdentityGapTests(unittest.TestCase):
     def test_employment_candidates_never_impute_canonical_open_id(self):
         with tempfile.TemporaryDirectory() as temp_dir:
@@ -156,6 +177,83 @@ class RemainingIdentityGapTests(unittest.TestCase):
 
             self.assertEqual(len(reviews), 4)
             self.assertEqual(summary["explained_temporal_boundary_panel_count"], 4)
+
+    def test_approved_manual_decision_closes_internal_gap_review(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            audit = {
+                "high_panels": [
+                    {
+                        "source": "대학정보공시",
+                        "catalog_code": code,
+                        "dataset": code,
+                        "row_count": 1000,
+                        "orphan_row_rate": 0.02,
+                    }
+                    for code in ("0202", "0204", "1102", "1209")
+                ]
+            }
+            audit_path = root / "audit.json"
+            audit_path.write_text(json.dumps(audit, ensure_ascii=False), encoding="utf-8")
+            orphan_path = root / "orphans.csv"
+            fields = [
+                "source", "catalog_code", "dataset", "year", "open_id", "row_count",
+                "classification", "first_0101_year", "last_0101_year",
+            ]
+            with orphan_path.open("w", encoding="utf-8", newline="") as handle:
+                writer = csv.DictWriter(handle, fieldnames=fields)
+                writer.writeheader()
+                for code in ("0202", "0204", "1102"):
+                    writer.writerow(
+                        {
+                            "source": "대학정보공시",
+                            "catalog_code": code,
+                            "dataset": code,
+                            "year": "2009",
+                            "open_id": code,
+                            "row_count": "2",
+                            "classification": "before_first_0101_year",
+                            "first_0101_year": "2010",
+                            "last_0101_year": "2025",
+                        }
+                    )
+                writer.writerow(
+                    {
+                        "source": "대학정보공시",
+                        "catalog_code": "1209",
+                        "dataset": "1209",
+                        "year": "2019",
+                        "open_id": "X",
+                        "row_count": "16",
+                        "classification": "internal_0101_gap",
+                        "first_0101_year": "2010",
+                        "last_0101_year": "2025",
+                    }
+                )
+            decision_path = root / "decisions.csv"
+            write_high_panel_decision(decision_path)
+
+            reviews, summary = resolution.review_high_panels(
+                audit_path,
+                orphan_path,
+                decision_path,
+            )
+
+            panel = next(row for row in reviews if row["catalog_code"] == "1209")
+            self.assertEqual(panel["review_disposition"], "explained_manual_identity_scope_decision")
+            self.assertEqual(panel["manually_resolved_key_count"], 1)
+            self.assertEqual(panel["manually_resolved_row_count"], 16)
+            self.assertEqual(summary["status"], "complete")
+            self.assertEqual(summary["manual_review_required_panel_count"], 0)
+            self.assertEqual(summary["manually_resolved_key_count"], 1)
+            self.assertEqual(summary["manual_review_keys"], [])
+
+    def test_manual_decision_rejects_row_count_drift(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            path = Path(temp_dir) / "decisions.csv"
+            write_high_panel_decision(path, expected_row_count="not-a-number")
+            with self.assertRaisesRegex(RuntimeError, "invalid expected row count"):
+                resolution.load_high_panel_manual_decisions(path)
 
 
 if __name__ == "__main__":

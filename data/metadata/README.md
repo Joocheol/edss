@@ -26,6 +26,7 @@
 - `edss_school_year_bridge.csv`: 모든 패널의 비어 있지 않은 `(연도, 개방ID)`를 한 행씩 보존하고 `0101` 범주형 속성과 미연결 검토 상태를 연결한 기준표
 - `edss_school_year_bridge_summary.json`: 기준표 grain·유일성·입력 체크섬·데이터셋별 left join 무증식 검증 결과
 - `edss_employment_2023_2024_open_id_candidates.csv`: 취업통계 2023–2024년 학교·연도별 학과서명 후보와 `0101` 맥락 확인 상태. 정식 ID 교차표가 아니다.
+- `edss_high_orphan_manual_decisions.csv`: high 패널의 내부 공백에 대한 공식 근거·행 수·안전 처리 수동 판정. 2019년 `1209` OpenID `5831784427` 16행은 학위과정 범위 공백으로 확정하고 동일 ID와 원본 행을 보존한다.
 - `edss_high_orphan_panel_review.csv`: 미연결률 1% 초과 4개 패널의 시간 경계·내부 공백 분류와 권장 처리
 - `edss_remaining_identity_gap_resolution.json`: 취업 안전 집계와 high 패널 후속 검토의 행 수·상태·출력 체크섬
 - `edss_official_crosswalk_audit.json`: 2026년 8월 공식 EDSS 제공목록의 학교코드 표시, 2023·2024 취업 ZIP 실제 헤더, 공식 검색 결과와 후보의 공식 확정 여부 대조

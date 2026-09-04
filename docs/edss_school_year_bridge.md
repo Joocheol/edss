@@ -34,7 +34,7 @@
 |---|---|---|
 | `before_base_first_seen` | `unresolved_temporal_boundary` | 최초 관측 전 경계연도. 자동 보정 금지 |
 | `after_base_last_seen` | `unresolved_temporal_boundary` | 마지막 관측 후 경계연도. 자동 보정 금지 |
-| `internal_base_gap` | `external_crosscheck_required_internal_gap` | 내부 공백 1개를 별도 외부 검토 대상으로 유지 |
+| `internal_base_gap` | `external_crosscheck_required_internal_gap` | 내부 공백을 별도 외부 검토 대상으로 유지. 이 중 high 패널 `1209`의 2019년 `5831784427` 1개·16행은 별도 수동 판정표에서 학위과정 범위 공백으로 확정 |
 | `open_id_absent_all_years` | `external_crosscheck_required_absent_all_years` | 전 기간 미등장 5개를 별도 외부 검토 대상으로 유지 |
 
 시간 분류는 관측 범위 차이를 나타낼 뿐 신설·폐교·통폐합·ID 변경을 증명하지 않는다. 미연결 키는 인접 연도의 동일 ID나 다른 ID에 강제 매핑하지 않는다.

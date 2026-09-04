@@ -92,7 +92,22 @@ HIGH_REVIEW_FIELDS = (
     "internal_gap_row_count",
     "never_in_0101_key_count",
     "never_in_0101_row_count",
+    "manually_resolved_key_count",
+    "manually_resolved_row_count",
     "review_disposition",
+    "recommended_handling",
+)
+HIGH_MANUAL_DECISION_FIELDS = (
+    "source",
+    "catalog_code",
+    "year",
+    "open_id",
+    "expected_row_count",
+    "decision_status",
+    "manual_classification",
+    "confirmed_entity_name",
+    "evidence_url",
+    "evidence_summary",
     "recommended_handling",
 )
 CLASSIFICATION_MAP = {
@@ -157,6 +172,41 @@ def read_bridge(path: Path) -> dict[tuple[str, str], dict[str, str]]:
     if len(lookup) != len(rows):
         raise RuntimeError("school-year bridge key is not unique")
     return lookup
+
+
+def load_high_panel_manual_decisions(path: Path) -> dict[tuple[str, str, str, str], dict[str, str]]:
+    """Load approved high-panel decisions without changing any source row or OpenID."""
+
+    with path.open(encoding="utf-8-sig", newline="") as handle:
+        rows = list(csv.DictReader(handle))
+    if not rows:
+        raise RuntimeError(f"high-panel manual decision file is empty: {path}")
+    missing = set(HIGH_MANUAL_DECISION_FIELDS) - set(rows[0])
+    if missing:
+        raise RuntimeError(f"high-panel manual decision fields missing: {sorted(missing)}")
+
+    decisions: dict[tuple[str, str, str, str], dict[str, str]] = {}
+    for row in rows:
+        key = tuple(row[field].strip() for field in ("source", "catalog_code", "year", "open_id"))
+        if key in decisions:
+            raise RuntimeError(f"duplicate high-panel manual decision: {key}")
+        if row["decision_status"].strip() != "approved":
+            raise RuntimeError(f"high-panel decision is not approved: {key}")
+        try:
+            expected_rows = int(row["expected_row_count"])
+        except ValueError as error:
+            raise RuntimeError(f"invalid expected row count for {key}") from error
+        if expected_rows <= 0:
+            raise RuntimeError(f"nonpositive expected row count for {key}: {expected_rows}")
+        if not row["manual_classification"].strip().startswith("confirmed_"):
+            raise RuntimeError(f"unconfirmed high-panel classification for {key}")
+        handling = row["recommended_handling"].strip()
+        if "retain_same_open_id" not in handling or "no_imputation" not in handling:
+            raise RuntimeError(f"unsafe high-panel handling for {key}: {handling!r}")
+        if not row["evidence_url"].strip() or not row["evidence_summary"].strip():
+            raise RuntimeError(f"high-panel decision lacks evidence for {key}")
+        decisions[key] = {field: row[field].strip() for field in HIGH_MANUAL_DECISION_FIELDS}
+    return decisions
 
 
 def split_normalized(value: str, normalizer=normalize_text) -> set[str]:
@@ -335,7 +385,11 @@ def build_employment_outputs(
     return derived_rows, candidate_rows, summary
 
 
-def review_high_panels(audit_summary_path: Path, orphan_path: Path) -> tuple[list[dict], dict]:
+def review_high_panels(
+    audit_summary_path: Path,
+    orphan_path: Path,
+    manual_decision_path: Path | None = None,
+) -> tuple[list[dict], dict]:
     audit = json.loads(audit_summary_path.read_text(encoding="utf-8"))
     audit_panels = audit.get("high_panels")
     if audit_panels is None:
@@ -356,8 +410,15 @@ def review_high_panels(audit_summary_path: Path, orphan_path: Path) -> tuple[lis
     for row in orphan_rows:
         grouped[(row["source"], row["catalog_code"])].append(row)
 
+    decisions = (
+        load_high_panel_manual_decisions(manual_decision_path)
+        if manual_decision_path is not None
+        else {}
+    )
     reviews = []
     manual_keys = []
+    resolved_keys = []
+    observed_manual_keys: set[tuple[str, str, str, str]] = set()
     for key in sorted(high_keys):
         panel = high_keys[key]
         rows = grouped[key]
@@ -366,14 +427,39 @@ def review_high_panels(audit_summary_path: Path, orphan_path: Path) -> tuple[lis
         for row in rows:
             class_rows[CLASSIFICATION_MAP[row["classification"]]] += int(row["row_count"])
             if CLASSIFICATION_MAP[row["classification"]] in {"internal_gap", "never"}:
-                manual_keys.append(row)
+                decision_key = (row["source"], row["catalog_code"], row["year"], row["open_id"])
+                observed_manual_keys.add(decision_key)
+                decision = decisions.get(decision_key)
+                if decision is None:
+                    manual_keys.append(row)
+                else:
+                    if int(decision["expected_row_count"]) != int(row["row_count"]):
+                        raise RuntimeError(
+                            f"high-panel decision row-count mismatch for {decision_key}: "
+                            f"expected {decision['expected_row_count']}, observed {row['row_count']}"
+                        )
+                    resolved_keys.append({**row, **decision})
         boundary_only = set(class_keys) <= {"before_first_0101_year", "after_last_0101_year"}
-        disposition = "explained_temporal_boundary" if boundary_only else "manual_review_required"
-        handling = (
-            "Preserve unmatched rows; no ID correction. Treat the orphan rate as reference-period coverage."
-            if boundary_only
-            else "Preserve unmatched rows; review internal gaps or never-seen IDs before any mapping."
-        )
+        unresolved_for_panel = [
+            row for row in manual_keys
+            if (row["source"], row["catalog_code"]) == key
+        ]
+        resolved_for_panel = [
+            row for row in resolved_keys
+            if (row["source"], row["catalog_code"]) == key
+        ]
+        if boundary_only:
+            disposition = "explained_temporal_boundary"
+            handling = (
+                "Preserve unmatched rows; no ID correction. Treat the orphan rate as "
+                "reference-period coverage."
+            )
+        elif unresolved_for_panel:
+            disposition = "manual_review_required"
+            handling = "Preserve unmatched rows; review unresolved internal gaps before any mapping."
+        else:
+            disposition = "explained_manual_identity_scope_decision"
+            handling = resolved_for_panel[0]["recommended_handling"]
         reviews.append(
             {
                 "source": panel["source"],
@@ -392,21 +478,35 @@ def review_high_panels(audit_summary_path: Path, orphan_path: Path) -> tuple[lis
                 "internal_gap_row_count": class_rows["internal_gap"],
                 "never_in_0101_key_count": class_keys["never_in_0101"],
                 "never_in_0101_row_count": class_rows["never"],
+                "manually_resolved_key_count": len(resolved_for_panel),
+                "manually_resolved_row_count": sum(
+                    int(row["row_count"]) for row in resolved_for_panel
+                ),
                 "review_disposition": disposition,
                 "recommended_handling": handling,
             }
         )
     if len(reviews) != 4:
         raise RuntimeError(f"expected 4 high panels, found {len(reviews)}")
+    unexpected_decisions = set(decisions) - observed_manual_keys
+    if unexpected_decisions:
+        raise RuntimeError(f"manual decisions do not match high-panel gaps: {sorted(unexpected_decisions)}")
     return reviews, {
         "reviewed_panel_count": len(reviews),
         "explained_temporal_boundary_panel_count": sum(
             row["review_disposition"] == "explained_temporal_boundary" for row in reviews
         ),
+        "manually_resolved_panel_count": sum(
+            row["review_disposition"] == "explained_manual_identity_scope_decision"
+            for row in reviews
+        ),
+        "manually_resolved_key_count": len(resolved_keys),
         "manual_review_required_panel_count": sum(
             row["review_disposition"] == "manual_review_required" for row in reviews
         ),
         "manual_review_keys": manual_keys,
+        "manual_decisions": resolved_keys,
+        "status": "complete" if not manual_keys else "review_required",
     }
 
 
@@ -471,6 +571,11 @@ def main() -> int:
         default=Path("data/metadata/edss_high_orphan_panel_review.csv"),
     )
     parser.add_argument(
+        "--high-manual-decisions",
+        type=Path,
+        default=Path("data/metadata/edss_high_orphan_manual_decisions.csv"),
+    )
+    parser.add_argument(
         "--summary-output",
         type=Path,
         default=Path("data/metadata/edss_remaining_identity_gap_resolution.json"),
@@ -483,13 +588,24 @@ def main() -> int:
         args.bridge,
         minimum_signature_size=args.minimum_signature_size,
     )
-    high_reviews, high_summary = review_high_panels(args.audit_summary, args.audit_orphans)
+    high_reviews, high_summary = review_high_panels(
+        args.audit_summary,
+        args.audit_orphans,
+        args.high_manual_decisions,
+    )
     atomic_write_gzip_csv(args.derived_output, derived_rows, DERIVED_FIELDS)
     atomic_write_csv(args.candidate_output, candidate_rows, CANDIDATE_FIELDS)
     atomic_write_csv(args.high_review_output, high_reviews, HIGH_REVIEW_FIELDS)
     summary = {
         "generated_at": utc_now(),
         "status": "review_required",
+        "inputs": {
+            "high_panel_manual_decisions": {
+                "path": str(args.high_manual_decisions),
+                "row_count": len(load_high_panel_manual_decisions(args.high_manual_decisions)),
+                "sha256": sha256_file(args.high_manual_decisions),
+            }
+        },
         "employment": employment_summary,
         "high_orphan_panels": high_summary,
         "outputs": {

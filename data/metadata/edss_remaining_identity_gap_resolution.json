@@ -1,6 +1,13 @@
 {
-  "generated_at": "2026-09-02T01:45:11.062133+00:00",
+  "generated_at": "2026-09-04T01:12:18.980501+00:00",
   "status": "review_required",
+  "inputs": {
+    "high_panel_manual_decisions": {
+      "path": "data/metadata/edss_high_orphan_manual_decisions.csv",
+      "row_count": 1,
+      "sha256": "c419131eb563bc0b99ec204addbf017a8b30f87339b7cb813c64b9680497f290"
+    }
+  },
   "employment": {
     "minimum_signature_size": 3,
     "historical_open_id_count": 593,
@@ -28,8 +35,11 @@
   "high_orphan_panels": {
     "reviewed_panel_count": 4,
     "explained_temporal_boundary_panel_count": 3,
-    "manual_review_required_panel_count": 1,
-    "manual_review_keys": [
+    "manually_resolved_panel_count": 1,
+    "manually_resolved_key_count": 1,
+    "manual_review_required_panel_count": 0,
+    "manual_review_keys": [],
+    "manual_decisions": [
       {
         "source": "대학정보공시",
         "catalog_code": "1209",
@@ -39,9 +49,17 @@
         "row_count": "16",
         "classification": "internal_0101_gap",
         "first_0101_year": "2010",
-        "last_0101_year": "2025"
+        "last_0101_year": "2025",
+        "expected_row_count": "16",
+        "decision_status": "approved",
+        "manual_classification": "confirmed_degree_program_scope_gap_same_open_id",
+        "confirmed_entity_name": "한국폴리텍Ⅱ대학 남인천캠퍼스",
+        "evidence_url": "https://kopo.ac.kr/namincheon/content.do?menu=7003",
+        "evidence_summary": "1209에 2019년 16행이 있고 일련번호는 16개로 유일하며 정확 중복은 0개다. 임원구분은 이사 13명·감사 2명·원천코드없음 1명이고 성별 집계는 남 11명·여 5명이다. 2020년 동일 OpenID는 17행이며 일련번호·임원구분·성별 조합 10개가 이어진다. 공식 연혁은 2019년 전문기술과정 운영과 2020년 2년제 학위과정 신설을 확인하므로 0101 공백은 학교 폐교나 ID 변경이 아니라 학위과정 범위 차이다.",
+        "recommended_handling": "retain_same_open_id_preserve_rows_no_imputation_no_interpolation"
       }
-    ]
+    ],
+    "status": "complete"
   },
   "outputs": {
     "derived_employment": {
@@ -57,7 +75,7 @@
     "high_panel_review": {
       "path": "data/metadata/edss_high_orphan_panel_review.csv",
       "row_count": 4,
-      "sha256": "ad6693c8201a64012c03b111aa20ecbca0d8567e0390e1e7024e77f78442d1db"
+      "sha256": "b6f0c34f1494a38a19dd35a101625ce6cf6e3f8c88fb5a43c2c5b14a99b26e5f"
     }
   }
 }
