@@ -1,0 +1,18 @@
+column_name,data_type,source,transformation,meaning,missingness_rule
+_panel_year,VARCHAR,analysis.employment_legacy_2010_2022,identity,취업통계 조사 연도,공란 불가
+개방ID,VARCHAR,analysis.employment_legacy_2010_2022,identity,EDSS 원본 개방ID 문자열,공란 불가
+employment_quality_status,VARCHAR,derived,duplicate_year_check,학교연도 집계의 일반 품질 상태,공란 불가
+employment_time_comparison_eligible,BOOLEAN,derived,duplicate_year_check,직전 연도와 독립적인 시계열 비교 가능 여부,공란 불가
+further_study_quality_status,VARCHAR,derived,annual_zero_check,진학자수 원천 열의 연도별 품질 상태,공란 불가
+source_record_count,BIGINT,analysis.employment_legacy_2010_2022,count,학교연도별 제한 원천 레코드 수,공란 불가
+reported_graduate_count,HUGEINT,졸업학생수,sum_by_school_year,원천 보고 졸업학생 수,공란 불가
+reported_employed_count,HUGEINT,취업자수,sum_by_school_year,원천 보고 취업자 수,공란 불가
+reported_health_insurance_employed_count,HUGEINT,건강보험취업자수,sum_by_school_year,원천 보고 건강보험 취업자 수,공란 불가
+reported_school_employed_count,HUGEINT,교내취업자수,sum_by_school_year,원천 보고 교내 취업자 수,공란 불가
+reported_further_study_count,HUGEINT,진학자수,sum_by_school_year,원천 보고 진학자 수,공란 불가이나 2016–2019 전부 0
+reported_military_service_count,HUGEINT,입대자수,sum_by_school_year,원천 보고 입대자 수,공란 불가
+reported_employment_unavailable_count,HUGEINT,취업불가능자수,sum_by_school_year,원천 보고 취업불가능자 수,공란 불가
+reported_foreign_student_count,HUGEINT,외국인유학생수,sum_by_school_year,원천 보고 외국인유학생 수,공란 불가
+reported_excluded_count,HUGEINT,제외인정자수,sum_by_school_year,원천 보고 제외인정자 수,공란 불가
+reported_other_count,HUGEINT,기타_총계,sum_by_school_year,원천 보고 기타 총계,공란 불가
+reported_unknown_count,HUGEINT,미상,sum_by_school_year,원천 보고 미상 수,공란 불가

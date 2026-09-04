@@ -1,6 +1,6 @@
 {
   "status": "complete",
-  "generated_at": "2026-09-04T02:09:27.932107+00:00",
+  "generated_at": "2026-09-04T02:34:07.289151+00:00",
   "duckdb_version": "1.4.1",
   "inputs": {
     "standalone_employment": {
@@ -22,12 +22,16 @@
     "school_year_core_data_dictionary": {
       "relative_path": "data/metadata/edss_school_year_core_data_dictionary.csv",
       "sha256": "ebb37bb6a351cb7067edec79f29baf6c6f16c5d71e3cad3a8f7f83827c32ec6c"
+    },
+    "employment_school_year_data_dictionary": {
+      "relative_path": "data/metadata/edss_employment_school_year_data_dictionary.csv",
+      "sha256": "58912e94b0da047dfa6b1ffff56f04c027e0f6a97725f588dc419e4f808d846d"
     }
   },
   "database": {
     "relative_path": "data/processed/edss/restricted/edss_all.duckdb",
-    "bytes": 16078876672,
-    "sha256": "b4b5e3d748094b5a8209a3a2ba9471dc3cfb53087ff44620c55fc3748762d101"
+    "bytes": 16080711680,
+    "sha256": "3d200cfb90b6118adfe9adf5d1f1405b9cc32acc01ef6b41332f66250ceee53a"
   },
   "catalog": {
     "relative_path": "data/metadata/edss_panel_catalog.csv",
@@ -50,7 +54,7 @@
     "skipped_current_this_run": 233,
     "manifest_table_count": 233,
     "manifest_panel_row_count": 180119183,
-    "elapsed_seconds": 14.7
+    "elapsed_seconds": 15.7
   },
   "employment_analysis_views": {
     "status": "complete_with_scope_exclusion",
@@ -219,6 +223,177 @@
       "sha256": "ebb37bb6a351cb7067edec79f29baf6c6f16c5d71e3cad3a8f7f83827c32ec6c"
     }
   },
+  "employment_school_year_mart": {
+    "status": "complete",
+    "table": "analysis.employment_school_year_2010_2022",
+    "joined_view": "analysis.school_year_core_with_employment_2010_2022",
+    "grain": "one row per (_panel_year, 개방ID)",
+    "years": [
+      "2010",
+      "2022"
+    ],
+    "row_count": 7058,
+    "column_count": 17,
+    "distinct_key_count": 7058,
+    "duplicate_key_count": 0,
+    "blank_key_count": 0,
+    "source_row_count": 7277987,
+    "accounted_source_row_count": 7277987,
+    "orphan_employment_key_count": 0,
+    "joined_core_row_count": 24044,
+    "joined_core_distinct_key_count": 24044,
+    "joined_core_employment_matched_count": 7058,
+    "joined_core_employment_unmatched_count": 16986,
+    "join_expansion_count": 0,
+    "metric_validation": {
+      "reported_graduate_count": {
+        "source_field": "졸업학생수",
+        "nonblank_row_count": 7277987,
+        "invalid_nonblank_row_count": 0,
+        "negative_row_count": 0,
+        "nonbinary_row_count": 0,
+        "source_sum": 7277987,
+        "mart_sum": 7277987,
+        "sum_reconciles": true
+      },
+      "reported_employed_count": {
+        "source_field": "취업자수",
+        "nonblank_row_count": 7277987,
+        "invalid_nonblank_row_count": 0,
+        "negative_row_count": 0,
+        "nonbinary_row_count": 0,
+        "source_sum": 3820112,
+        "mart_sum": 3820112,
+        "sum_reconciles": true
+      },
+      "reported_health_insurance_employed_count": {
+        "source_field": "건강보험취업자수",
+        "nonblank_row_count": 7277987,
+        "invalid_nonblank_row_count": 0,
+        "negative_row_count": 0,
+        "nonbinary_row_count": 0,
+        "source_sum": 3718423,
+        "mart_sum": 3718423,
+        "sum_reconciles": true
+      },
+      "reported_school_employed_count": {
+        "source_field": "교내취업자수",
+        "nonblank_row_count": 7277987,
+        "invalid_nonblank_row_count": 0,
+        "negative_row_count": 0,
+        "nonbinary_row_count": 0,
+        "source_sum": 100935,
+        "mart_sum": 100935,
+        "sum_reconciles": true
+      },
+      "reported_further_study_count": {
+        "source_field": "진학자수",
+        "nonblank_row_count": 7277987,
+        "invalid_nonblank_row_count": 0,
+        "negative_row_count": 0,
+        "nonbinary_row_count": 0,
+        "source_sum": 316101,
+        "mart_sum": 316101,
+        "sum_reconciles": true
+      },
+      "reported_military_service_count": {
+        "source_field": "입대자수",
+        "nonblank_row_count": 7277987,
+        "invalid_nonblank_row_count": 0,
+        "negative_row_count": 0,
+        "nonbinary_row_count": 0,
+        "source_sum": 88108,
+        "mart_sum": 88108,
+        "sum_reconciles": true
+      },
+      "reported_employment_unavailable_count": {
+        "source_field": "취업불가능자수",
+        "nonblank_row_count": 7277987,
+        "invalid_nonblank_row_count": 0,
+        "negative_row_count": 0,
+        "nonbinary_row_count": 0,
+        "source_sum": 2881,
+        "mart_sum": 2881,
+        "sum_reconciles": true
+      },
+      "reported_foreign_student_count": {
+        "source_field": "외국인유학생수",
+        "nonblank_row_count": 7277987,
+        "invalid_nonblank_row_count": 0,
+        "negative_row_count": 0,
+        "nonbinary_row_count": 0,
+        "source_sum": 204937,
+        "mart_sum": 204937,
+        "sum_reconciles": true
+      },
+      "reported_excluded_count": {
+        "source_field": "제외인정자수",
+        "nonblank_row_count": 7277987,
+        "invalid_nonblank_row_count": 0,
+        "negative_row_count": 0,
+        "nonbinary_row_count": 0,
+        "source_sum": 79626,
+        "mart_sum": 79626,
+        "sum_reconciles": true
+      },
+      "reported_other_count": {
+        "source_field": "기타_총계",
+        "nonblank_row_count": 7277987,
+        "invalid_nonblank_row_count": 0,
+        "negative_row_count": 0,
+        "nonbinary_row_count": 0,
+        "source_sum": 2284301,
+        "mart_sum": 2284301,
+        "sum_reconciles": true
+      },
+      "reported_unknown_count": {
+        "source_field": "미상",
+        "nonblank_row_count": 7277987,
+        "invalid_nonblank_row_count": 0,
+        "negative_row_count": 0,
+        "nonbinary_row_count": 0,
+        "source_sum": 72466,
+        "mart_sum": 72466,
+        "sum_reconciles": true
+      }
+    },
+    "subset_violations": {
+      "reported_graduate_count_eq_source_record_count": 0,
+      "reported_employed_count_le_reported_graduate_count": 0,
+      "reported_health_insurance_employed_count_le_reported_employed_count": 0,
+      "reported_school_employed_count_le_reported_employed_count": 0,
+      "reported_further_study_count_le_reported_graduate_count": 0,
+      "reported_military_service_count_le_reported_graduate_count": 0,
+      "reported_employment_unavailable_count_le_reported_graduate_count": 0,
+      "reported_foreign_student_count_le_reported_graduate_count": 0,
+      "reported_excluded_count_le_reported_graduate_count": 0,
+      "reported_other_count_le_reported_graduate_count": 0,
+      "reported_unknown_count_le_reported_graduate_count": 0
+    },
+    "quality_findings": {
+      "duplicate_year_comparison": {
+        "base_year": "2021",
+        "comparison_year": "2022",
+        "base_key_count": 537,
+        "comparison_key_count": 537,
+        "shared_key_count": 537,
+        "exact_metric_vector_match_key_count": 537,
+        "exact_duplicate_detected": true,
+        "comparison_eligible": false
+      },
+      "all_zero_reported_further_study_years": [
+        "2016",
+        "2017",
+        "2018",
+        "2019"
+      ],
+      "official_employment_rate_derived": false
+    },
+    "data_dictionary": {
+      "row_count": 17,
+      "sha256": "58912e94b0da047dfa6b1ffff56f04c027e0f6a97725f588dc419e4f808d846d"
+    }
+  },
   "validation": {
     "catalog_paths_missing": 0,
     "catalog_size_mismatches": 0,
@@ -231,6 +406,11 @@
     "schema_break_scope_excluded_rows": 46962,
     "school_year_core_unique_key": true,
     "school_year_core_join_expansion_count": 0,
+    "employment_school_year_unique_key": true,
+    "employment_school_year_orphan_key_count": 0,
+    "employment_core_join_expansion_count": 0,
+    "employment_2022_time_comparison_eligible": false,
+    "official_employment_rate_derived": false,
     "database_access_tier": "restricted"
   }
 }

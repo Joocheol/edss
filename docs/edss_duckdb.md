@@ -13,7 +13,7 @@
 | 취업통계 | `employment` | 1 | 7,324,949 |
 | 합계 |  | 233 | 180,119,183 |
 
-DB 크기는 16,078,876,672 bytes이며 SHA-256은 `b4b5e3d748094b5a8209a3a2ba9471dc3cfb53087ff44620c55fc3748762d101`이다. 데이터 파일 자체는 Git에서 제외하고 빌드 감사 결과만 `data/metadata/edss_duckdb_build.json`에 보존한다.
+DB 크기는 16,080,711,680 bytes이며 SHA-256은 `3d200cfb90b6118adfe9adf5d1f1405b9cc32acc01ef6b41332f66250ceee53a`이다. 데이터 파일 자체는 Git에서 제외하고 빌드 감사 결과만 `data/metadata/edss_duckdb_build.json`에 보존한다.
 
 ## 스키마와 테이블
 
@@ -28,8 +28,12 @@ DB 크기는 16,078,876,672 bytes이며 SHA-256은 `b4b5e3d748094b5a8209a3a2ba94
 - `analysis.employment_legacy_2010_2022`: 연도가 2010–2022로 고정되고 OpenID 결측이 없는 제한 종단 분석 뷰
 - `analysis.employment_2023_2024_standalone`: OpenID 열이 없는 2023–2024 학교·학과 기술통계 뷰
 - `analysis.school_year_core_2010_2022`: 기준표 24,044개 학교연도와 `0101` 규모 지표 12개를 결합한 유일키 분석 마트
+- `analysis.employment_school_year_2010_2022`: 제한 취업통계 7,277,987행을 7,058개 학교연도와 11개 보고 지표로 사전 집계한 유일키 마트
+- `analysis.school_year_core_with_employment_2010_2022`: 핵심 마트에 취업 학교연도 마트를 left join한 24,044행 무증식 뷰
 
 이전 `analysis.employment_2023_2024_resolved` 뷰와 `employment.safe_2023_2024_resolved` 테이블은 기본 조회 계층에서 제거한다. 추론 적용 파일은 파일 기반 감사 산출물로만 보존한다.
+
+취업 마트는 2022년 537개 학교의 집계 벡터가 2021년과 전부 같음을 감지해 해당 연도를 시계열 비교 부적격으로 표시한다. `진학자수`가 전부 0인 2016–2019년도 별도 품질 상태를 가지며, 분모 정의가 안정적이지 않으므로 공식 취업률은 생성하지 않는다.
 
 동일한 카탈로그 코드가 출처마다 반복될 수 있으므로 반드시 스키마까지 포함한 이름을 사용한다. 카탈로그의 `domain_column_count`는 원래 업무열 수이고 `loaded_column_count`는 공통 출처 추적열 12개를 포함한 실제 테이블 열 수다.
 

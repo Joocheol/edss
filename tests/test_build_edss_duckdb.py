@@ -340,6 +340,91 @@ class BuildEdssDuckDBTests(unittest.TestCase):
             self.assertEqual(values, [("A", 3), ("X", None), ("B", 4)])
             connection.close()
 
+    def test_employment_school_year_mart_aggregates_before_core_join(self):
+        duckdb = builder.require_duckdb()
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            connection = duckdb.connect(":memory:")
+            builder.initialize_database(connection, root / "tmp", "1GB", 1)
+            source_fields = [
+                "_panel_year",
+                "개방ID",
+                *(source for source, _output in builder.EMPLOYMENT_SCHOOL_YEAR_METRICS),
+            ]
+            column_sql = ", ".join(
+                f'{builder.quote_identifier(field)} VARCHAR' for field in source_fields
+            )
+            connection.execute(
+                f"CREATE TABLE analysis.employment_legacy_2010_2022 ({column_sql})"
+            )
+            placeholders = ", ".join("?" for _ in source_fields)
+            source_rows = []
+            core_rows = []
+            for year in range(2010, 2023):
+                year_text = str(year)
+                further_study = "0" if 2016 <= year <= 2019 else "1"
+                metrics = ["1", "1", "1", "0", further_study, *("0" for _ in range(6))]
+                source_rows.append((year_text, "A", *metrics))
+                core_rows.append((year_text, "A"))
+            connection.executemany(
+                f"INSERT INTO analysis.employment_legacy_2010_2022 "
+                f"VALUES ({placeholders})",
+                source_rows,
+            )
+            core_rows.append(("2010", "X"))
+            connection.execute(
+                "CREATE TABLE analysis.school_year_core_2010_2022 "
+                "(_panel_year VARCHAR, 개방ID VARCHAR)"
+            )
+            connection.executemany(
+                "INSERT INTO analysis.school_year_core_2010_2022 VALUES (?, ?)",
+                core_rows,
+            )
+
+            result = builder.build_employment_school_year_mart(
+                connection,
+                Path(__file__).resolve().parents[1]
+                / "data/metadata/edss_employment_school_year_data_dictionary.csv",
+            )
+
+            self.assertEqual(result["status"], "complete")
+            self.assertEqual(result["row_count"], 13)
+            self.assertEqual(result["distinct_key_count"], 13)
+            self.assertEqual(result["source_row_count"], 13)
+            self.assertEqual(result["accounted_source_row_count"], 13)
+            self.assertEqual(result["orphan_employment_key_count"], 0)
+            self.assertEqual(result["joined_core_row_count"], 14)
+            self.assertEqual(result["joined_core_employment_matched_count"], 13)
+            self.assertEqual(result["joined_core_employment_unmatched_count"], 1)
+            self.assertEqual(result["join_expansion_count"], 0)
+            finding = result["quality_findings"]
+            self.assertTrue(
+                finding["duplicate_year_comparison"]["exact_duplicate_detected"]
+            )
+            self.assertEqual(
+                finding["all_zero_reported_further_study_years"],
+                ["2016", "2017", "2018", "2019"],
+            )
+            joined = connection.execute(
+                """
+                SELECT _panel_year, 개방ID, _employment_exists,
+                       employment_time_comparison_eligible,
+                       employment_reported_employed_count
+                FROM analysis.school_year_core_with_employment_2010_2022
+                WHERE (_panel_year = '2022' AND 개방ID = 'A')
+                   OR (_panel_year = '2010' AND 개방ID = 'X')
+                ORDER BY _panel_year DESC, 개방ID
+                """
+            ).fetchall()
+            self.assertEqual(
+                joined,
+                [
+                    ("2022", "A", "true", False, 1),
+                    ("2010", "X", "false", None, None),
+                ],
+            )
+            connection.close()
+
 
 if __name__ == "__main__":
     unittest.main()

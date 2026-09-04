@@ -57,6 +57,9 @@ DEFAULT_BRIDGE_SUMMARY = Path("data/metadata/edss_school_year_bridge_summary.jso
 DEFAULT_SCHOOL_YEAR_CORE_DICTIONARY = Path(
     "data/metadata/edss_school_year_core_data_dictionary.csv"
 )
+DEFAULT_EMPLOYMENT_SCHOOL_YEAR_DICTIONARY = Path(
+    "data/metadata/edss_employment_school_year_data_dictionary.csv"
+)
 SCHOOL_YEAR_CORE_METRICS = (
     ("고등교육학교_재적학생수", "enrolled_student_count"),
     ("고등교육학교_재적여학생수", "female_enrolled_student_count"),
@@ -70,6 +73,19 @@ SCHOOL_YEAR_CORE_METRICS = (
     ("고등교육학교_여자사무직원수", "female_staff_count"),
     ("고등교육학교_건물면적", "building_area"),
     ("고등교육학교_학과수", "department_count"),
+)
+EMPLOYMENT_SCHOOL_YEAR_METRICS = (
+    ("졸업학생수", "reported_graduate_count"),
+    ("취업자수", "reported_employed_count"),
+    ("건강보험취업자수", "reported_health_insurance_employed_count"),
+    ("교내취업자수", "reported_school_employed_count"),
+    ("진학자수", "reported_further_study_count"),
+    ("입대자수", "reported_military_service_count"),
+    ("취업불가능자수", "reported_employment_unavailable_count"),
+    ("외국인유학생수", "reported_foreign_student_count"),
+    ("제외인정자수", "reported_excluded_count"),
+    ("기타_총계", "reported_other_count"),
+    ("미상", "reported_unknown_count"),
 )
 
 
@@ -853,6 +869,10 @@ def build_school_year_core_mart(
 
     connection.execute("BEGIN TRANSACTION")
     try:
+        connection.execute(
+            "DROP VIEW IF EXISTS "
+            "analysis.school_year_core_with_employment_2010_2022"
+        )
         connection.execute("DROP TABLE IF EXISTS analysis.school_year_core_2010_2022")
         connection.execute("DROP TABLE IF EXISTS meta.school_year_bridge")
         connection.execute(
@@ -930,11 +950,455 @@ def build_school_year_core_mart(
     }
 
 
+def build_employment_school_year_mart(
+    connection,
+    dictionary_path: Path,
+) -> dict[str, object]:
+    """Aggregate restricted legacy employment rows before joining the core mart."""
+
+    source_view = "analysis.employment_legacy_2010_2022"
+    aggregate_temp = "analysis.__loading_employment_school_year_aggregates"
+    mart_temp = "analysis.__loading_employment_school_year_2010_2022"
+    required_columns = {
+        "_panel_year",
+        "개방ID",
+        *(source for source, _output in EMPLOYMENT_SCHOOL_YEAR_METRICS),
+    }
+    source_columns = {
+        row[0]
+        for row in connection.execute(
+            """
+            SELECT column_name
+            FROM information_schema.columns
+            WHERE table_schema = 'analysis'
+              AND table_name = 'employment_legacy_2010_2022'
+            """
+        ).fetchall()
+    }
+    missing_columns = sorted(required_columns - source_columns)
+    if missing_columns:
+        raise RuntimeError(
+            f"legacy employment is missing school-year fields: {missing_columns}"
+        )
+
+    source_stats = connection.execute(
+        f"""
+        SELECT
+            count(*),
+            count(DISTINCT (_panel_year, 개방ID)),
+            count(*) FILTER (
+                WHERE coalesce(_panel_year, '') = '' OR coalesce(개방ID, '') = ''
+            ),
+            min(_panel_year),
+            max(_panel_year),
+            count(DISTINCT _panel_year)
+        FROM {source_view}
+        """
+    ).fetchone()
+    if source_stats[2:] != (0, "2010", "2022", 13):
+        raise RuntimeError(f"unexpected legacy employment period or keys: {source_stats}")
+
+    metric_validation = {}
+    for source_field, output_field in EMPLOYMENT_SCHOOL_YEAR_METRICS:
+        source_identifier = quote_identifier(source_field)
+        nonblank_rows, invalid_rows, negative_rows, nonbinary_rows, source_sum = (
+            connection.execute(
+                f"""
+                SELECT
+                    count(*) FILTER (
+                        WHERE coalesce(trim({source_identifier}), '') <> ''
+                    ),
+                    count(*) FILTER (
+                        WHERE coalesce(trim({source_identifier}), '') <> ''
+                          AND try_cast(
+                              replace(trim({source_identifier}), ',', '') AS BIGINT
+                          ) IS NULL
+                    ),
+                    count(*) FILTER (
+                        WHERE try_cast(
+                            replace(trim({source_identifier}), ',', '') AS BIGINT
+                        ) < 0
+                    ),
+                    count(*) FILTER (
+                        WHERE try_cast(
+                            replace(trim({source_identifier}), ',', '') AS BIGINT
+                        ) NOT IN (0, 1)
+                    ),
+                    sum(try_cast(
+                        replace(trim({source_identifier}), ',', '') AS BIGINT
+                    ))
+                FROM {source_view}
+                """
+            ).fetchone()
+        )
+        if (
+            nonblank_rows != source_stats[0]
+            or invalid_rows
+            or negative_rows
+            or nonbinary_rows
+        ):
+            raise RuntimeError(
+                f"invalid legacy employment metric {source_field}: "
+                f"nonblank={nonblank_rows}, invalid={invalid_rows}, "
+                f"negative={negative_rows}, nonbinary={nonbinary_rows}"
+            )
+        metric_validation[output_field] = {
+            "source_field": source_field,
+            "nonblank_row_count": nonblank_rows,
+            "invalid_nonblank_row_count": invalid_rows,
+            "negative_row_count": negative_rows,
+            "nonbinary_row_count": nonbinary_rows,
+            "source_sum": int(source_sum),
+        }
+
+    connection.execute(f"DROP TABLE IF EXISTS {aggregate_temp}")
+    connection.execute(f"DROP TABLE IF EXISTS {mart_temp}")
+    aggregate_expressions = ",\n".join(
+        (
+            "sum(try_cast(replace(trim("
+            f"{quote_identifier(source)}), ',', '') AS BIGINT)) AS "
+            f"{quote_identifier(output)}"
+        )
+        for source, output in EMPLOYMENT_SCHOOL_YEAR_METRICS
+    )
+    connection.execute(
+        f"""
+        CREATE TABLE {aggregate_temp} AS
+        SELECT
+            _panel_year,
+            개방ID,
+            count(*)::BIGINT AS source_record_count,
+            {aggregate_expressions}
+        FROM {source_view}
+        GROUP BY _panel_year, 개방ID
+        """
+    )
+
+    comparison_fields = [
+        "source_record_count",
+        *(output for _source, output in EMPLOYMENT_SCHOOL_YEAR_METRICS),
+    ]
+    exact_comparison = " AND ".join(
+        f"a.{quote_identifier(field)} = b.{quote_identifier(field)}"
+        for field in comparison_fields
+    )
+    duplicate_stats = connection.execute(
+        f"""
+        WITH a AS (
+            SELECT * FROM {aggregate_temp} WHERE _panel_year = '2021'
+        ),
+        b AS (
+            SELECT * FROM {aggregate_temp} WHERE _panel_year = '2022'
+        )
+        SELECT
+            (SELECT count(*) FROM a),
+            (SELECT count(*) FROM b),
+            count(*),
+            count(*) FILTER (WHERE {exact_comparison})
+        FROM a
+        JOIN b USING (개방ID)
+        """
+    ).fetchone()
+    duplicate_detected = (
+        duplicate_stats[0] > 0
+        and duplicate_stats[0] == duplicate_stats[1]
+        and duplicate_stats[0] == duplicate_stats[2]
+        and duplicate_stats[0] == duplicate_stats[3]
+    )
+
+    duplicate_status = (
+        "duplicate_of_2021_school_aggregate" if duplicate_detected else "as_reported"
+    )
+    connection.execute(
+        f"""
+        CREATE TABLE {mart_temp} AS
+        SELECT
+            _panel_year,
+            개방ID,
+            CASE
+                WHEN _panel_year = '2022' THEN ?
+                ELSE 'as_reported'
+            END::VARCHAR AS employment_quality_status,
+            CASE
+                WHEN _panel_year = '2022' AND ? THEN false
+                ELSE true
+            END::BOOLEAN AS employment_time_comparison_eligible,
+            CASE
+                WHEN sum(reported_further_study_count)
+                     OVER (PARTITION BY _panel_year) = 0
+                    THEN 'all_zero_source_field'
+                ELSE 'as_reported'
+            END::VARCHAR AS further_study_quality_status,
+            * EXCLUDE (_panel_year, 개방ID)
+        FROM {aggregate_temp}
+        """,
+        [duplicate_status, duplicate_detected],
+    )
+
+    mart_rows, mart_columns = relation_dimensions(
+        connection,
+        "analysis",
+        "__loading_employment_school_year_2010_2022",
+    )
+    mart_stats = connection.execute(
+        f"""
+        SELECT
+            count(*),
+            count(DISTINCT (_panel_year, 개방ID)),
+            count(*) FILTER (
+                WHERE coalesce(_panel_year, '') = '' OR coalesce(개방ID, '') = ''
+            ),
+            min(_panel_year),
+            max(_panel_year),
+            sum(source_record_count),
+            count(*) FILTER (WHERE employment_time_comparison_eligible = false)
+        FROM {mart_temp}
+        """
+    ).fetchone()
+    expected_ineligible_rows = duplicate_stats[1] if duplicate_detected else 0
+    expected_stats = (
+        source_stats[1],
+        source_stats[1],
+        0,
+        "2010",
+        "2022",
+        source_stats[0],
+        expected_ineligible_rows,
+    )
+    if mart_stats != expected_stats:
+        raise RuntimeError(
+            f"employment school-year mart validation mismatch: "
+            f"{mart_stats} != {expected_stats}"
+        )
+
+    zero_further_study_years = [
+        row[0]
+        for row in connection.execute(
+            f"""
+            SELECT _panel_year
+            FROM {mart_temp}
+            GROUP BY _panel_year
+            HAVING sum(reported_further_study_count) = 0
+            ORDER BY _panel_year
+            """
+        ).fetchall()
+    ]
+
+    with dictionary_path.open(encoding="utf-8-sig", newline="") as handle:
+        dictionary_rows = list(csv.DictReader(handle))
+    mart_schema = connection.execute(
+        """
+        SELECT column_name, data_type
+        FROM information_schema.columns
+        WHERE table_schema = 'analysis'
+          AND table_name = '__loading_employment_school_year_2010_2022'
+        ORDER BY ordinal_position
+        """
+    ).fetchall()
+    dictionary_schema = [
+        (row["column_name"], row["data_type"]) for row in dictionary_rows
+    ]
+    if dictionary_schema != mart_schema:
+        raise RuntimeError("employment school-year dictionary does not match the mart")
+
+    subset_checks = {
+        "reported_graduate_count_eq_source_record_count": (
+            "reported_graduate_count <> source_record_count"
+        ),
+        "reported_employed_count_le_reported_graduate_count": (
+            "reported_employed_count > reported_graduate_count"
+        ),
+        "reported_health_insurance_employed_count_le_reported_employed_count": (
+            "reported_health_insurance_employed_count > reported_employed_count"
+        ),
+        "reported_school_employed_count_le_reported_employed_count": (
+            "reported_school_employed_count > reported_employed_count"
+        ),
+    }
+    for _source, output in EMPLOYMENT_SCHOOL_YEAR_METRICS[4:]:
+        subset_checks[f"{output}_le_reported_graduate_count"] = (
+            f"{quote_identifier(output)} > reported_graduate_count"
+        )
+    subset_violations = {}
+    for check_name, predicate in subset_checks.items():
+        violations = int(
+            connection.execute(
+                f"SELECT count(*) FROM {mart_temp} WHERE {predicate}"
+            ).fetchone()[0]
+        )
+        if violations:
+            raise RuntimeError(f"employment school-year subset violation: {check_name}")
+        subset_violations[check_name] = violations
+
+    for _source_field, output_field in EMPLOYMENT_SCHOOL_YEAR_METRICS:
+        mart_sum = connection.execute(
+            f"SELECT sum({quote_identifier(output_field)}) FROM {mart_temp}"
+        ).fetchone()[0]
+        mart_sum = int(mart_sum)
+        metric_validation[output_field]["mart_sum"] = mart_sum
+        metric_validation[output_field]["sum_reconciles"] = (
+            mart_sum == metric_validation[output_field]["source_sum"]
+        )
+        if not metric_validation[output_field]["sum_reconciles"]:
+            raise RuntimeError(f"employment school-year sum mismatch: {output_field}")
+
+    orphan_employment_keys = int(
+        connection.execute(
+            f"""
+            SELECT count(*)
+            FROM {mart_temp} AS e
+            LEFT JOIN analysis.school_year_core_2010_2022 AS c
+              ON e._panel_year = c._panel_year AND e.개방ID = c.개방ID
+            WHERE c.개방ID IS NULL
+            """
+        ).fetchone()[0]
+    )
+    if orphan_employment_keys:
+        raise RuntimeError(
+            f"employment school-year keys missing from core: {orphan_employment_keys}"
+        )
+
+    connection.execute("BEGIN TRANSACTION")
+    try:
+        connection.execute(
+            "DROP VIEW IF EXISTS "
+            "analysis.school_year_core_with_employment_2010_2022"
+        )
+        connection.execute(
+            "DROP TABLE IF EXISTS analysis.employment_school_year_2010_2022"
+        )
+        connection.execute(
+            "ALTER TABLE analysis.__loading_employment_school_year_2010_2022 "
+            "RENAME TO employment_school_year_2010_2022"
+        )
+        connection.execute(f"DROP TABLE IF EXISTS {aggregate_temp}")
+        connection.execute(
+            """
+            CREATE VIEW analysis.school_year_core_with_employment_2010_2022 AS
+            SELECT
+                c.*,
+                CASE WHEN e.개방ID IS NULL THEN 'false' ELSE 'true' END::VARCHAR
+                    AS _employment_exists,
+                e.employment_quality_status,
+                e.employment_time_comparison_eligible,
+                e.further_study_quality_status,
+                e.source_record_count AS employment_source_record_count,
+                e.reported_graduate_count AS employment_reported_graduate_count,
+                e.reported_employed_count AS employment_reported_employed_count,
+                e.reported_health_insurance_employed_count
+                    AS employment_reported_health_insurance_employed_count,
+                e.reported_school_employed_count
+                    AS employment_reported_school_employed_count,
+                e.reported_further_study_count
+                    AS employment_reported_further_study_count,
+                e.reported_military_service_count
+                    AS employment_reported_military_service_count,
+                e.reported_employment_unavailable_count
+                    AS employment_reported_employment_unavailable_count,
+                e.reported_foreign_student_count
+                    AS employment_reported_foreign_student_count,
+                e.reported_excluded_count AS employment_reported_excluded_count,
+                e.reported_other_count AS employment_reported_other_count,
+                e.reported_unknown_count AS employment_reported_unknown_count
+            FROM analysis.school_year_core_2010_2022 AS c
+            LEFT JOIN analysis.employment_school_year_2010_2022 AS e
+              ON c._panel_year = e._panel_year AND c.개방ID = e.개방ID
+            """
+        )
+        connection.execute("DROP TABLE IF EXISTS meta.employment_school_year_summary")
+        connection.execute(
+            f"""
+            CREATE TABLE meta.employment_school_year_summary AS
+            SELECT
+                'complete'::VARCHAR AS status,
+                {mart_rows}::BIGINT AS row_count,
+                {source_stats[0]}::BIGINT AS source_row_count,
+                {orphan_employment_keys}::BIGINT AS orphan_key_count,
+                {duplicate_stats[3]}::BIGINT AS duplicate_year_exact_match_key_count,
+                {str(duplicate_detected).lower()}::BOOLEAN
+                    AS duplicate_year_detected
+            """
+        )
+        connection.execute("COMMIT")
+    except Exception:
+        connection.execute("ROLLBACK")
+        raise
+
+    joined_stats = connection.execute(
+        """
+        SELECT
+            count(*),
+            count(DISTINCT (_panel_year, 개방ID)),
+            count(*) FILTER (WHERE _employment_exists = 'true'),
+            count(*) FILTER (WHERE _employment_exists = 'false')
+        FROM analysis.school_year_core_with_employment_2010_2022
+        """
+    ).fetchone()
+    core_rows = int(
+        connection.execute(
+            "SELECT count(*) FROM analysis.school_year_core_2010_2022"
+        ).fetchone()[0]
+    )
+    expected_joined_stats = (
+        core_rows,
+        core_rows,
+        mart_rows,
+        core_rows - mart_rows,
+    )
+    if joined_stats != expected_joined_stats:
+        raise RuntimeError(
+            f"employment core join validation mismatch: "
+            f"{joined_stats} != {expected_joined_stats}"
+        )
+
+    return {
+        "status": "complete",
+        "table": "analysis.employment_school_year_2010_2022",
+        "joined_view": "analysis.school_year_core_with_employment_2010_2022",
+        "grain": "one row per (_panel_year, 개방ID)",
+        "years": ["2010", "2022"],
+        "row_count": mart_rows,
+        "column_count": mart_columns,
+        "distinct_key_count": mart_stats[1],
+        "duplicate_key_count": mart_rows - mart_stats[1],
+        "blank_key_count": mart_stats[2],
+        "source_row_count": source_stats[0],
+        "accounted_source_row_count": mart_stats[5],
+        "orphan_employment_key_count": orphan_employment_keys,
+        "joined_core_row_count": joined_stats[0],
+        "joined_core_distinct_key_count": joined_stats[1],
+        "joined_core_employment_matched_count": joined_stats[2],
+        "joined_core_employment_unmatched_count": joined_stats[3],
+        "join_expansion_count": joined_stats[0] - core_rows,
+        "metric_validation": metric_validation,
+        "subset_violations": subset_violations,
+        "quality_findings": {
+            "duplicate_year_comparison": {
+                "base_year": "2021",
+                "comparison_year": "2022",
+                "base_key_count": duplicate_stats[0],
+                "comparison_key_count": duplicate_stats[1],
+                "shared_key_count": duplicate_stats[2],
+                "exact_metric_vector_match_key_count": duplicate_stats[3],
+                "exact_duplicate_detected": duplicate_detected,
+                "comparison_eligible": not duplicate_detected,
+            },
+            "all_zero_reported_further_study_years": zero_further_study_years,
+            "official_employment_rate_derived": False,
+        },
+        "data_dictionary": {
+            "row_count": len(dictionary_rows),
+            "sha256": sha256_file(dictionary_path),
+        },
+    }
+
+
 def replace_build_summary(
     connection,
     rows: list[dict[str, str]],
     employment_views: dict[str, object],
     school_year_core: dict[str, object],
+    employment_school_year: dict[str, object],
     status: str,
 ) -> None:
     connection.execute("DROP TABLE IF EXISTS meta.database_summary")
@@ -948,7 +1412,8 @@ def replace_build_summary(
             ?::BIGINT AS legacy_employment_rows,
             ?::BIGINT AS standalone_employment_rows,
             ?::BIGINT AS scope_excluded_employment_rows,
-            ?::BIGINT AS school_year_core_rows
+            ?::BIGINT AS school_year_core_rows,
+            ?::BIGINT AS employment_school_year_rows
         """,
         [
             status,
@@ -958,6 +1423,7 @@ def replace_build_summary(
             int(employment_views["standalone"]["rows"]),
             int(employment_views["standalone"]["rows"]),
             int(school_year_core["row_count"]),
+            int(employment_school_year["row_count"]),
         ],
     )
     connection.execute(
@@ -1006,6 +1472,11 @@ def main() -> int:
         type=Path,
         default=DEFAULT_SCHOOL_YEAR_CORE_DICTIONARY,
     )
+    parser.add_argument(
+        "--employment-school-year-dictionary",
+        type=Path,
+        default=DEFAULT_EMPLOYMENT_SCHOOL_YEAR_DICTIONARY,
+    )
     parser.add_argument("--repo-root", type=Path, default=Path("."))
     parser.add_argument("--memory-limit", default="8GB")
     parser.add_argument("--threads", type=int, default=4)
@@ -1041,6 +1512,11 @@ def main() -> int:
         args.school_year_core_dictionary
         if args.school_year_core_dictionary.is_absolute()
         else repo_root / args.school_year_core_dictionary
+    )
+    employment_dictionary_path = (
+        args.employment_school_year_dictionary
+        if args.employment_school_year_dictionary.is_absolute()
+        else repo_root / args.employment_school_year_dictionary
     )
     all_rows = read_catalog(catalog_path, repo_root)
     selected_rows = all_rows[: args.max_panels] if args.max_panels else all_rows
@@ -1107,11 +1583,16 @@ def main() -> int:
             bridge_summary_path,
             core_dictionary_path,
         )
+        employment_school_year = build_employment_school_year_mart(
+            connection,
+            employment_dictionary_path,
+        )
         replace_build_summary(
             connection,
             selected_rows,
             employment_views,
             school_year_core,
+            employment_school_year,
             status,
         )
         connection.execute("CHECKPOINT")
@@ -1165,6 +1646,10 @@ def main() -> int:
                 "relative_path": args.school_year_core_dictionary.as_posix(),
                 "sha256": school_year_core["data_dictionary"]["sha256"],
             },
+            "employment_school_year_data_dictionary": {
+                "relative_path": args.employment_school_year_dictionary.as_posix(),
+                "sha256": employment_school_year["data_dictionary"]["sha256"],
+            },
         },
         "database": database_record,
         "catalog": {
@@ -1184,6 +1669,7 @@ def main() -> int:
         },
         "employment_analysis_views": employment_views,
         "school_year_core_mart": school_year_core,
+        "employment_school_year_mart": employment_school_year,
         "validation": {
             "catalog_paths_missing": 0,
             "catalog_size_mismatches": 0,
@@ -1196,6 +1682,20 @@ def main() -> int:
             "schema_break_scope_excluded_rows": employment_views["standalone"]["rows"],
             "school_year_core_unique_key": school_year_core["duplicate_key_count"] == 0,
             "school_year_core_join_expansion_count": school_year_core["join_expansion_count"],
+            "employment_school_year_unique_key": (
+                employment_school_year["duplicate_key_count"] == 0
+            ),
+            "employment_school_year_orphan_key_count": (
+                employment_school_year["orphan_employment_key_count"]
+            ),
+            "employment_core_join_expansion_count": (
+                employment_school_year["join_expansion_count"]
+            ),
+            "employment_2022_time_comparison_eligible": (
+                employment_school_year["quality_findings"]
+                ["duplicate_year_comparison"]["comparison_eligible"]
+            ),
+            "official_employment_rate_derived": False,
             "database_access_tier": "restricted",
         },
     }
