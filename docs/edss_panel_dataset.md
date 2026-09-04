@@ -50,6 +50,7 @@ EDSS 개방데이터를 주 자료원으로 사용해 세 필수 분야의 265�
 - 공식 학교명–OpenID 교차표 감사: `data/metadata/edss_official_crosswalk_audit.json`
 - 대학알리미 재적학생수 기반 OpenID 후보: `data/metadata/edss_academyinfo_open_id_match.json`
 - 대학알리미 2025년 대학원명·학과 기반 이름 후보: `data/metadata/edss_academyinfo_graduate_name_match.json` (개방ID 대입 없음)
+- 대학원 종류별 패널·학과·연도 연속성 기반 OpenID 검토 후보: `data/metadata/edss_graduate_open_id_inference.json` (정식 개방ID 대입 없음)
 
 원본 열은 이름과 값을 변경하지 않고 모두 문자열로 저장한다. 따라서 `개방ID`와 기타 코드의 선행 0, 원본 공란, `-` 등의 표기를 보존한다. 다음 열만 출처 추적을 위해 앞에 추가한다.
 

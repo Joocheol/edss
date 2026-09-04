@@ -12,6 +12,7 @@ EDSS 다운로드, 압축 해제, 원본 목록 작성, 표준화, 품질검사 
 - `collect_academyinfo_enrollment.py`: 대학알리미 2023·2024년 학교코드 목록과 학교별 재적학생수를 원본 XML로 재개 가능하게 수집하고, 인증정보 없이 체크섬·빈 응답·중복키를 기록한다.
 - `collect_academyinfo_school_major.py`: 대학알리미 대학별 학과정보 API의 2025년 전체 학과를 재개 가능하게 수집하고, 일반·전문·특수대학원 부분집합과 대학원명·학위과정·입학정원·졸업자 수의 품질 요약을 기록한다. API에 대학원별 식별자가 없으므로 결과는 OpenID 검증 후보 자료로만 사용한다.
 - `analyze_academyinfo_graduate_name_coverage.py`: 2025년 대학원명·학교종류·지역을 취업통계 2023–2024년 미연결 대학원 identity와 비교하고 학과 집합 겹침을 기록한다. 연도 차이와 식별자 부재 때문에 후보 OpenID는 생성하거나 대입하지 않는다.
+- `infer_edss_graduate_open_id_candidates.py`: 대학알리미 이름·학과·주야간, EDSS 0402–0404 종류별 정상 ID 학과서명, 0101 지역·본분교, 0104 학과, 2개년 연속성을 결합해 대학원 OpenID 검토 후보를 만든다. 2022년 마스킹 백테스트로 임계값을 교정하고 연도 충돌·역방향 중복을 제외하며 정식 ID는 대입하지 않는다.
 - `match_academyinfo_enrollment_open_ids.py`: 두 연도의 학교구분·지역·본분교·재적학생수가 각각 하나의 같은 EDSS OpenID에 정확히 일치하고 역방향도 유일할 때만 후보를 만든다. 취업 학교명에 연결하되 정식 ID는 대입하지 않는다.
 - `apply_edss_employment_open_id_candidates.py`: 명시적 승인 플래그가 있을 때만 검토된 대학알리미 후보를 개인정보 열이 없는 별도 취업 파생 패널의 빈 `개방ID`에 적용한다. 기존 값·원본·제한 패널은 수정하지 않고 충돌 시 중단하며 적용 근거 열과 감사 JSON을 남긴다.
 - `validate_edss_priority_school_history.py`: 우선 검토 ID 6개의 학과 집합과 교원 행을 같은 연도 정상 ID와 비교해 통폐합·명칭 변경·중복 ID 검토용 후보표를 생성한다. 학교명 확정은 별도 공식 근거가 있을 때만 수행한다.

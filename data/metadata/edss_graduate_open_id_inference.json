@@ -1,0 +1,93 @@
+{
+  "generated_at": "2026-09-02T05:44:16.643523+00:00",
+  "status": "review_required",
+  "population": "EDSS employment 2023-2024 graduate-school-year identities",
+  "row_count": 2435,
+  "unique_identity_key_count": 2435,
+  "duplicate_identity_key_count": 0,
+  "critical_missing_counts": {
+    "_panel_year": 0,
+    "_school_identity_key": 0,
+    "edss_school_name": 0,
+    "edss_school_kind": 0
+  },
+  "name_context_matched_count": 2286,
+  "selected_candidate_count": 1805,
+  "selected_unique_open_id_count": 960,
+  "confidence_tier_counts": {
+    "high": 535,
+    "strong": 1270,
+    "unresolved": 630
+  },
+  "resolution_status_counts": {
+    "candidate_high_exact_context": 535,
+    "candidate_strong_calibrated_multisource": 407,
+    "candidate_strong_cross_year_anchor": 90,
+    "candidate_strong_exact_prior_year_signature": 426,
+    "candidate_strong_exact_small_signature": 347,
+    "excluded_cross_year_candidate_conflict": 6,
+    "excluded_reverse_candidate_collision": 180,
+    "unresolved_ambiguous_exact_signature": 11,
+    "unresolved_below_calibrated_threshold": 73,
+    "unresolved_name_context": 149,
+    "unresolved_no_department_overlap": 211
+  },
+  "cross_year_conflict_excluded_row_count": 6,
+  "reverse_collision_excluded_row_count": 180,
+  "canonical_open_id_imputed_row_count": 0,
+  "masked_id_backtest": {
+    "year": "2022",
+    "evaluation_profile_count": 1195,
+    "selected_profile_count": 1079,
+    "precision": 0.994439,
+    "coverage": 0.902929,
+    "score_threshold": 0.6,
+    "margin_threshold": 0.03,
+    "minimum_intersection": 1,
+    "target_precision": 0.99,
+    "caveat": "Masked-ID backtest uses 0104 department profiles as proxies for the employment target schema."
+  },
+  "inputs": {
+    "name_candidates": {
+      "path": "/Users/joocheol/Documents/GitHub/edss/data/metadata/edss_academyinfo_graduate_name_candidates.csv",
+      "sha256": "3afa1c2fce0fa1d0fed39f244d71e7a7af94186cabcf4bca996b43dfa7273737"
+    },
+    "identity_candidates": {
+      "path": "/Users/joocheol/Documents/GitHub/edss/data/metadata/edss_employment_2023_2024_open_id_candidates.csv",
+      "sha256": "14d87910741df657b21922c095c0ba46981ef5ab408ec16812d53708bff0f074"
+    },
+    "employment_aggregate": {
+      "path": "/Users/joocheol/Documents/GitHub/edss/data/processed/edss/derived/employment_2023_2024_school_department.csv.gz",
+      "sha256": "ee68db81e54ac5b0bcb01362d2f1067af33d066f53a629d0df186fc12426afc5"
+    },
+    "academyinfo_graduate_major": {
+      "path": "/Users/joocheol/Documents/GitHub/edss/data/raw/open_api/academyinfo_school_major/graduate_school_major.csv",
+      "sha256": "a39e0c91585f4c017e31a86beab6eb4dafe1e27dd356926b64dba910c6de22a2"
+    },
+    "school_year_bridge": {
+      "path": "/Users/joocheol/Documents/GitHub/edss/data/metadata/edss_school_year_bridge.csv",
+      "sha256": "edfbdbf2cc9c20da00f47d059d668eb8fa4469fae79c6c3105bb356ab644a27d"
+    },
+    "duckdb_build": {
+      "path": "/Users/joocheol/Documents/GitHub/edss/data/metadata/edss_duckdb_build.json",
+      "sha256": "0f5a82fab70247906548149fe8eafdbea45775c7e20fc010b81e100b02620bdd"
+    },
+    "duckdb": {
+      "path": "/Users/joocheol/Documents/GitHub/edss/data/processed/edss/restricted/edss_all.duckdb",
+      "bytes": 16044535808,
+      "sha256": "5a019a6844a8ce4960a4e736fccb497cf278b55b36e09ca46e405e24dd04a101",
+      "sha256_source": "/Users/joocheol/Documents/GitHub/edss/data/metadata/edss_duckdb_build.json"
+    }
+  },
+  "output": {
+    "path": "data/metadata/edss_graduate_open_id_candidates.csv",
+    "row_count": 2435,
+    "sha256": "9a933f94eb7e9cfb92a5207ac32c49907bcf045c993305fec3768d88ed6ab932"
+  },
+  "limitations": [
+    "Candidates are statistical inferences, not an official EDSS crosswalk.",
+    "AcademyInfo is survey year 2025 while target identities are 2023-2024.",
+    "Department names and reporting grain can change across panels and years.",
+    "Candidate OpenIDs remain separate evidence labels; canonical OpenIDs are not imputed."
+  ]
+}
