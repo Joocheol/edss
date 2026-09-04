@@ -1,0 +1,106 @@
+{
+  "generated_at": "2026-09-03T00:44:44.358948+00:00",
+  "status": "provisional_review_required",
+  "method": {
+    "comparable_2023_populations": [
+      "대학",
+      "일반대학원"
+    ],
+    "context": [
+      "province",
+      "university_or_general_graduate_scope"
+    ],
+    "department_count_tolerance": 2,
+    "accepted_rule": "unique reciprocal best plus exact department set of at least 3 or high overlap",
+    "canonical_mapping_written": false
+  },
+  "counts": {
+    "bridge_missing_open_id_count": 2,
+    "review_identity_count": 600,
+    "accepted_provisional_count": 66,
+    "accepted_with_2023_open_id_candidate_count": 53,
+    "status_counts": {
+      "accepted_reciprocal_exact": 34,
+      "accepted_reciprocal_high_overlap": 32,
+      "ambiguous_forward_top_score": 21,
+      "no_count_tolerance_candidate": 101,
+      "review_small_exact_signature": 24,
+      "review_weak_best": 388
+    },
+    "scope_status_counts": {
+      "대학": {
+        "accepted_reciprocal_exact": 30,
+        "accepted_reciprocal_high_overlap": 24,
+        "ambiguous_forward_top_score": 14,
+        "no_count_tolerance_candidate": 55,
+        "review_small_exact_signature": 14,
+        "review_weak_best": 278
+      },
+      "일반대학원": {
+        "accepted_reciprocal_exact": 4,
+        "accepted_reciprocal_high_overlap": 8,
+        "ambiguous_forward_top_score": 7,
+        "no_count_tolerance_candidate": 46,
+        "review_small_exact_signature": 10,
+        "review_weak_best": 110
+      }
+    },
+    "non_general_graduate_identity_count": 1019,
+    "parent_group_row_count": 262,
+    "parent_resolution_method_counts": {
+      "longest_undergraduate_name_prefix": 975,
+      "standalone_graduate_university": 43,
+      "unresolved_parent": 1
+    }
+  },
+  "inputs": {
+    "source_2022": {
+      "path": "/Users/joocheol/Documents/GitHub/edss/data/raw/edss/취업통계/0001_학생인적취업정보_13299/0001_학생인적취업정보_2022.zip",
+      "sha256": "e763b6a6848039be6c1e34975628600f772e36219a762610f8a6a59a1b694d13"
+    },
+    "source_2023": {
+      "path": "/Users/joocheol/Documents/GitHub/edss/data/raw/edss/취업통계/0001_학생인적취업정보_13300/0001_학생인적취업정보_2023.zip",
+      "sha256": "1ace9e82663a816e00a66a35d2b76980e79c708d54abd390564d3d90dcdbe4eb"
+    },
+    "bridge": {
+      "path": "data/metadata/edss_school_year_bridge.csv",
+      "sha256": "edfbdbf2cc9c20da00f47d059d668eb8fa4469fae79c6c3105bb356ab644a27d"
+    },
+    "enrollment_candidates": {
+      "path": "data/metadata/edss_employment_enrollment_open_id_candidates.csv",
+      "sha256": "3666fa22e265a1363050ca72dc9fe48458c6d648708a4d0660c52263a6e0bcaa"
+    },
+    "graduate_candidates": {
+      "path": "data/metadata/edss_graduate_open_id_candidates.csv",
+      "sha256": "9a933f94eb7e9cfb92a5207ac32c49907bcf045c993305fec3768d88ed6ab932"
+    }
+  },
+  "outputs": {
+    "review": {
+      "path": "data/processed/edss/restricted/derived/employment_2022_2023_reciprocal_review.csv",
+      "row_count": 600,
+      "sha256": "c85abc66d65f2319943995f97ce81210dc9b364b5daf6dba8c2e70e7a919c225"
+    },
+    "crosswalk": {
+      "path": "data/processed/edss/restricted/derived/employment_2022_2023_provisional_crosswalk.csv",
+      "row_count": 66,
+      "sha256": "5327e83d8671e1691e0dc18ed18b51c3e34dd167aae0eabc7d2ed578eaeeba5d"
+    },
+    "parent_groups": {
+      "path": "data/metadata/edss_employment_2023_non_general_graduate_parent_groups.csv",
+      "row_count": 262,
+      "sha256": "eb37983621c307af60435d499069e16fb8c1e462a5e2bf272239d9c73e22355a"
+    },
+    "region_counts": {
+      "path": "data/metadata/edss_employment_2022_2023_comparable_region_counts.csv",
+      "row_count": 34,
+      "sha256": "bb9431dabdf5734f399667faf54cd998ecee92c5c3a63a9692a0c010b15959a3"
+    }
+  },
+  "caveats": [
+    "Accepted rows are provisional research evidence, not a canonical identity crosswalk.",
+    "Only undergraduate institutions and general graduate schools are comparable at the 2022 grain.",
+    "Professional and special graduate schools are parent-grouped for diagnosis but excluded from the one-to-one match.",
+    "A 2023 OpenID remains a candidate from separate EDSS panels and is blank when no unique external candidate exists."
+  ]
+}

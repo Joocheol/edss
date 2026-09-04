@@ -1,0 +1,103 @@
+{
+  "generated_at": "2026-09-03T00:55:59.701280+00:00",
+  "status": "provisional_review_required",
+  "method": {
+    "candidate_context": [
+      "province",
+      "university_or_general_graduate_scope"
+    ],
+    "candidate_filter": "absolute distinct department-count difference <= 2",
+    "ranking_priority": "college-department pair overlap before department-only overlap",
+    "accepted_rule": "unique reciprocal best plus exact pair set of at least 3 or high pair overlap",
+    "canonical_mapping_written": false
+  },
+  "data_quality": {
+    "source_2022": {
+      "blank_college_count": 0,
+      "blank_department_count": 0,
+      "blank_open_id_count": 0,
+      "profile_count": 537,
+      "row_count": 553521
+    },
+    "source_2023": {
+      "blank_college_count": 0,
+      "blank_department_count": 0,
+      "blank_province_count": 0,
+      "blank_school_name_count": 0,
+      "profile_count": 1619,
+      "row_count": 23312
+    }
+  },
+  "counts": {
+    "bridge_missing_open_id_count": 2,
+    "review_identity_count": 600,
+    "accepted_pair_validated_count": 62,
+    "accepted_with_2023_open_id_candidate_count": 51,
+    "status_counts": {
+      "accepted_reciprocal_exact_college_department_set": 32,
+      "accepted_reciprocal_high_college_department_overlap": 30,
+      "ambiguous_forward_pair_score": 22,
+      "no_department_count_tolerance_candidate": 101,
+      "review_small_exact_college_department_signature": 24,
+      "review_weak_college_department_overlap": 391
+    },
+    "scope_status_counts": {
+      "대학": {
+        "accepted_reciprocal_exact_college_department_set": 28,
+        "accepted_reciprocal_high_college_department_overlap": 22,
+        "ambiguous_forward_pair_score": 15,
+        "no_department_count_tolerance_candidate": 55,
+        "review_small_exact_college_department_signature": 14,
+        "review_weak_college_department_overlap": 281
+      },
+      "일반대학원": {
+        "accepted_reciprocal_exact_college_department_set": 4,
+        "accepted_reciprocal_high_college_department_overlap": 8,
+        "ambiguous_forward_pair_score": 7,
+        "no_department_count_tolerance_candidate": 46,
+        "review_small_exact_college_department_signature": 10,
+        "review_weak_college_department_overlap": 110
+      }
+    },
+    "comparison_to_department_only_counts": {
+      "not_accepted": 534,
+      "previous_match_confirmed_by_college_department": 62,
+      "previous_match_downgraded_by_college_department": 4
+    }
+  },
+  "inputs": {
+    "source_2022": {
+      "path": "/Users/joocheol/Documents/GitHub/edss/data/raw/edss/취업통계/0001_학생인적취업정보_13299/0001_학생인적취업정보_2022.zip",
+      "sha256": "e763b6a6848039be6c1e34975628600f772e36219a762610f8a6a59a1b694d13"
+    },
+    "source_2023": {
+      "path": "/Users/joocheol/Documents/GitHub/edss/data/raw/edss/취업통계/0001_학생인적취업정보_13300/0001_학생인적취업정보_2023.zip",
+      "sha256": "1ace9e82663a816e00a66a35d2b76980e79c708d54abd390564d3d90dcdbe4eb"
+    },
+    "bridge": {
+      "path": "data/metadata/edss_school_year_bridge.csv",
+      "sha256": "edfbdbf2cc9c20da00f47d059d668eb8fa4469fae79c6c3105bb356ab644a27d"
+    },
+    "previous_crosswalk": {
+      "path": "data/processed/edss/restricted/derived/employment_2022_2023_provisional_crosswalk.csv",
+      "sha256": "5327e83d8671e1691e0dc18ed18b51c3e34dd167aae0eabc7d2ed578eaeeba5d"
+    }
+  },
+  "outputs": {
+    "review": {
+      "path": "data/processed/edss/restricted/derived/employment_2022_2023_college_department_review.csv",
+      "row_count": 600,
+      "sha256": "e233d3f6a1184f3415b5f415353e51a72cd4e43750a47c8e9aa27872caa99484"
+    },
+    "crosswalk": {
+      "path": "data/processed/edss/restricted/derived/employment_2022_2023_college_department_crosswalk.csv",
+      "row_count": 62,
+      "sha256": "eba2b09ae1ff8285afdb159ff7089aa6cb5076bb7ea5c0db490f3bbbd5d09a80"
+    }
+  },
+  "caveats": [
+    "College names can change even when the institution identity is stable, so downgraded department-only matches remain review candidates.",
+    "Accepted rows are provisional research evidence, not a canonical identity crosswalk.",
+    "Professional and special graduate schools remain outside the comparable one-to-one population."
+  ]
+}

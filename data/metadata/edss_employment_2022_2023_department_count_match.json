@@ -1,0 +1,100 @@
+{
+  "generated_at": "2026-09-03T00:32:53.447025+00:00",
+  "status": "review_required",
+  "method": {
+    "context": [
+      "province",
+      "university_or_graduate_level"
+    ],
+    "school_unit_2022": "개방ID",
+    "school_unit_2023": "(시도명, 학교명, 대학대학원구분명)",
+    "size_measure": "distinct normalized 학과명 count",
+    "department_count_tolerance": 2,
+    "ranking": "department overlap, Jaccard, smaller-set coverage, then count difference",
+    "max_candidates_written_per_2023_identity": 5,
+    "canonical_mapping_written": false
+  },
+  "counts": {
+    "open_id_count_2022": 537,
+    "school_identity_count_2023": 1619,
+    "bridge_missing_open_id_count": 2,
+    "candidate_output_row_count": 4625,
+    "count_tolerance_pair_count_before_output_cap": 5940,
+    "identities_with_count_tolerance_candidate": 1356,
+    "identities_without_count_tolerance_candidate": 263,
+    "identities_truncated_to_output_cap": 493,
+    "identity_status_counts": {
+      "ambiguous_top_score_tie": 371,
+      "no_count_tolerance_candidate": 263,
+      "reverse_open_id_conflict": 4,
+      "unique_best_review_required": 892,
+      "unique_exact_department_set": 57,
+      "unique_high_overlap": 32
+    },
+    "level_status_counts": {
+      "대학": {
+        "ambiguous_top_score_tie": 14,
+        "no_count_tolerance_candidate": 55,
+        "unique_best_review_required": 278,
+        "unique_exact_department_set": 44,
+        "unique_high_overlap": 24
+      },
+      "대학원": {
+        "ambiguous_top_score_tie": 357,
+        "no_count_tolerance_candidate": 208,
+        "reverse_open_id_conflict": 4,
+        "unique_best_review_required": 614,
+        "unique_exact_department_set": 13,
+        "unique_high_overlap": 8
+      }
+    },
+    "region_level_school_counts": {
+      "대학": {
+        "region_count": 17,
+        "school_appearances_2022": 386,
+        "school_identities_2023": 415,
+        "regions_with_absolute_difference_at_most_tolerance": 14,
+        "maximum_absolute_difference": 16
+      },
+      "대학원": {
+        "region_count": 17,
+        "school_appearances_2022": 183,
+        "school_identities_2023": 1204,
+        "regions_with_absolute_difference_at_most_tolerance": 0,
+        "maximum_absolute_difference": 382
+      }
+    },
+    "reverse_conflicting_open_id_count": 2
+  },
+  "caveats": [
+    "2022 OpenIDs can span more than one province; they are eligible in every recorded 2022 province.",
+    "Graduate-school names are much more granular in 2023 than employment OpenIDs are in 2022, so graduate matching can be many-to-one.",
+    "A count-tolerance candidate is not a confirmed identity; department-name overlap and reverse conflicts must be reviewed."
+  ],
+  "inputs": {
+    "source_2022": {
+      "path": "/Users/joocheol/Documents/GitHub/edss/data/raw/edss/취업통계/0001_학생인적취업정보_13299/0001_학생인적취업정보_2022.zip",
+      "sha256": "e763b6a6848039be6c1e34975628600f772e36219a762610f8a6a59a1b694d13"
+    },
+    "source_2023": {
+      "path": "/Users/joocheol/Documents/GitHub/edss/data/raw/edss/취업통계/0001_학생인적취업정보_13300/0001_학생인적취업정보_2023.zip",
+      "sha256": "1ace9e82663a816e00a66a35d2b76980e79c708d54abd390564d3d90dcdbe4eb"
+    },
+    "bridge": {
+      "path": "data/metadata/edss_school_year_bridge.csv",
+      "sha256": "edfbdbf2cc9c20da00f47d059d668eb8fa4469fae79c6c3105bb356ab644a27d"
+    }
+  },
+  "outputs": {
+    "candidate_output": {
+      "path": "data/processed/edss/restricted/derived/employment_2022_2023_department_count_candidates.csv",
+      "row_count": 4625,
+      "sha256": "6887feec8ca0d0776055f5bd1dee95e719079bb09171f3fce84e20fc4c35aa1f"
+    },
+    "region_count_output": {
+      "path": "data/metadata/edss_employment_2022_2023_region_school_counts.csv",
+      "row_count": 34,
+      "sha256": "4c12f44f3b894620e70de2a09484d06d9281a6f72ff115f12a123fb1caaa8408"
+    }
+  }
+}
