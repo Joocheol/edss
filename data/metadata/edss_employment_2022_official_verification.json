@@ -1,0 +1,110 @@
+{
+  "audit_version": 1,
+  "verified_on": "2026-09-04",
+  "scope": "EDSS 학생인적취업정보 2022 파일의 독립 2022 졸업 코호트 사용 가능성",
+  "verification_status": "official_definition_conflict_confirmed",
+  "republication_status": "not_documented_by_checked_official_sources",
+  "severity": "high_for_2022_cohort_or_time_series_analysis",
+  "official_definitions": [
+    {
+      "survey_year": "2021",
+      "reference_date": "2021-12-31",
+      "target_graduation_months": [
+        "202008",
+        "202102"
+      ],
+      "source_title": "2021년 고등교육기관 졸업자 취업통계연보",
+      "source_url": "https://kess.kedi.re.kr/publ/fileDownload.do?fileSeq=1064949&publItemId=95638"
+    },
+    {
+      "survey_year": "2022",
+      "reference_date": "2022-12-31",
+      "target_graduation_months": [
+        "202108",
+        "202202"
+      ],
+      "source_title": "2022년 고등교육기관 졸업자 취업통계연보",
+      "source_url": "https://kess.kedi.re.kr/publ/fileDownload.do?fileSeq=1075201&publItemId=102507"
+    },
+    {
+      "survey_year": "2022",
+      "target_graduation_months": [
+        "202108",
+        "202202"
+      ],
+      "source_title": "교육부 2022년도 고등교육기관 졸업자 취업통계 조사 지침",
+      "source_url": "https://www.moe.go.kr/boardCnts/view.do?boardID=337&boardSeq=94792&lev=0&m=0303&s=moe"
+    }
+  ],
+  "edss_listing": {
+    "dataset": "학생인적취업정보",
+    "domn_code": "13299",
+    "advertised_years": "2010~2022",
+    "source_url": "https://www.edmgr.kr/edss/es/opd/odd/od/es_opd_oddod01_001"
+  },
+  "local_source_evidence": {
+    "2021": {
+      "archive": "data/raw/edss/취업통계/0001_학생인적취업정보_13299/0001_학생인적취업정보_2021.zip",
+      "sha256": "b9ec094f6d20a5fd2fe72c20a0672aefd1e0c3c6b3757ba318b6a68007776d73",
+      "row_count": 553521,
+      "distinct_open_id_count": 537,
+      "source_survey_year_values": [
+        "2021"
+      ],
+      "graduation_month_min": "201903",
+      "graduation_month_max": "202003"
+    },
+    "2022": {
+      "archive": "data/raw/edss/취업통계/0001_학생인적취업정보_13299/0001_학생인적취업정보_2022.zip",
+      "sha256": "e763b6a6848039be6c1e34975628600f772e36219a762610f8a6a59a1b694d13",
+      "row_count": 553521,
+      "distinct_open_id_count": 537,
+      "source_survey_year_values": [
+        "2022"
+      ],
+      "graduation_month_min": "201903",
+      "graduation_month_max": "202003",
+      "official_2022_target_month_row_count": 0,
+      "dominant_older_cohort_months": {
+        "201908": 96092,
+        "202002": 452879
+      },
+      "dominant_older_cohort_row_count": 548971,
+      "dominant_older_cohort_share": 0.991779896
+    }
+  },
+  "cross_year_checks": {
+    "graduation_month_distribution_2021_equals_2022": true,
+    "graduation_month_distribution_difference_count": 0,
+    "school_aggregate_comparison_field_count": 12,
+    "shared_open_id_count": 537,
+    "exact_school_aggregate_match_count": 537,
+    "exact_school_aggregate_match_share": 1.0,
+    "school_aggregate_fields": [
+      "source_record_count",
+      "reported_graduate_count",
+      "reported_employed_count",
+      "reported_health_insurance_employed_count",
+      "reported_school_employed_count",
+      "reported_further_study_count",
+      "reported_military_service_count",
+      "reported_employment_unavailable_count",
+      "reported_foreign_student_count",
+      "reported_excluded_count",
+      "reported_other_count",
+      "reported_unknown_count"
+    ]
+  },
+  "interpretation": {
+    "confirmed": [
+      "공식 2021년 조사와 2022년 조사는 서로 다른 졸업 코호트를 대상으로 한다.",
+      "EDSS 2022년 파일에는 공식 2022년 주요 대상 졸업월인 202108과 202202가 없다.",
+      "EDSS 2022년 파일의 졸업년월 분포와 12개 학교 집계값은 EDSS 2021년 파일과 완전히 동일하다."
+    ],
+    "not_confirmed": [
+      "EDSS 2022년 파일이 제공기관이 의도한 공식 재공개인지 여부",
+      "원본 불일치가 다운로드 매핑 오류, 제공 파일 오류 또는 별도 후속 파동인지 여부"
+    ],
+    "decision": "2022년 파일은 독립 2022년 졸업 코호트 및 연도 추세 분석에서 제외하고 원본 그대로 보존한다."
+  }
+}
