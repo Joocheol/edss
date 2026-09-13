@@ -1,12 +1,13 @@
-# 연구 문서
+# EDSS 연구 노트
 
-- [디렉토리 구조와 작업 규칙](project_structure.md)
-- [연구 계획](edss_full_panel_rebuild_plan.md)
-- [데이터 전략](data_strategy.md)
-- [데이터 구조와 결합 주의사항](edss_panel_dataset.md)
-- [표본 제외와 식별 관련 판단](edss_remaining_identity_gap_resolution.md)
-- [분석 결과 해석](findings/README.md)
-- [실행 도구 목록](../scripts/README.md)
+EDSS 개방데이터로 한국 고등교육의 변화와 졸업 후 취업 현황을 연구합니다.
 
-원자료 설명서는 `reference/`에 보관합니다. 연구 문서는 Markdown으로
-관리하고, 재현 가능한 결과 파일은 `outputs/`, 출판 원고는 `manuscript/`에 둡니다.
+## 현재까지 한 일
+
+데이터 수집·정제와 학교 식별자 검증을 진행했고, 2010–2020년 졸업 코호트의 취업 추세를 분석했습니다.
+
+- [데이터 사용법](data-guide.md): 어떤 데이터를 쓰고 무엇을 주의할지
+- [분석 결과](results.md): 현재까지의 핵심 발견과 다음 질문
+
+코드와 상세 검증 기록은 [GitHub 저장소](https://github.com/Joocheol/edss)에 보관합니다.
+이 공간에는 연구에 바로 필요한 설명만 남깁니다.
