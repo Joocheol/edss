@@ -3,10 +3,10 @@ import unittest
 from pathlib import Path
 
 
-SCRIPTS = Path(__file__).resolve().parents[1] / "scripts"
-sys.path.insert(0, str(SCRIPTS))
+SRC = Path(__file__).resolve().parents[1] / "src"
+sys.path.insert(0, str(SRC))
 
-import audit_edss_employment_cohort_years as audit
+from edss import audit_edss_employment_cohort_years as audit
 
 
 class EmploymentCohortYearAuditTests(unittest.TestCase):

@@ -5,10 +5,10 @@ import unittest
 from email.message import Message
 from pathlib import Path
 
-SCRIPTS = Path(__file__).resolve().parents[1] / "scripts"
-sys.path.insert(0, str(SCRIPTS))
+SRC = Path(__file__).resolve().parents[1] / "src"
+sys.path.insert(0, str(SRC))
 
-import download_edss
+from edss import download_edss
 
 
 class DownloadEdssTests(unittest.TestCase):

@@ -1,19 +1,10 @@
-import importlib.util
+import sys
 import unittest
 from pathlib import Path
 
 
-SCRIPT = (
-    Path(__file__).resolve().parents[1]
-    / "scripts"
-    / "analyze_edss_employment_stratified_trends.py"
-)
-SPEC = importlib.util.spec_from_file_location(
-    "analyze_edss_employment_stratified_trends", SCRIPT
-)
-stratified = importlib.util.module_from_spec(SPEC)
-assert SPEC.loader is not None
-SPEC.loader.exec_module(stratified)
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
+from edss import analyze_edss_employment_stratified_trends as stratified
 
 
 def synthetic_rows():

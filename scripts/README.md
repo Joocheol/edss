@@ -45,3 +45,9 @@ uv run --with duckdb==1.4.1 python scripts/build_edss_employment_cohort_trends.p
 uv run --with duckdb==1.4.1 python scripts/analyze_edss_employment_balanced_panel.py
 uv run --with duckdb==1.4.1 python scripts/analyze_edss_employment_stratified_trends.py
 ```
+
+## 코드 위치
+
+이 폴더의 Python 파일은 실행 진입점입니다. 함수 구현은 동일한 이름의
+`src/edss/` 모듈에 있으며, 노트북과 테스트도 해당 모듈을 직접 불러옵니다.
+기존 CLI 명령과 인자는 유지합니다.

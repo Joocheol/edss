@@ -1,19 +1,10 @@
-import importlib.util
+import sys
 import unittest
 from pathlib import Path
 
 
-SCRIPT = (
-    Path(__file__).resolve().parents[1]
-    / "scripts"
-    / "build_edss_employment_cohort_trends.py"
-)
-SPEC = importlib.util.spec_from_file_location(
-    "build_edss_employment_cohort_trends", SCRIPT
-)
-trends = importlib.util.module_from_spec(SPEC)
-assert SPEC.loader is not None
-SPEC.loader.exec_module(trends)
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
+from edss import build_edss_employment_cohort_trends as trends
 
 
 def synthetic_aggregates():

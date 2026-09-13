@@ -3,10 +3,10 @@ import unittest
 from pathlib import Path
 
 
-SCRIPTS = Path(__file__).resolve().parents[1] / "scripts"
-sys.path.insert(0, str(SCRIPTS))
+SRC = Path(__file__).resolve().parents[1] / "src"
+sys.path.insert(0, str(SRC))
 
-import infer_edss_graduate_open_id_candidates as inference
+from edss import infer_edss_graduate_open_id_candidates as inference
 
 
 class GraduateOpenIdInferenceTests(unittest.TestCase):

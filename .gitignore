@@ -24,3 +24,22 @@ data/processed/*
 # Runtime logs may contain transient operational details.
 logs/*.log
 !logs/README.md
+
+# Intermediate data and generated research artifacts remain local.
+data/interim/*
+!data/interim/.gitkeep
+outputs/*
+!outputs/README.md
+!outputs/results/
+!outputs/figures/
+!outputs/tables/
+!outputs/reports/
+outputs/results/*
+outputs/figures/*
+outputs/tables/*
+outputs/reports/*
+!outputs/**/.gitkeep
+.pytest_cache/
+*.egg-info/
+build/
+dist/

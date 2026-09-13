@@ -1,19 +1,10 @@
-import importlib.util
+import sys
 import unittest
 from pathlib import Path
 
 
-SCRIPT = (
-    Path(__file__).resolve().parents[1]
-    / "scripts"
-    / "analyze_edss_employment_balanced_panel.py"
-)
-SPEC = importlib.util.spec_from_file_location(
-    "analyze_edss_employment_balanced_panel", SCRIPT
-)
-balanced = importlib.util.module_from_spec(SPEC)
-assert SPEC.loader is not None
-SPEC.loader.exec_module(balanced)
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
+from edss import analyze_edss_employment_balanced_panel as balanced
 
 
 def synthetic_aggregates():

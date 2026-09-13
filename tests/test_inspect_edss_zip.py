@@ -2,10 +2,10 @@ import sys
 import unittest
 from pathlib import Path
 
-SCRIPTS = Path(__file__).resolve().parents[1] / "scripts"
-sys.path.insert(0, str(SCRIPTS))
+SRC = Path(__file__).resolve().parents[1] / "src"
+sys.path.insert(0, str(SRC))
 
-import inspect_edss_zip
+from edss import inspect_edss_zip
 
 
 class InspectEdssZipTests(unittest.TestCase):

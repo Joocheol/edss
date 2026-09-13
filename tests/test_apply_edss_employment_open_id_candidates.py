@@ -1,16 +1,13 @@
 import csv
 import gzip
-import importlib.util
+import sys
 import tempfile
 import unittest
 from pathlib import Path
 
 
-SCRIPT = Path(__file__).resolve().parents[1] / "scripts" / "apply_edss_employment_open_id_candidates.py"
-SPEC = importlib.util.spec_from_file_location("apply_open_ids", SCRIPT)
-apply_open_ids = importlib.util.module_from_spec(SPEC)
-assert SPEC.loader is not None
-SPEC.loader.exec_module(apply_open_ids)
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
+from edss import apply_edss_employment_open_id_candidates as apply_open_ids
 
 
 SOURCE_FIELDS = [

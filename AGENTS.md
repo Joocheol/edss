@@ -20,3 +20,11 @@
 - 스크립트, 설정, 데이터 사전, 수집기록, 품질검사 결과만 커밋한다.
 - 인증키, 쿠키, 세션 정보, 개인정보는 저장하지 않는다.
 
+
+## Project layout
+
+- 작업 기준 저장소는 `/Users/joocheol/Documents/GitHub/edss`다.
+- 재사용 함수는 `src/edss/`, 실행 진입점은 `scripts/`, 탐색과 해석은 `notebooks/`에 둔다.
+- 분석 결과는 `outputs/{results,figures,tables,reports}/`, 연구 해석은 `docs/findings/`, 출판 원고는 `manuscript/`에 둔다.
+- 기존 `data/metadata/` 수집·검증 기록과 출처 경로는 보존한다.
+- `config/`와 `tests/`는 기존 역할을 유지한다.

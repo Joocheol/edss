@@ -5,10 +5,10 @@ import tempfile
 import unittest
 from pathlib import Path
 
-SCRIPTS = Path(__file__).resolve().parents[1] / "scripts"
-sys.path.insert(0, str(SCRIPTS))
+SRC = Path(__file__).resolve().parents[1] / "src"
+sys.path.insert(0, str(SRC))
 
-import build_edss_school_year_bridge as bridge
+from edss import build_edss_school_year_bridge as bridge
 
 
 FIELDS = ["_panel_year", "개방ID", "학교구분명", "시도명", "지역명", "본분교명"]

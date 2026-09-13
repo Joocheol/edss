@@ -13,16 +13,21 @@ EDSS 개방데이터를 이용해 2009~2025년 한국 고등교육 장기 패널
 ## 폴더 구조
 
 ```text
-config/          수집대상과 우선순위
-data/raw/        내려받은 원본 파일(Git 제외)
-data/processed/  정제·결합 데이터(Git 제외)
-data/metadata/   수집기록, 스키마, 품질검사 결과
-docs/reference/  제공목록과 원자료 설명서
-notebooks/       탐색·검증 노트북
-scripts/         다운로드·정제·검증 도구
-tests/           파싱·페이지네이션·중복·오류 응답 테스트
-logs/            인증정보가 제거된 로컬 실행 로그(Git 제외)
+data/            원본·중간·분석 입력·수집 및 품질 기록
+notebooks/       탐색·검증·해석 기록
+src/edss/        재사용하는 수집·정제·분석·검증 함수
+scripts/         src 함수를 호출하는 실행 진입점
+outputs/         results·figures·tables·reports 생성물
+manuscript/      논문·책 원고와 참고문헌
+docs/            연구 방법·결정·해석, findings/와 reference/
+config/          수집대상과 옵션
+tests/           핵심 계산 및 데이터 처리 검증
+logs/            로컬 실행 로그(Git 제외)
 ```
+
+[구조와 작업 방법](docs/project_structure.md)을 참고하세요.
+작업 기준 폴더는 `/Users/joocheol/Documents/GitHub/edss`입니다.
+
 
 ## 원칙
 
@@ -40,7 +45,11 @@ logs/            인증정보가 제거된 로컬 실행 로그(Git 제외)
 
 ## 빠른 시작
 
-Python 3.11 이상과 표준 라이브러리만 사용합니다. 명령은 저장소 루트에서 실행합니다.
+Python 3.11 이상을 사용합니다. 수집 도구는 표준 라이브러리로 실행하며, DuckDB 분석은 `duckdb==1.4.1`, KEDI Excel 교차표는 `pandas`와 `openpyxl`이 필요합니다. 명령은 저장소 루트에서 실행합니다.
+
+```bash
+python3 -m pip install -e '.[analysis,notebooks]'
+```
 
 ```bash
 python3 -m unittest discover -s tests -p 'test_*.py' -v

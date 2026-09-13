@@ -5,10 +5,10 @@ import tempfile
 import unittest
 from pathlib import Path
 
-SCRIPTS = Path(__file__).resolve().parents[1] / "scripts"
-sys.path.insert(0, str(SCRIPTS))
+SRC = Path(__file__).resolve().parents[1] / "src"
+sys.path.insert(0, str(SRC))
 
-import match_academyinfo_enrollment_open_ids as matcher
+from edss import match_academyinfo_enrollment_open_ids as matcher
 
 
 class AcademyInfoEnrollmentMatchTests(unittest.TestCase):

@@ -4,10 +4,10 @@ import unittest
 import zipfile
 from pathlib import Path
 
-SCRIPTS = Path(__file__).resolve().parents[1] / "scripts"
-sys.path.insert(0, str(SCRIPTS))
+SRC = Path(__file__).resolve().parents[1] / "src"
+sys.path.insert(0, str(SRC))
 
-import scan_edss_full_rebuild_inputs as scanner
+from edss import scan_edss_full_rebuild_inputs as scanner
 
 
 class ScanEdssFullRebuildInputsTests(unittest.TestCase):

@@ -9,10 +9,10 @@ import unittest
 import zipfile
 from pathlib import Path
 
-SCRIPTS = Path(__file__).resolve().parents[1] / "scripts"
-sys.path.insert(0, str(SCRIPTS))
+SRC = Path(__file__).resolve().parents[1] / "src"
+sys.path.insert(0, str(SRC))
 
-import build_edss_dataset as builder
+from edss import build_edss_dataset as builder
 
 
 class BuildEdssDatasetTests(unittest.TestCase):

@@ -1,15 +1,12 @@
 import csv
-import importlib.util
+import sys
 import tempfile
 import unittest
 from pathlib import Path
 
 
-SCRIPT = Path(__file__).resolve().parents[1] / "scripts" / "review_pre2025_unmatched_openids.py"
-SPEC = importlib.util.spec_from_file_location("review_pre2025", SCRIPT)
-review = importlib.util.module_from_spec(SPEC)
-assert SPEC.loader is not None
-SPEC.loader.exec_module(review)
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
+from edss import review_pre2025_unmatched_openids as review
 
 
 class ApprovedIdentityProposalTests(unittest.TestCase):

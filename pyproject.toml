@@ -1,0 +1,17 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "edss-research"
+version = "0.1.0"
+description = "EDSS higher education panel research tools"
+requires-python = ">=3.11"
+dependencies = []
+
+[project.optional-dependencies]
+analysis = ["duckdb==1.4.1", "pandas>=2.2,<3", "openpyxl>=3.1,<4"]
+notebooks = ["jupyterlab>=4,<5", "nbconvert>=7,<8", "ipykernel>=6,<7"]
+
+[tool.setuptools.packages.find]
+where = ["src"]

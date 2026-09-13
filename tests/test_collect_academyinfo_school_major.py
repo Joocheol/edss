@@ -4,10 +4,10 @@ import unittest
 from pathlib import Path
 from types import SimpleNamespace
 
-SCRIPTS = Path(__file__).resolve().parents[1] / "scripts"
-sys.path.insert(0, str(SCRIPTS))
+SRC = Path(__file__).resolve().parents[1] / "src"
+sys.path.insert(0, str(SRC))
 
-import collect_academyinfo_school_major as collector
+from edss import collect_academyinfo_school_major as collector
 
 
 def response_xml(items, total=None):

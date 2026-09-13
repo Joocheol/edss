@@ -3,10 +3,10 @@ import unittest
 from pathlib import Path
 
 
-SCRIPTS = Path(__file__).resolve().parents[1] / "scripts"
-sys.path.insert(0, str(SCRIPTS))
+SRC = Path(__file__).resolve().parents[1] / "src"
+sys.path.insert(0, str(SRC))
 
-import build_edss_employment_2022_2023_provisional_crosswalk as crosswalk
+from edss import build_edss_employment_2022_2023_provisional_crosswalk as crosswalk
 
 
 class ProvisionalCrosswalkTests(unittest.TestCase):

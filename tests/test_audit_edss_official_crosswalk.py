@@ -6,10 +6,10 @@ import unittest
 import zipfile
 from pathlib import Path
 
-SCRIPTS = Path(__file__).resolve().parents[1] / "scripts"
-sys.path.insert(0, str(SCRIPTS))
+SRC = Path(__file__).resolve().parents[1] / "src"
+sys.path.insert(0, str(SRC))
 
-import audit_edss_official_crosswalk as audit
+from edss import audit_edss_official_crosswalk as audit
 
 
 WORKBOOK_XML = """<?xml version="1.0" encoding="UTF-8"?>

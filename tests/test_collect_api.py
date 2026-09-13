@@ -7,10 +7,10 @@ from types import SimpleNamespace
 from unittest.mock import patch
 from urllib.error import HTTPError
 
-SCRIPTS = Path(__file__).resolve().parents[1] / "scripts"
-sys.path.insert(0, str(SCRIPTS))
+SRC = Path(__file__).resolve().parents[1] / "src"
+sys.path.insert(0, str(SRC))
 
-import collect_api
+from edss import collect_api
 
 
 def response_xml(items, total=0, page=1, rows=10, code="00", message="NORMAL SERVICE."):

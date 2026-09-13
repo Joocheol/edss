@@ -1,18 +1,15 @@
 import csv
 import gzip
 import hashlib
-import importlib.util
+import sys
 import json
 import tempfile
 import unittest
 from pathlib import Path
 
 
-SCRIPT = Path(__file__).resolve().parents[1] / "scripts" / "build_edss_duckdb.py"
-SPEC = importlib.util.spec_from_file_location("build_edss_duckdb", SCRIPT)
-builder = importlib.util.module_from_spec(SPEC)
-assert SPEC.loader is not None
-SPEC.loader.exec_module(builder)
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
+from edss import build_edss_duckdb as builder
 
 
 class BuildEdssDuckDBTests(unittest.TestCase):
