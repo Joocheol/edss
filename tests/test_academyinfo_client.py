@@ -44,11 +44,12 @@ class AcademyInfoClientTests(unittest.TestCase):
                 )
                 self.assertEqual(params, {"pageNo": "1", "numOfRows": "1", **additions})
 
-    def test_indicator_override_is_applied(self) -> None:
+    def test_configured_fixed_parameter_is_applied(self) -> None:
         params = representative_params(
             {
                 "scope_strategy": "per_school_by_year",
                 "operation": "getComparisonFullTimeFacultyResearchCrntSt",
+                "fixed_params": {"indctId": "33"},
             },
             ProbeDefaults(),
         )

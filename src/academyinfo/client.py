@@ -26,12 +26,6 @@ class ProbeDefaults:
     school_division_code: str = "01"
 
 
-INDICATOR_OVERRIDES = {
-    "getComparisonFullTimeFacultyResearchCrntSt": "33",
-    "getComparisonFullTimeFacultyEnsureCrntSt": "67",
-}
-
-
 def load_yaml(path: Path) -> dict[str, Any]:
     """Load a YAML mapping from *path*."""
 
@@ -111,7 +105,14 @@ def representative_params(
 ) -> dict[str, str]:
     """Build non-secret representative parameters from an endpoint scope strategy."""
 
-    params = {"pageNo": str(page_no), "numOfRows": str(num_rows)}
+    fixed_params = endpoint.get("fixed_params", {})
+    if not isinstance(fixed_params, Mapping):
+        raise TypeError("endpoint fixed_params must be a mapping")
+    params = {
+        **{str(key): str(value) for key, value in fixed_params.items()},
+        "pageNo": str(page_no),
+        "numOfRows": str(num_rows),
+    }
     strategy = endpoint["scope_strategy"]
     if strategy == "per_school_by_year":
         params.update({"schlId": defaults.school_id, "svyYr": defaults.survey_year})
@@ -126,9 +127,6 @@ def representative_params(
     elif strategy != "lookup_once":
         raise ValueError(f"Unknown scope_strategy: {strategy}")
 
-    indicator_id = INDICATOR_OVERRIDES.get(str(endpoint["operation"]))
-    if indicator_id:
-        params["indctId"] = indicator_id
     return params
 
 

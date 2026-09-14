@@ -19,3 +19,7 @@ GitBook은 이 저장소의 `docs/` 전체를 문서 루트로 사용합니다. 
 [확정 수집 범위 보기](collection-scope.md)
 
 [대학알리미 API 검증 결과와 실행법 보기](academyinfo-audit.md)
+
+[대학알리미 API 수집 프로그램 보기](academyinfo-collection.md)
+
+[대학알리미 API 수집기 설계 및 이행 계획 보기](academyinfo-collector-design.md)

@@ -602,6 +602,7 @@ endpoints:
     classification_basis: "공식 명세에서 학교코드 필수"
     swagger_required_parameters: ["serviceKey", "svyYr", "schlId", "indctId"]
     swagger_optional_parameters: ["pageNo", "numOfRows"]
+    fixed_params: {indctId: "33"}
     output_fields: ["indctId", "indctVal1", "indctYr", "schlDivNm", "schlEstbNm", "schlId", "schlKrnNm", "svyYr"]
     endpoint_url: "https://apis.data.go.kr/B340014/EducationResearchService/getComparisonFullTimeFacultyResearchCrntSt"
     spec_url: "https://www.data.go.kr/data/15158678/openapi.do"
@@ -635,6 +636,7 @@ endpoints:
     classification_basis: "공식 명세에서 학교코드 필수"
     swagger_required_parameters: ["serviceKey", "indctId", "schlId", "svyYr"]
     swagger_optional_parameters: ["pageNo", "numOfRows"]
+    fixed_params: {indctId: "67"}
     output_fields: ["indctId", "indctVal1", "indctYr", "schlDivNm", "schlEstbNm", "schlId", "schlKrnNm", "svyYr"]
     endpoint_url: "https://apis.data.go.kr/B340014/EducationResearchService/getComparisonFullTimeFacultyEnsureCrntSt"
     spec_url: "https://www.data.go.kr/data/15158678/openapi.do"
@@ -734,7 +736,7 @@ endpoints:
     classification_basis: "공식 명세에서 학교구분 필수"
     swagger_required_parameters: ["serviceKey", "schlDivCd"]
     swagger_optional_parameters: ["pageNo", "numOfRows"]
-    output_fields: ["fieldType1", "fieldType2", "fieldVal1", "fieldVal2", "fieldVal3", "fieldVal4", "fieldVal5", "fieldVal6", "fieldVal7", "indctId", "schlDivCd"]
+    output_fields: ["fieldType1", "fieldType2", "fieldType3", "fieldType4", "fieldType5", "fieldType6", "fieldType7", "fieldVal1", "fieldVal2", "fieldVal3", "fieldVal4", "fieldVal5", "fieldVal6", "fieldVal7", "indctId", "schlDivCd"]
     endpoint_url: "https://apis.data.go.kr/B340014/FinancesService/getRegionalTuitionCrntSt"
     spec_url: "https://www.data.go.kr/data/15158680/openapi.do"
   - data_id: "15158680"
@@ -778,6 +780,7 @@ endpoints:
     classification_basis: "앞선 실험에서 학교명 생략 전국 조회 확인"
     swagger_required_parameters: ["serviceKey", "svyYr", "schlKrnNm"]
     swagger_optional_parameters: ["pageNo", "numOfRows", "schlId"]
+    fixed_params: {schlKrnNm: ""}
     output_fields: ["clgNm", "dghtDivNm", "edcCrseLtrCtnt", "eschlPscpNum", "grdtNum", "kediMjrId", "korMjrNm", "lsnTrmNm", "lstUpdtDtm", "mjrAreaCd", "mjrAreaNm", "mjrAreaSignguCd", "mjrAreaSignguNm", "mjrUpdtDtm", "onsfSrsClftNm", "pbnfDgriCrseDivNm", "pwayEmplLtrCtnt", "schlKndNm", "schlMjrCharNm", "schlMjrStatNm", "schlNm", "stdClftMjrId", "svyYr"]
     endpoint_url: "https://apis.data.go.kr/B340014/SchoolMajorInfoService/getSchoolMajorInfo"
     spec_url: "https://www.data.go.kr/data/15158666/openapi.do"
@@ -1141,6 +1144,7 @@ endpoints:
     classification_basis: "앞선 실험에서 학교명 생략 전국 조회 확인"
     swagger_required_parameters: ["serviceKey", "svyYr", "schlKrnNm"]
     swagger_optional_parameters: ["pageNo", "numOfRows", "schlId"]
+    fixed_params: {schlKrnNm: ""}
     output_fields: ["lstUpdtDtm", "pbnfAreaCd", "pbnfAreaNm", "postNo", "postNoAdrs", "psbsDivNm", "schlDivNm", "schlEngNm", "schlEstbDivNm", "schlEstbDt", "schlId", "schlKndNm", "schlNm", "schlRepFxNoCtnt", "schlRepTpNoCtnt", "schlUrlAdrs", "svyYr"]
     endpoint_url: "https://apis.data.go.kr/B340014/SchoolInfoService/getSchoolInfo"
     spec_url: "https://www.data.go.kr/data/15158665/openapi.do"
