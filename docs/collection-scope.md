@@ -6,6 +6,11 @@
 장기 패널의 핵심 수집원은 **EDSS 개방데이터, KESS 공개 데이터,
 한국대학교육협의회 대학알리미 Open API 9종**으로 고정한다.
 
+범위 수치는 2026-09-14에 다시 검토했다. EDSS는 저장소 이력에 보존된
+2026-08-31 공식 목록과 완료 요약, KESS는 공식 학교/학과별 데이터셋 화면,
+대학알리미는 공식 Swagger와 실제 응답을 근거로 한다. 기계 판독 가능한 확인
+기록은 `data/metadata/source_scope_verification.json`에 남긴다.
+
 ## 1. EDSS 개방데이터
 
 역사 패널의 주 자료원으로 EDSS 개방데이터의 고등교육 관련 세 분야를
@@ -69,6 +74,9 @@ Excel 자료를 수집한다. KESS는 EDSS와 통계 생산 기반이 상당 부
 | 15158626 | 산학협력 현황 (`IndustryAcademicCooperationService`) | 7 | [상세](https://www.data.go.kr/data/15158626/openapi.do) |
 | 15158665 | 대학 및 전문대학정보 (`SchoolInfoService`) | 1 | [상세](https://www.data.go.kr/data/15158665/openapi.do) |
 | **합계** | **9개 서비스** | **103** | |
+
+103개 기능의 입력·출력 필드, 범위 분할 방식, 실시간 가용성 및 요청 규칙은
+[대학알리미 API 전수 재검토](academyinfo-audit.md)에 기록한다.
 
 공공데이터포털에서 `대학알리미`를 검색했을 때 나타나는 11개 결과 전체를
 수집하는 것은 아니다. 그 결과에는 경기도 제공 API가 포함되고, 반대로 제목에

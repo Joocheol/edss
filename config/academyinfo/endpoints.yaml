@@ -1,0 +1,1146 @@
+version: 2
+source_authority: "공공데이터포털의 한국대학교육협의회 Swagger 명세"
+scope:
+  service_count: 9
+  operation_count: 103
+scope_strategy_definitions:
+  nationwide_by_year: "연도를 명시하고 학교 필터 없이 전국 범위를 수집"
+  per_school_by_year: "학교코드와 연도를 명시하여 학교별 수집"
+  regional_by_school_type: "학교구분 01·02를 각각 지역별 수집"
+  regional_all_school_types: "학교구분 생략으로 모든 유형의 지역별 통계를 함께 수집"
+  lookup_once: "연도·학교 범위 없이 코드 또는 제공연도 목록을 수집"
+  lookup_by_year: "연도를 명시하고 코드 목록을 수집"
+endpoints:
+  - data_id: "15158684"
+    service: "StudentService"
+    operation: "getComparisonFreshmanChanceBalanceSelectionRatio"
+    summary: "신입생 기회균형 선발 비율_대학비교통계"
+    scope_strategy: "per_school_by_year"
+    classification_basis: "공식 명세에서 학교코드 필수"
+    swagger_required_parameters: ["serviceKey", "schlId", "svyYr"]
+    swagger_optional_parameters: ["pageNo", "numOfRows"]
+    output_fields: ["indctId", "indctVal1", "indctYr", "schlDivNm", "schlEstbNm", "schlId", "schlKrnNm", "svyYr"]
+    endpoint_url: "https://apis.data.go.kr/B340014/StudentService/getComparisonFreshmanChanceBalanceSelectionRatio"
+    spec_url: "https://www.data.go.kr/data/15158684/openapi.do"
+  - data_id: "15158684"
+    service: "StudentService"
+    operation: "getRegionalFreshmanChanceBalanceSelectionRatio"
+    summary: "신입생 기회균형 선발 비율_지역별통계"
+    scope_strategy: "regional_by_school_type"
+    classification_basis: "공식 명세에서 학교구분 필수"
+    swagger_required_parameters: ["serviceKey", "schlDivCd"]
+    swagger_optional_parameters: ["pageNo", "numOfRows"]
+    output_fields: ["indctFirstSchlCntRmk", "indctSecondSchlCntRmk", "indctThirdSchlCntRmk", "indctFirstSvyYr", "indctSecondSvyYr", "indctThirdSvyYr", "znNmRmk", "indctFirstSchlCnt", "indctSecondSchlCnt", "indctThirdSchlCnt", "indctFirstVal", "indctSecondVal", "indctThirdVal", "znNm", "indctId", "schlDivCd"]
+    endpoint_url: "https://apis.data.go.kr/B340014/StudentService/getRegionalFreshmanChanceBalanceSelectionRatio"
+    spec_url: "https://www.data.go.kr/data/15158684/openapi.do"
+  - data_id: "15158684"
+    service: "StudentService"
+    operation: "getComparisonFreshmanEnsureCrntSt"
+    summary: "신입생 충원 현황 조회_대학비교통계"
+    scope_strategy: "per_school_by_year"
+    classification_basis: "공식 명세에서 학교코드 필수"
+    swagger_required_parameters: ["serviceKey", "schlId", "svyYr"]
+    swagger_optional_parameters: ["pageNo", "numOfRows"]
+    output_fields: ["indctId", "indctVal1", "schlDivNm", "schlEstbNm", "schlId", "schlKrnNm", "svyYr"]
+    endpoint_url: "https://apis.data.go.kr/B340014/StudentService/getComparisonFreshmanEnsureCrntSt"
+    spec_url: "https://www.data.go.kr/data/15158684/openapi.do"
+  - data_id: "15158684"
+    service: "StudentService"
+    operation: "getRegionalFreshmanEnsureCrntSt"
+    summary: "신입생 충원 현황 조회_지역별통계"
+    scope_strategy: "regional_by_school_type"
+    classification_basis: "공식 명세에서 학교구분 필수"
+    swagger_required_parameters: ["serviceKey", "schlDivCd"]
+    swagger_optional_parameters: ["pageNo", "numOfRows"]
+    output_fields: ["fieldType1", "fieldType2", "fieldType3", "fieldType4", "fieldType5", "fieldType6", "fieldType7", "fieldVal1", "fieldVal2", "fieldVal3", "fieldVal4", "fieldVal5", "fieldVal6", "fieldVal7", "indctId", "schlDivCd"]
+    endpoint_url: "https://apis.data.go.kr/B340014/StudentService/getRegionalFreshmanEnsureCrntSt"
+    spec_url: "https://www.data.go.kr/data/15158684/openapi.do"
+  - data_id: "15158684"
+    service: "StudentService"
+    operation: "getNoticeFreshmanDrafteesRate"
+    summary: "신입생 충원율 조회_우리대학경쟁력"
+    scope_strategy: "per_school_by_year"
+    classification_basis: "공식 명세에서 학교코드 필수"
+    swagger_required_parameters: ["serviceKey", "svyYr", "schlId"]
+    swagger_optional_parameters: ["pageNo", "numOfRows"]
+    output_fields: ["schlId", "schlKrnNm", "indctVal1", "indctVal2", "indctVal4", "indctAvg", "indctImg", "svyYr", "indctId"]
+    endpoint_url: "https://apis.data.go.kr/B340014/StudentService/getNoticeFreshmanDrafteesRate"
+    spec_url: "https://www.data.go.kr/data/15158684/openapi.do"
+  - data_id: "15158684"
+    service: "StudentService"
+    operation: "getComparisonForeignDropOutCrntSt"
+    summary: "외국인 중도탈락 학생 현황 조회_대학비교통계"
+    scope_strategy: "per_school_by_year"
+    classification_basis: "공식 명세에서 학교코드 필수"
+    swagger_required_parameters: ["serviceKey", "schlId", "svyYr"]
+    swagger_optional_parameters: ["pageNo", "numOfRows"]
+    output_fields: ["indctId", "indctVal1", "schlDivNm", "schlEstbNm", "schlId", "schlKrnNm", "svyYr"]
+    endpoint_url: "https://apis.data.go.kr/B340014/StudentService/getComparisonForeignDropOutCrntSt"
+    spec_url: "https://www.data.go.kr/data/15158684/openapi.do"
+  - data_id: "15158684"
+    service: "StudentService"
+    operation: "getRegionalForeignDropOutCrntSt"
+    summary: "외국인 중도탈락 학생 현황 조회_지역별통계"
+    scope_strategy: "regional_by_school_type"
+    classification_basis: "공식 명세에서 학교구분 필수"
+    swagger_required_parameters: ["serviceKey", "schlDivCd"]
+    swagger_optional_parameters: ["pageNo", "numOfRows"]
+    output_fields: ["fieldType1", "fieldType2", "fieldType3", "fieldType4", "fieldType5", "fieldType6", "fieldType7", "fieldVal1", "fieldVal2", "fieldVal3", "fieldVal4", "fieldVal5", "fieldVal6", "fieldVal7", "indctId", "schlDivCd"]
+    endpoint_url: "https://apis.data.go.kr/B340014/StudentService/getRegionalForeignDropOutCrntSt"
+    spec_url: "https://www.data.go.kr/data/15158684/openapi.do"
+  - data_id: "15158684"
+    service: "StudentService"
+    operation: "getComparisonForeignStudentCrntSt"
+    summary: "외국인 학생 현황 조회_대학비교통계"
+    scope_strategy: "per_school_by_year"
+    classification_basis: "공식 명세에서 학교코드 필수"
+    swagger_required_parameters: ["serviceKey", "schlId", "svyYr"]
+    swagger_optional_parameters: ["pageNo", "numOfRows"]
+    output_fields: ["indctId", "indctVal1", "indctYr", "schlDivNm", "schlEstbNm", "schlId", "schlKrnNm", "svyYr"]
+    endpoint_url: "https://apis.data.go.kr/B340014/StudentService/getComparisonForeignStudentCrntSt"
+    spec_url: "https://www.data.go.kr/data/15158684/openapi.do"
+  - data_id: "15158684"
+    service: "StudentService"
+    operation: "getRegionalForeignStudentCrntSt"
+    summary: "외국인 학생 현황 조회_지역별통계"
+    scope_strategy: "regional_by_school_type"
+    classification_basis: "공식 명세에서 학교구분 필수"
+    swagger_required_parameters: ["serviceKey", "schlDivCd"]
+    swagger_optional_parameters: ["pageNo", "numOfRows"]
+    output_fields: ["fieldType1", "fieldType2", "fieldType3", "fieldType4", "fieldType5", "fieldType6", "fieldType7", "fieldVal1", "fieldVal2", "fieldVal3", "fieldVal4", "fieldVal5", "fieldVal6", "fieldVal7", "indctId", "schlDivCd"]
+    endpoint_url: "https://apis.data.go.kr/B340014/StudentService/getRegionalForeignStudentCrntSt"
+    spec_url: "https://www.data.go.kr/data/15158684/openapi.do"
+  - data_id: "15158684"
+    service: "StudentService"
+    operation: "getComparisonEntranceModelLastRegistrationRatio"
+    summary: "입학전형 최종 등록률_대학비교통계"
+    scope_strategy: "per_school_by_year"
+    classification_basis: "공식 명세에서 학교코드 필수"
+    swagger_required_parameters: ["serviceKey", "schlId", "svyYr"]
+    swagger_optional_parameters: ["pageNo", "numOfRows"]
+    output_fields: ["indctId", "indctVal1", "indctYr", "schlDivNm", "schlEstbNm", "schlId", "schlKrnNm", "svyYr"]
+    endpoint_url: "https://apis.data.go.kr/B340014/StudentService/getComparisonEntranceModelLastRegistrationRatio"
+    spec_url: "https://www.data.go.kr/data/15158684/openapi.do"
+  - data_id: "15158684"
+    service: "StudentService"
+    operation: "getRegionalEntranceModelLastRegistrationRatio"
+    summary: "입학전형 최종 등록률_지역별통계"
+    scope_strategy: "regional_by_school_type"
+    classification_basis: "공식 명세에서 학교구분 필수"
+    swagger_required_parameters: ["serviceKey", "schlDivCd"]
+    swagger_optional_parameters: ["pageNo", "numOfRows"]
+    output_fields: ["indctFirstSchlCntRmk", "indctSecondSchlCntRmk", "indctThirdSchlCntRmk", "indctFirstSvyYr", "indctSecondSvyYr", "indctThirdSvyYr", "znNmRmk", "indctFirstSchlCnt", "indctSecondSchlCnt", "indctThirdSchlCnt", "indctFirstVal", "indctSecondVal", "indctThirdVal", "znNm", "indctId", "schlDivCd"]
+    endpoint_url: "https://apis.data.go.kr/B340014/StudentService/getRegionalEntranceModelLastRegistrationRatio"
+    spec_url: "https://www.data.go.kr/data/15158684/openapi.do"
+  - data_id: "15158684"
+    service: "StudentService"
+    operation: "getComparisonEnrolledStudentCrntSt"
+    summary: "재적학생 현황 조회_대학비교통계"
+    scope_strategy: "per_school_by_year"
+    classification_basis: "공식 명세에서 학교코드 필수"
+    swagger_required_parameters: ["serviceKey", "schlId", "svyYr"]
+    swagger_optional_parameters: ["pageNo", "numOfRows"]
+    output_fields: ["indctId", "indctVal1", "schlDivNm", "schlEstbNm", "schlId", "schlKrnNm", "svyYr"]
+    endpoint_url: "https://apis.data.go.kr/B340014/StudentService/getComparisonEnrolledStudentCrntSt"
+    spec_url: "https://www.data.go.kr/data/15158684/openapi.do"
+  - data_id: "15158684"
+    service: "StudentService"
+    operation: "getRegionalEnrolledStudentCrntSt"
+    summary: "재적학생 현황 조회_지역별통계"
+    scope_strategy: "regional_by_school_type"
+    classification_basis: "공식 명세에서 학교구분 필수"
+    swagger_required_parameters: ["serviceKey", "schlDivCd"]
+    swagger_optional_parameters: ["pageNo", "numOfRows"]
+    output_fields: ["fieldType1", "fieldType2", "fieldType3", "fieldType4", "fieldType5", "fieldType6", "fieldType7", "fieldVal1", "fieldVal2", "fieldVal3", "fieldVal4", "fieldVal5", "fieldVal6", "fieldVal7", "indctId", "schlDivCd"]
+    endpoint_url: "https://apis.data.go.kr/B340014/StudentService/getRegionalEnrolledStudentCrntSt"
+    spec_url: "https://www.data.go.kr/data/15158684/openapi.do"
+  - data_id: "15158684"
+    service: "StudentService"
+    operation: "getNoticeEnrolledStudentDrafteesRate"
+    summary: "재학생 충원율 조회_우리대학경쟁력"
+    scope_strategy: "per_school_by_year"
+    classification_basis: "공식 명세에서 학교코드 필수"
+    swagger_required_parameters: ["serviceKey", "svyYr", "schlId"]
+    swagger_optional_parameters: ["pageNo", "numOfRows"]
+    output_fields: ["schlId", "schlKrnNm", "indctVal1", "indctVal2", "indctVal3", "indctVal4", "indctAvg", "indctImg", "svyYr", "indctId"]
+    endpoint_url: "https://apis.data.go.kr/B340014/StudentService/getNoticeEnrolledStudentDrafteesRate"
+    spec_url: "https://www.data.go.kr/data/15158684/openapi.do"
+  - data_id: "15158684"
+    service: "StudentService"
+    operation: "getComparisonEnrolledStudentEnsureRate"
+    summary: "재학생 충원율_대학비교통계"
+    scope_strategy: "per_school_by_year"
+    classification_basis: "공식 명세에서 학교코드 필수"
+    swagger_required_parameters: ["serviceKey", "schlId", "svyYr"]
+    swagger_optional_parameters: ["pageNo", "numOfRows"]
+    output_fields: ["indctId", "indctVal1", "indctYr", "schlDivNm", "schlEstbNm", "schlId", "schlKrnNm", "svyYr"]
+    endpoint_url: "https://apis.data.go.kr/B340014/StudentService/getComparisonEnrolledStudentEnsureRate"
+    spec_url: "https://www.data.go.kr/data/15158684/openapi.do"
+  - data_id: "15158684"
+    service: "StudentService"
+    operation: "getRegionalEnrolledStudentEnsureRate"
+    summary: "재학생 충원율_지역별통계"
+    scope_strategy: "regional_by_school_type"
+    classification_basis: "공식 명세에서 학교구분 필수"
+    swagger_required_parameters: ["serviceKey", "schlDivCd"]
+    swagger_optional_parameters: ["pageNo", "numOfRows"]
+    output_fields: ["indctFirstSchlCntRmk", "indctSecondSchlCntRmk", "indctThirdSchlCntRmk", "indctFirstSvyYr", "indctSecondSvyYr", "indctThirdSvyYr", "znNmRmk", "indctFirstSchlCnt", "indctSecondSchlCnt", "indctThirdSchlCnt", "indctFirstVal", "indctSecondVal", "indctThirdVal", "znNm", "indctId", "schlDivCd"]
+    endpoint_url: "https://apis.data.go.kr/B340014/StudentService/getRegionalEnrolledStudentEnsureRate"
+    spec_url: "https://www.data.go.kr/data/15158684/openapi.do"
+  - data_id: "15158684"
+    service: "StudentService"
+    operation: "getComparisonEnrolledStudent"
+    summary: "재학생_대학비교통계"
+    scope_strategy: "per_school_by_year"
+    classification_basis: "공식 명세에서 학교코드 필수"
+    swagger_required_parameters: ["serviceKey", "schlId", "svyYr"]
+    swagger_optional_parameters: ["pageNo", "numOfRows"]
+    output_fields: ["indctId", "indctVal1", "indctYr", "schlDivNm", "schlEstbNm", "schlId", "schlKrnNm", "svyYr"]
+    endpoint_url: "https://apis.data.go.kr/B340014/StudentService/getComparisonEnrolledStudent"
+    spec_url: "https://www.data.go.kr/data/15158684/openapi.do"
+  - data_id: "15158684"
+    service: "StudentService"
+    operation: "getRegionalEnrolledStudent"
+    summary: "재학생_지역별통계"
+    scope_strategy: "regional_by_school_type"
+    classification_basis: "공식 명세에서 학교구분 필수"
+    swagger_required_parameters: ["serviceKey", "schlDivCd"]
+    swagger_optional_parameters: ["pageNo", "numOfRows"]
+    output_fields: ["indctFirstSchlCntRmk", "indctSecondSchlCntRmk", "indctThirdSchlCntRmk", "indctFirstSvyYr", "indctSecondSvyYr", "indctThirdSvyYr", "znNmRmk", "indctFirstSchlCnt", "indctSecondSchlCnt", "indctThirdSchlCnt", "indctFirstVal", "indctSecondVal", "indctThirdVal", "znNm", "indctId", "schlDivCd"]
+    endpoint_url: "https://apis.data.go.kr/B340014/StudentService/getRegionalEnrolledStudent"
+    spec_url: "https://www.data.go.kr/data/15158684/openapi.do"
+  - data_id: "15158684"
+    service: "StudentService"
+    operation: "getComparisonInsideFixedNumberFreshmanCompetitionRate"
+    summary: "정원내 신입생 경쟁률_대학비교통계"
+    scope_strategy: "per_school_by_year"
+    classification_basis: "공식 명세에서 학교코드 필수"
+    swagger_required_parameters: ["serviceKey", "schlId", "svyYr"]
+    swagger_optional_parameters: ["pageNo", "numOfRows"]
+    output_fields: ["indctId", "indctVal1", "indctYr", "schlDivNm", "schlEstbNm", "schlId", "schlKrnNm", "svyYr"]
+    endpoint_url: "https://apis.data.go.kr/B340014/StudentService/getComparisonInsideFixedNumberFreshmanCompetitionRate"
+    spec_url: "https://www.data.go.kr/data/15158684/openapi.do"
+  - data_id: "15158684"
+    service: "StudentService"
+    operation: "getRegionalInsideFixedNumberFreshmanCompetitionRate"
+    summary: "정원내 신입생 경쟁률_지역별통계"
+    scope_strategy: "regional_by_school_type"
+    classification_basis: "공식 명세에서 학교구분 필수"
+    swagger_required_parameters: ["serviceKey", "schlDivCd"]
+    swagger_optional_parameters: ["pageNo", "numOfRows"]
+    output_fields: ["indctFirstSchlCntRmk", "indctSecondSchlCntRmk", "indctThirdSchlCntRmk", "indctFirstSvyYr", "indctSecondSvyYr", "indctThirdSvyYr", "znNmRmk", "indctFirstSchlCnt", "indctSecondSchlCnt", "indctThirdSchlCnt", "indctFirstVal", "indctSecondVal", "indctThirdVal", "znNm", "indctId", "schlDivCd"]
+    endpoint_url: "https://apis.data.go.kr/B340014/StudentService/getRegionalInsideFixedNumberFreshmanCompetitionRate"
+    spec_url: "https://www.data.go.kr/data/15158684/openapi.do"
+  - data_id: "15158684"
+    service: "StudentService"
+    operation: "getRegionalGraduateEnterFindJobCrntSt"
+    summary: "졸업생의 진학, 취업 현황 정보 조회_지역별통계"
+    scope_strategy: "regional_by_school_type"
+    classification_basis: "공식 명세에서 학교구분 필수"
+    swagger_required_parameters: ["serviceKey", "schlDivCd"]
+    swagger_optional_parameters: ["pageNo", "numOfRows", "indctId"]
+    output_fields: ["fieldType1", "fieldType2", "fieldType3", "fieldType4", "fieldType5", "fieldType6", "fieldType7", "fieldVal1", "fieldVal2", "fieldVal3", "fieldVal4", "fieldVal5", "fieldVal6", "fieldVal7", "indctId", "schlDivCd"]
+    endpoint_url: "https://apis.data.go.kr/B340014/StudentService/getRegionalGraduateEnterFindJobCrntSt"
+    spec_url: "https://www.data.go.kr/data/15158684/openapi.do"
+  - data_id: "15158684"
+    service: "StudentService"
+    operation: "getNoticeGraduateEmploymentRate"
+    summary: "졸업생의 취업현황 조회_우리대학경쟁력"
+    scope_strategy: "per_school_by_year"
+    classification_basis: "공식 명세에서 학교코드 필수"
+    swagger_required_parameters: ["serviceKey", "svyYr", "schlId"]
+    swagger_optional_parameters: ["pageNo", "numOfRows"]
+    output_fields: ["schlId", "schlKrnNm", "indctVal1", "indctVal2", "indctVal3", "indctVal4", "indctAvg", "indctImg", "svyYr", "apyYr", "indctId"]
+    endpoint_url: "https://apis.data.go.kr/B340014/StudentService/getNoticeGraduateEmploymentRate"
+    spec_url: "https://www.data.go.kr/data/15158684/openapi.do"
+  - data_id: "15158684"
+    service: "StudentService"
+    operation: "getComparisonDropOutStudentCrntSt"
+    summary: "중도탈락 학생 현황 조회_대학비교통계"
+    scope_strategy: "per_school_by_year"
+    classification_basis: "공식 명세에서 학교코드 필수"
+    swagger_required_parameters: ["serviceKey", "schlId", "svyYr"]
+    swagger_optional_parameters: ["pageNo", "numOfRows"]
+    output_fields: ["indctId", "indctVal1", "schlDivNm", "schlEstbNm", "schlId", "schlKrnNm", "svyYr"]
+    endpoint_url: "https://apis.data.go.kr/B340014/StudentService/getComparisonDropOutStudentCrntSt"
+    spec_url: "https://www.data.go.kr/data/15158684/openapi.do"
+  - data_id: "15158684"
+    service: "StudentService"
+    operation: "getRegionalDropOutStudentCrntSt"
+    summary: "중도탈락 학생 현황 조회_지역별통계"
+    scope_strategy: "regional_by_school_type"
+    classification_basis: "공식 명세에서 학교구분 필수"
+    swagger_required_parameters: ["serviceKey", "schlDivCd"]
+    swagger_optional_parameters: ["pageNo", "numOfRows"]
+    output_fields: ["fieldType1", "fieldType2", "fieldType3", "fieldType4", "fieldType5", "fieldType6", "fieldType7", "fieldVal1", "fieldVal2", "fieldVal3", "fieldVal4", "fieldVal5", "fieldVal6", "fieldVal7", "indctId", "schlDivCd"]
+    endpoint_url: "https://apis.data.go.kr/B340014/StudentService/getRegionalDropOutStudentCrntSt"
+    spec_url: "https://www.data.go.kr/data/15158684/openapi.do"
+  - data_id: "15158684"
+    service: "StudentService"
+    operation: "getNoticeStudentsWastageRate"
+    summary: "중도탈락 학생비율 조회_우리대학경쟁력"
+    scope_strategy: "per_school_by_year"
+    classification_basis: "공식 명세에서 학교코드 필수"
+    swagger_required_parameters: ["serviceKey", "schlId", "svyYr"]
+    swagger_optional_parameters: ["pageNo", "numOfRows"]
+    output_fields: ["schlId", "schlKrnNm", "indctVal1", "indctVal2", "indctVal4", "indctAvg", "indctImg", "svyYr", "indctId"]
+    endpoint_url: "https://apis.data.go.kr/B340014/StudentService/getNoticeStudentsWastageRate"
+    spec_url: "https://www.data.go.kr/data/15158684/openapi.do"
+  - data_id: "15158684"
+    service: "StudentService"
+    operation: "getComparisonStudentOnALeaveOfAbsence"
+    summary: "휴학생_대학비교통계"
+    scope_strategy: "per_school_by_year"
+    classification_basis: "공식 명세에서 학교코드 필수"
+    swagger_required_parameters: ["serviceKey", "schlId", "svyYr"]
+    swagger_optional_parameters: ["pageNo", "numOfRows"]
+    output_fields: ["indctId", "indctVal1", "indctYr", "schlDivNm", "schlEstbNm", "schlId", "schlKrnNm", "svyYr"]
+    endpoint_url: "https://apis.data.go.kr/B340014/StudentService/getComparisonStudentOnALeaveOfAbsence"
+    spec_url: "https://www.data.go.kr/data/15158684/openapi.do"
+  - data_id: "15158684"
+    service: "StudentService"
+    operation: "getRegionalStudentOnALeaveOfAbsence"
+    summary: "휴학생_지역별통계"
+    scope_strategy: "regional_by_school_type"
+    classification_basis: "공식 명세에서 학교구분 필수"
+    swagger_required_parameters: ["serviceKey", "schlDivCd"]
+    swagger_optional_parameters: ["pageNo", "numOfRows"]
+    output_fields: ["indctFirstSchlCntRmk", "indctSecondSchlCntRmk", "indctThirdSchlCntRmk", "indctFirstSvyYr", "indctSecondSvyYr", "indctThirdSvyYr", "znNmRmk", "indctFirstSchlCnt", "indctSecondSchlCnt", "indctThirdSchlCnt", "indctFirstVal", "indctSecondVal", "indctThirdVal", "znNm", "indctId", "schlDivCd"]
+    endpoint_url: "https://apis.data.go.kr/B340014/StudentService/getRegionalStudentOnALeaveOfAbsence"
+    spec_url: "https://www.data.go.kr/data/15158684/openapi.do"
+  - data_id: "15158963"
+    service: "BasicInformationService_2"
+    operation: "getUniversityCode"
+    summary: "대학 코드조회"
+    scope_strategy: "nationwide_by_year"
+    classification_basis: "연도만 필수이고 학교 필터는 선택"
+    swagger_required_parameters: ["serviceKey", "svyYr"]
+    swagger_optional_parameters: ["pageNo", "numOfRows", "schlId", "schlKrnNm", "clgcpDivCd", "schlDivCd", "znCd", "estbDivCd"]
+    output_fields: ["clgcpDivCd", "clgcpDivNm", "estbDivCd", "estbDivNm", "schlDivCd", "schlDivNm", "schlFullNm", "schlId", "schlKrnNm", "svyYr", "znCd", "znNm", "schlKndCd", "schlKndNm"]
+    endpoint_url: "https://apis.data.go.kr/B340014/BasicInformationService_2/getUniversityCode"
+    spec_url: "https://www.data.go.kr/data/15158963/openapi.do"
+  - data_id: "15158963"
+    service: "BasicInformationService_2"
+    operation: "getCodeByRegion"
+    summary: "지역별 코드조회"
+    scope_strategy: "lookup_once"
+    classification_basis: "필수 범위 필터가 없는 코드·연도 조회"
+    swagger_required_parameters: ["serviceKey"]
+    swagger_optional_parameters: ["pageNo", "numOfRows", "cdnm", "cdid"]
+    output_fields: ["cdid", "cdnm"]
+    endpoint_url: "https://apis.data.go.kr/B340014/BasicInformationService_2/getCodeByRegion"
+    spec_url: "https://www.data.go.kr/data/15158963/openapi.do"
+  - data_id: "15158963"
+    service: "BasicInformationService_2"
+    operation: "getNoticeUniversitySearchList"
+    summary: "대학 검색목록_우리대학경쟁력"
+    scope_strategy: "nationwide_by_year"
+    classification_basis: "연도만 필수이고 학교 필터는 선택"
+    swagger_required_parameters: ["serviceKey", "svyYr"]
+    swagger_optional_parameters: ["pageNo", "numOfRows", "schlId", "schlKrnNm", "clgcpDivCd", "schlDivCd", "schlKndCd", "znCd", "estbDivCd"]
+    output_fields: ["svyYr", "schlId", "clgcpDivCd", "clgcpDivNm", "schlDivCd", "schlDivNm", "schlFullNm", "znCd", "znNm", "estbDivCd", "estbDivNm", "schlKndCd", "schlKndNm", "schlKrnNm"]
+    endpoint_url: "https://apis.data.go.kr/B340014/BasicInformationService_2/getNoticeUniversitySearchList"
+    spec_url: "https://www.data.go.kr/data/15158963/openapi.do"
+  - data_id: "15158963"
+    service: "BasicInformationService_2"
+    operation: "getComparisonUniversitySearchList"
+    summary: "대학 검색목록 _대학비교통계"
+    scope_strategy: "nationwide_by_year"
+    classification_basis: "연도만 필수이고 학교 필터는 선택"
+    swagger_required_parameters: ["serviceKey", "svyYr"]
+    swagger_optional_parameters: ["pageNo", "numOfRows", "schlId", "schlKrnNm", "clgcpDivCd", "schlDivCd", "schlKndCd", "znCd", "estbDivCd"]
+    output_fields: ["svyYr", "schlId", "schlKrnNm", "clgcpDivCd", "clgcpDivNm", "schlDivCd", "schlDivNm", "schlFullNm", "znCd", "znNm", "estbDivCd", "estbDivNm", "schlKndCd", "schlKndNm"]
+    endpoint_url: "https://apis.data.go.kr/B340014/BasicInformationService_2/getComparisonUniversitySearchList"
+    spec_url: "https://www.data.go.kr/data/15158963/openapi.do"
+  - data_id: "15158963"
+    service: "BasicInformationService_2"
+    operation: "getKeyIndicatorCode"
+    summary: "주요지표 코드조회"
+    scope_strategy: "lookup_once"
+    classification_basis: "필수 범위 필터가 없는 코드·연도 조회"
+    swagger_required_parameters: ["serviceKey"]
+    swagger_optional_parameters: ["pageNo", "numOfRows", "rmk", "cdnm", "cdid"]
+    output_fields: ["cdid", "cdnm", "rmk"]
+    endpoint_url: "https://apis.data.go.kr/B340014/BasicInformationService_2/getKeyIndicatorCode"
+    spec_url: "https://www.data.go.kr/data/15158963/openapi.do"
+  - data_id: "15158963"
+    service: "BasicInformationService_2"
+    operation: "getComparisonPubYear"
+    summary: "공시년도 조회_대학비교통계"
+    scope_strategy: "lookup_once"
+    classification_basis: "필수 범위 필터가 없는 코드·연도 조회"
+    swagger_required_parameters: ["serviceKey"]
+    swagger_optional_parameters: ["pageNo", "numOfRows"]
+    output_fields: ["yearVal"]
+    endpoint_url: "https://apis.data.go.kr/B340014/BasicInformationService_2/getComparisonPubYear"
+    spec_url: "https://www.data.go.kr/data/15158963/openapi.do"
+  - data_id: "15158963"
+    service: "BasicInformationService_2"
+    operation: "getCodeByFound"
+    summary: "설립유형별 코드조회"
+    scope_strategy: "lookup_once"
+    classification_basis: "필수 범위 필터가 없는 코드·연도 조회"
+    swagger_required_parameters: ["serviceKey"]
+    swagger_optional_parameters: ["pageNo", "numOfRows", "cdid", "cdnm"]
+    output_fields: ["cdid", "cdnm"]
+    endpoint_url: "https://apis.data.go.kr/B340014/BasicInformationService_2/getCodeByFound"
+    spec_url: "https://www.data.go.kr/data/15158963/openapi.do"
+  - data_id: "15158963"
+    service: "BasicInformationService_2"
+    operation: "getNoticeSvyYear"
+    summary: "조사년도 조회_우리대학경쟁력"
+    scope_strategy: "lookup_once"
+    classification_basis: "필수 범위 필터가 없는 코드·연도 조회"
+    swagger_required_parameters: ["serviceKey"]
+    swagger_optional_parameters: ["pageNo", "numOfRows"]
+    output_fields: ["yearVal"]
+    endpoint_url: "https://apis.data.go.kr/B340014/BasicInformationService_2/getNoticeSvyYear"
+    spec_url: "https://www.data.go.kr/data/15158963/openapi.do"
+  - data_id: "15158963"
+    service: "BasicInformationService_2"
+    operation: "getCodeByType"
+    summary: "학교유형별코드조회"
+    scope_strategy: "lookup_once"
+    classification_basis: "필수 범위 필터가 없는 코드·연도 조회"
+    swagger_required_parameters: ["serviceKey"]
+    swagger_optional_parameters: ["pageNo", "numOfRows", "cdnm", "cdid"]
+    output_fields: ["cdid", "cdnm"]
+    endpoint_url: "https://apis.data.go.kr/B340014/BasicInformationService_2/getCodeByType"
+    spec_url: "https://www.data.go.kr/data/15158963/openapi.do"
+  - data_id: "15158963"
+    service: "BasicInformationService_2"
+    operation: "getCodeByKind"
+    summary: "학교종류별 코드조회"
+    scope_strategy: "lookup_once"
+    classification_basis: "필수 범위 필터가 없는 코드·연도 조회"
+    swagger_required_parameters: ["serviceKey"]
+    swagger_optional_parameters: ["pageNo", "numOfRows", "cdnm", "cdid"]
+    output_fields: ["cdid", "cdnm"]
+    endpoint_url: "https://apis.data.go.kr/B340014/BasicInformationService_2/getCodeByKind"
+    spec_url: "https://www.data.go.kr/data/15158963/openapi.do"
+  - data_id: "15158678"
+    service: "EducationResearchService"
+    operation: "getComparisonGypsyScholarFacultyLectureChargeRatio"
+    summary: "비전임교원 강의담당비율_대학비교통계"
+    scope_strategy: "per_school_by_year"
+    classification_basis: "공식 명세에서 학교코드 필수"
+    swagger_required_parameters: ["serviceKey", "schlId", "svyYr"]
+    swagger_optional_parameters: ["pageNo", "numOfRows"]
+    output_fields: ["indctId", "indctVal1", "indctYr", "schlDivNm", "schlEstbNm", "schlId", "schlKrnNm", "svyYr"]
+    endpoint_url: "https://apis.data.go.kr/B340014/EducationResearchService/getComparisonGypsyScholarFacultyLectureChargeRatio"
+    spec_url: "https://www.data.go.kr/data/15158678/openapi.do"
+  - data_id: "15158678"
+    service: "EducationResearchService"
+    operation: "getRegionalGypsyScholarFacultyLectureChargeRatio"
+    summary: "비전임교원 강의담당비율_지역별통계"
+    scope_strategy: "regional_by_school_type"
+    classification_basis: "공식 명세에서 학교구분 필수"
+    swagger_required_parameters: ["serviceKey", "schlDivCd"]
+    swagger_optional_parameters: ["pageNo", "numOfRows"]
+    output_fields: ["indctFirstSchlCntRmk", "indctSecondSchlCntRmk", "indctThirdSchlCntRmk", "indctFirstSvyYr", "indctSecondSvyYr", "indctThirdSvyYr", "znNmRmk", "indctFirstSchlCnt", "indctSecondSchlCnt", "indctThirdSchlCnt", "indctFirstVal", "indctSecondVal", "indctThirdVal", "znNm", "indctId", "schlDivCd"]
+    endpoint_url: "https://apis.data.go.kr/B340014/EducationResearchService/getRegionalGypsyScholarFacultyLectureChargeRatio"
+    spec_url: "https://www.data.go.kr/data/15158678/openapi.do"
+  - data_id: "15158678"
+    service: "EducationResearchService"
+    operation: "getComparisonForeignFullTimeFacultyCrntSt"
+    summary: "외국인 전임교원 현황 조회_대학비교통계"
+    scope_strategy: "per_school_by_year"
+    classification_basis: "공식 명세에서 학교코드 필수"
+    swagger_required_parameters: ["serviceKey", "schlId", "svyYr"]
+    swagger_optional_parameters: ["pageNo", "numOfRows"]
+    output_fields: ["indctId", "indctVal1", "schlDivNm", "schlEstbNm", "schlId", "schlKrnNm", "svyYr"]
+    endpoint_url: "https://apis.data.go.kr/B340014/EducationResearchService/getComparisonForeignFullTimeFacultyCrntSt"
+    spec_url: "https://www.data.go.kr/data/15158678/openapi.do"
+  - data_id: "15158678"
+    service: "EducationResearchService"
+    operation: "getRegionalForeignFullTimeFacultyCrntSt"
+    summary: "외국인 전임교원 현황 조회_지역별통계"
+    scope_strategy: "regional_by_school_type"
+    classification_basis: "공식 명세에서 학교구분 필수"
+    swagger_required_parameters: ["serviceKey", "schlDivCd"]
+    swagger_optional_parameters: ["pageNo", "numOfRows"]
+    output_fields: ["fieldType1", "fieldType2", "fieldType3", "fieldType4", "fieldType5", "fieldType6", "fieldType7", "fieldVal1", "fieldVal2", "fieldVal3", "fieldVal4", "fieldVal5", "fieldVal6", "fieldVal7", "indctId", "schlDivCd"]
+    endpoint_url: "https://apis.data.go.kr/B340014/EducationResearchService/getRegionalForeignFullTimeFacultyCrntSt"
+    spec_url: "https://www.data.go.kr/data/15158678/openapi.do"
+  - data_id: "15158678"
+    service: "EducationResearchService"
+    operation: "getComparisonFullTimeFacultyForPersonBookTranslatedBook"
+    summary: "전임교원 1인당 저역서_대학비교통계"
+    scope_strategy: "per_school_by_year"
+    classification_basis: "공식 명세에서 학교코드 필수"
+    swagger_required_parameters: ["serviceKey", "schlId", "svyYr"]
+    swagger_optional_parameters: ["pageNo", "numOfRows"]
+    output_fields: ["indctId", "indctVal1", "indctYr", "schlDivNm", "schlEstbNm", "schlId", "schlKrnNm", "svyYr"]
+    endpoint_url: "https://apis.data.go.kr/B340014/EducationResearchService/getComparisonFullTimeFacultyForPersonBookTranslatedBook"
+    spec_url: "https://www.data.go.kr/data/15158678/openapi.do"
+  - data_id: "15158678"
+    service: "EducationResearchService"
+    operation: "getRegionalFullTimeFacultyForPersonBookTranslatedBook"
+    summary: "전임교원 1인당 저역서_지역별통계"
+    scope_strategy: "regional_by_school_type"
+    classification_basis: "공식 명세에서 학교구분 필수"
+    swagger_required_parameters: ["serviceKey", "schlDivCd"]
+    swagger_optional_parameters: ["pageNo", "numOfRows"]
+    output_fields: ["indctFirstSchlCntRmk", "indctSecondSchlCntRmk", "indctThirdSchlCntRmk", "indctFirstSvyYr", "indctSecondSvyYr", "indctThirdSvyYr", "znNmRmk", "indctFirstSchlCnt", "indctSecondSchlCnt", "indctThirdSchlCnt", "indctFirstVal", "indctSecondVal", "indctThirdVal", "znNm", "indctId", "schlDivCd"]
+    endpoint_url: "https://apis.data.go.kr/B340014/EducationResearchService/getRegionalFullTimeFacultyForPersonBookTranslatedBook"
+    spec_url: "https://www.data.go.kr/data/15158678/openapi.do"
+  - data_id: "15158678"
+    service: "EducationResearchService"
+    operation: "getComparisonFullTimeFacultyForPersonStudentNumberEnrolledStudent"
+    summary: "전임교원 1인당 학생수(재학생)_대학비교통계"
+    scope_strategy: "per_school_by_year"
+    classification_basis: "공식 명세에서 학교코드 필수"
+    swagger_required_parameters: ["serviceKey", "schlId", "svyYr"]
+    swagger_optional_parameters: ["pageNo", "numOfRows"]
+    output_fields: ["indctId", "indctVal1", "indctYr", "schlDivNm", "schlEstbNm", "schlId", "schlKrnNm", "svyYr"]
+    endpoint_url: "https://apis.data.go.kr/B340014/EducationResearchService/getComparisonFullTimeFacultyForPersonStudentNumberEnrolledStudent"
+    spec_url: "https://www.data.go.kr/data/15158678/openapi.do"
+  - data_id: "15158678"
+    service: "EducationResearchService"
+    operation: "getRegionalFullTimeFacultyForPersonStudentNumberEnrolledStudent"
+    summary: "전임교원 1인당 학생수(재학생)_지역별통계"
+    scope_strategy: "regional_by_school_type"
+    classification_basis: "공식 명세에서 학교구분 필수"
+    swagger_required_parameters: ["serviceKey", "schlDivCd"]
+    swagger_optional_parameters: ["pageNo", "numOfRows"]
+    output_fields: ["indctFirstSchlCntRmk", "indctSecondSchlCntRmk", "indctThirdSchlCntRmk", "indctFirstSvyYr", "indctSecondSvyYr", "indctThirdSvyYr", "znNmRmk", "indctFirstSchlCnt", "indctSecondSchlCnt", "indctThirdSchlCnt", "indctFirstVal", "indctSecondVal", "indctThirdVal", "znNm", "indctId", "schlDivCd"]
+    endpoint_url: "https://apis.data.go.kr/B340014/EducationResearchService/getRegionalFullTimeFacultyForPersonStudentNumberEnrolledStudent"
+    spec_url: "https://www.data.go.kr/data/15158678/openapi.do"
+  - data_id: "15158678"
+    service: "EducationResearchService"
+    operation: "getComparisonFullTimeFacultyForPersonStudentNumberFixedNumber"
+    summary: "전임교원 1인당 학생수(편제정원기준)_대학비교통계"
+    scope_strategy: "per_school_by_year"
+    classification_basis: "공식 명세에서 학교코드 필수"
+    swagger_required_parameters: ["serviceKey", "schlId", "svyYr"]
+    swagger_optional_parameters: ["pageNo", "numOfRows"]
+    output_fields: ["indctId", "indctVal1", "indctYr", "schlDivNm", "schlEstbNm", "schlId", "schlKrnNm", "svyYr"]
+    endpoint_url: "https://apis.data.go.kr/B340014/EducationResearchService/getComparisonFullTimeFacultyForPersonStudentNumberFixedNumber"
+    spec_url: "https://www.data.go.kr/data/15158678/openapi.do"
+  - data_id: "15158678"
+    service: "EducationResearchService"
+    operation: "getRegionalFullTimeFacultyForPersonStudentNumberFixedNumber"
+    summary: "전임교원 1인당 학생수(편제정원기준)_지역별통계"
+    scope_strategy: "regional_by_school_type"
+    classification_basis: "공식 명세에서 학교구분 필수"
+    swagger_required_parameters: ["serviceKey", "schlDivCd"]
+    swagger_optional_parameters: ["pageNo", "numOfRows"]
+    output_fields: ["indctFirstSchlCntRmk", "indctSecondSchlCntRmk", "indctThirdSchlCntRmk", "indctFirstSvyYr", "indctSecondSvyYr", "indctThirdSvyYr", "znNmRmk", "indctFirstSchlCnt", "indctSecondSchlCnt", "indctThirdSchlCnt", "indctFirstVal", "indctSecondVal", "indctThirdVal", "znNm", "indctId", "schlDivCd"]
+    endpoint_url: "https://apis.data.go.kr/B340014/EducationResearchService/getRegionalFullTimeFacultyForPersonStudentNumberFixedNumber"
+    spec_url: "https://www.data.go.kr/data/15158678/openapi.do"
+  - data_id: "15158678"
+    service: "EducationResearchService"
+    operation: "getComparisonLectureChargeRatio"
+    summary: "전임교원 강의담당비율 조회_대학비교통계"
+    scope_strategy: "per_school_by_year"
+    classification_basis: "실제 확인: 학교 생략 시 0건, 제주대+2025 요청 시 자료 반환"
+    swagger_required_parameters: ["serviceKey"]
+    swagger_optional_parameters: ["pageNo", "numOfRows", "schlId", "svyYr"]
+    output_fields: ["indctId", "indctVal1", "schlDivNm", "schlEstbNm", "schlId", "schlKrnNm", "svyYr"]
+    endpoint_url: "https://apis.data.go.kr/B340014/EducationResearchService/getComparisonLectureChargeRatio"
+    spec_url: "https://www.data.go.kr/data/15158678/openapi.do"
+  - data_id: "15158678"
+    service: "EducationResearchService"
+    operation: "getRegionalLectureChargeRatio"
+    summary: "전임교원 강의담당비율 조회_지역별통계"
+    scope_strategy: "regional_by_school_type"
+    classification_basis: "공식 명세에서 학교구분 필수"
+    swagger_required_parameters: ["serviceKey", "schlDivCd"]
+    swagger_optional_parameters: ["pageNo", "numOfRows"]
+    output_fields: ["fieldType1", "fieldType2", "fieldType3", "fieldType4", "fieldType5", "fieldType6", "fieldType7", "fieldVal1", "fieldVal2", "fieldVal3", "fieldVal4", "fieldVal5", "fieldVal6", "fieldVal7", "indctId", "schlDivCd"]
+    endpoint_url: "https://apis.data.go.kr/B340014/EducationResearchService/getRegionalLectureChargeRatio"
+    spec_url: "https://www.data.go.kr/data/15158678/openapi.do"
+  - data_id: "15158678"
+    service: "EducationResearchService"
+    operation: "getComparisonFullTimeFacultyInsideOfSchoolForPersonResearchGrant"
+    summary: "전임교원 교내 1인당 연구비_대학비교통계"
+    scope_strategy: "per_school_by_year"
+    classification_basis: "공식 명세에서 학교코드 필수"
+    swagger_required_parameters: ["serviceKey", "schlId", "svyYr"]
+    swagger_optional_parameters: ["pageNo", "numOfRows"]
+    output_fields: ["indctId", "indctVal1", "indctYr", "schlDivNm", "schlEstbNm", "schlId", "schlKrnNm", "svyYr"]
+    endpoint_url: "https://apis.data.go.kr/B340014/EducationResearchService/getComparisonFullTimeFacultyInsideOfSchoolForPersonResearchGrant"
+    spec_url: "https://www.data.go.kr/data/15158678/openapi.do"
+  - data_id: "15158678"
+    service: "EducationResearchService"
+    operation: "getRegionalFullTimeFacultyInsideOfSchoolForPersonResearchGrant"
+    summary: "전임교원 교내 1인당 연구비_지역별통계"
+    scope_strategy: "regional_by_school_type"
+    classification_basis: "공식 명세에서 학교구분 필수"
+    swagger_required_parameters: ["serviceKey", "schlDivCd"]
+    swagger_optional_parameters: ["pageNo", "numOfRows"]
+    output_fields: ["indctFirstSchlCntRmk", "indctSecondSchlCntRmk", "indctThirdSchlCntRmk", "indctFirstSvyYr", "indctSecondSvyYr", "indctThirdSvyYr", "znNmRmk", "indctFirstSchlCnt", "indctSecondSchlCnt", "indctThirdSchlCnt", "indctFirstVal", "indctSecondVal", "indctThirdVal", "znNm", "indctId", "schlDivCd"]
+    endpoint_url: "https://apis.data.go.kr/B340014/EducationResearchService/getRegionalFullTimeFacultyInsideOfSchoolForPersonResearchGrant"
+    spec_url: "https://www.data.go.kr/data/15158678/openapi.do"
+  - data_id: "15158678"
+    service: "EducationResearchService"
+    operation: "getComparisonFullTimeFacultyOutsideOfSchoolForPersonResearchGrant"
+    summary: "전임교원 교외 1인당 연구비_대학비교통계"
+    scope_strategy: "per_school_by_year"
+    classification_basis: "공식 명세에서 학교코드 필수"
+    swagger_required_parameters: ["serviceKey", "schlId", "svyYr"]
+    swagger_optional_parameters: ["pageNo", "numOfRows"]
+    output_fields: ["indctId", "indctVal1", "indctYr", "schlDivNm", "schlEstbNm", "schlId", "schlKrnNm", "svyYr"]
+    endpoint_url: "https://apis.data.go.kr/B340014/EducationResearchService/getComparisonFullTimeFacultyOutsideOfSchoolForPersonResearchGrant"
+    spec_url: "https://www.data.go.kr/data/15158678/openapi.do"
+  - data_id: "15158678"
+    service: "EducationResearchService"
+    operation: "getRegionalFullTimeFacultyOutsideOfSchoolForPersonResearchGrant"
+    summary: "전임교원 교외 1인당 연구비_지역별통계"
+    scope_strategy: "regional_by_school_type"
+    classification_basis: "공식 명세에서 학교구분 필수"
+    swagger_required_parameters: ["serviceKey", "schlDivCd"]
+    swagger_optional_parameters: ["pageNo", "numOfRows"]
+    output_fields: ["indctFirstSchlCntRmk", "indctSecondSchlCntRmk", "indctThirdSchlCntRmk", "indctFirstSvyYr", "indctSecondSvyYr", "indctThirdSvyYr", "znNmRmk", "indctFirstSchlCnt", "indctSecondSchlCnt", "indctThirdSchlCnt", "indctFirstVal", "indctSecondVal", "indctThirdVal", "znNm", "indctId", "schlDivCd"]
+    endpoint_url: "https://apis.data.go.kr/B340014/EducationResearchService/getRegionalFullTimeFacultyOutsideOfSchoolForPersonResearchGrant"
+    spec_url: "https://www.data.go.kr/data/15158678/openapi.do"
+  - data_id: "15158678"
+    service: "EducationResearchService"
+    operation: "getComparisonFullTimeFacultyResearchCrntSt"
+    summary: "전임교원 연구 실적 현황 조회_대학비교통계"
+    scope_strategy: "per_school_by_year"
+    classification_basis: "공식 명세에서 학교코드 필수"
+    swagger_required_parameters: ["serviceKey", "svyYr", "schlId", "indctId"]
+    swagger_optional_parameters: ["pageNo", "numOfRows"]
+    output_fields: ["indctId", "indctVal1", "indctYr", "schlDivNm", "schlEstbNm", "schlId", "schlKrnNm", "svyYr"]
+    endpoint_url: "https://apis.data.go.kr/B340014/EducationResearchService/getComparisonFullTimeFacultyResearchCrntSt"
+    spec_url: "https://www.data.go.kr/data/15158678/openapi.do"
+  - data_id: "15158678"
+    service: "EducationResearchService"
+    operation: "getNoticeFullTimeFacultyResearchCrntSt"
+    summary: "전임교원 연구 실적 현황 조회_우리대학경쟁력"
+    scope_strategy: "per_school_by_year"
+    classification_basis: "공식 명세에서 학교코드 필수"
+    swagger_required_parameters: ["serviceKey", "svyYr", "schlId"]
+    swagger_optional_parameters: ["pageNo", "numOfRows"]
+    output_fields: ["schlId", "schlKrnNm", "indctVal1", "indctVal2", "indctVal4", "indctAvg", "indctImg", "svyYr", "indctId", "indctVal3"]
+    endpoint_url: "https://apis.data.go.kr/B340014/EducationResearchService/getNoticeFullTimeFacultyResearchCrntSt"
+    spec_url: "https://www.data.go.kr/data/15158678/openapi.do"
+  - data_id: "15158678"
+    service: "EducationResearchService"
+    operation: "getRegionalFullTimeFacultyResearchCrntSt"
+    summary: "전임교원 연구 실적 현황 조회_지역별통계"
+    scope_strategy: "regional_by_school_type"
+    classification_basis: "공식 명세에서 학교구분 필수"
+    swagger_required_parameters: ["serviceKey", "schlDivCd"]
+    swagger_optional_parameters: ["pageNo", "numOfRows"]
+    output_fields: ["fieldType1", "fieldType2", "fieldType3", "fieldType4", "fieldType5", "fieldType6", "fieldVal1", "fieldVal2", "fieldVal3", "fieldVal4", "fieldVal5", "fieldVal6", "fieldVal7", "indctId", "schlDivCd", "fieldType7"]
+    endpoint_url: "https://apis.data.go.kr/B340014/EducationResearchService/getRegionalFullTimeFacultyResearchCrntSt"
+    spec_url: "https://www.data.go.kr/data/15158678/openapi.do"
+  - data_id: "15158678"
+    service: "EducationResearchService"
+    operation: "getComparisonFullTimeFacultyEnsureCrntSt"
+    summary: "전임교원 확보 현황 조회_대학비교통계"
+    scope_strategy: "per_school_by_year"
+    classification_basis: "공식 명세에서 학교코드 필수"
+    swagger_required_parameters: ["serviceKey", "indctId", "schlId", "svyYr"]
+    swagger_optional_parameters: ["pageNo", "numOfRows"]
+    output_fields: ["indctId", "indctVal1", "indctYr", "schlDivNm", "schlEstbNm", "schlId", "schlKrnNm", "svyYr"]
+    endpoint_url: "https://apis.data.go.kr/B340014/EducationResearchService/getComparisonFullTimeFacultyEnsureCrntSt"
+    spec_url: "https://www.data.go.kr/data/15158678/openapi.do"
+  - data_id: "15158678"
+    service: "EducationResearchService"
+    operation: "getRegionalFullTimeFacultyEnsureCrntSt"
+    summary: "전임교원 확보 현황 조회_지역별통계"
+    scope_strategy: "regional_by_school_type"
+    classification_basis: "공식 명세에서 학교구분 필수"
+    swagger_required_parameters: ["serviceKey", "schlDivCd"]
+    swagger_optional_parameters: ["pageNo", "numOfRows", "indctId"]
+    output_fields: ["fieldType1", "fieldType2", "fieldType3", "fieldType4", "fieldType5", "fieldType6", "fieldType7", "fieldVal1", "fieldVal2", "fieldVal3", "fieldVal4", "fieldVal5", "fieldVal6", "fieldVal7", "indctId", "schlDivCd"]
+    endpoint_url: "https://apis.data.go.kr/B340014/EducationResearchService/getRegionalFullTimeFacultyEnsureCrntSt"
+    spec_url: "https://www.data.go.kr/data/15158678/openapi.do"
+  - data_id: "15158678"
+    service: "EducationResearchService"
+    operation: "getNoticeFullTimeFacultyEnsureRate"
+    summary: "전임교원확보율 조회_우리대학경쟁력"
+    scope_strategy: "per_school_by_year"
+    classification_basis: "공식 명세에서 학교코드 필수"
+    swagger_required_parameters: ["serviceKey", "svyYr", "schlId"]
+    swagger_optional_parameters: ["pageNo", "numOfRows"]
+    output_fields: ["schlId", "schlKrnNm", "indctVal1", "indctVal2", "indctVal3", "indctVal4", "indctAvg", "indctImg", "svyYr", "indctId"]
+    endpoint_url: "https://apis.data.go.kr/B340014/EducationResearchService/getNoticeFullTimeFacultyEnsureRate"
+    spec_url: "https://www.data.go.kr/data/15158678/openapi.do"
+  - data_id: "15158680"
+    service: "FinancesService"
+    operation: "getComparisonTuitionCrntSt"
+    summary: "등록금 현황 조회_대학비교통계"
+    scope_strategy: "per_school_by_year"
+    classification_basis: "공식 명세에서 학교코드 필수"
+    swagger_required_parameters: ["serviceKey", "schlId", "svyYr"]
+    swagger_optional_parameters: ["pageNo", "numOfRows"]
+    output_fields: ["indctId", "indctVal1", "schlDivNm", "schlEstbNm", "schlId", "schlKrnNm", "svyYr"]
+    endpoint_url: "https://apis.data.go.kr/B340014/FinancesService/getComparisonTuitionCrntSt"
+    spec_url: "https://www.data.go.kr/data/15158680/openapi.do"
+  - data_id: "15158680"
+    service: "FinancesService"
+    operation: "getComparisonScholarshipBenefitCrntSt"
+    summary: "장학금 수혜 현황 조회_대학비교통계"
+    scope_strategy: "per_school_by_year"
+    classification_basis: "공식 명세에서 학교코드 필수"
+    swagger_required_parameters: ["serviceKey", "schlId", "svyYr"]
+    swagger_optional_parameters: ["pageNo", "numOfRows"]
+    output_fields: ["indctId", "indctVal1", "schlDivNm", "schlEstbNm", "schlId", "schlKrnNm", "svyYr"]
+    endpoint_url: "https://apis.data.go.kr/B340014/FinancesService/getComparisonScholarshipBenefitCrntSt"
+    spec_url: "https://www.data.go.kr/data/15158680/openapi.do"
+  - data_id: "15158680"
+    service: "FinancesService"
+    operation: "getComparisonEducationalExpensesReductionCrntSt"
+    summary: "학생 1인당 교육비 환원 현황 조회_대학비교통계"
+    scope_strategy: "per_school_by_year"
+    classification_basis: "공식 명세에서 학교코드 필수"
+    swagger_required_parameters: ["serviceKey", "schlId", "svyYr"]
+    swagger_optional_parameters: ["pageNo", "numOfRows", "indctId"]
+    output_fields: ["indctId", "indctVal1", "indctYr", "schlDivNm", "schlEstbNm", "schlId", "schlKrnNm", "svyYr"]
+    endpoint_url: "https://apis.data.go.kr/B340014/FinancesService/getComparisonEducationalExpensesReductionCrntSt"
+    spec_url: "https://www.data.go.kr/data/15158680/openapi.do"
+  - data_id: "15158680"
+    service: "FinancesService"
+    operation: "getRegionalEducationalExpensesReductionCrntSt"
+    summary: "학생 1인당 교육비 환원 현황 조회_지역별통계"
+    scope_strategy: "regional_by_school_type"
+    classification_basis: "공식 명세에서 학교구분 필수"
+    swagger_required_parameters: ["serviceKey", "schlDivCd"]
+    swagger_optional_parameters: ["pageNo", "numOfRows", "indctId"]
+    output_fields: ["fieldType1", "fieldType2", "fieldType3", "fieldType4", "fieldType5", "fieldType6", "fieldType7", "fieldVal1", "fieldVal2", "fieldVal3", "fieldVal4", "fieldVal5", "fieldVal6", "fieldVal7", "indctId", "schlDivCd"]
+    endpoint_url: "https://apis.data.go.kr/B340014/FinancesService/getRegionalEducationalExpensesReductionCrntSt"
+    spec_url: "https://www.data.go.kr/data/15158680/openapi.do"
+  - data_id: "15158680"
+    service: "FinancesService"
+    operation: "getComparisonEducationExpensesLoanCrntSt"
+    summary: "학자금 대출 현황 조회_대학비교통계"
+    scope_strategy: "per_school_by_year"
+    classification_basis: "공식 명세에서 학교코드 필수"
+    swagger_required_parameters: ["serviceKey", "schlId", "svyYr"]
+    swagger_optional_parameters: ["pageNo", "numOfRows"]
+    output_fields: ["indctId", "indctVal1", "schlDivNm", "schlEstbNm", "schlId", "schlKrnNm", "svyYr"]
+    endpoint_url: "https://apis.data.go.kr/B340014/FinancesService/getComparisonEducationExpensesLoanCrntSt"
+    spec_url: "https://www.data.go.kr/data/15158680/openapi.do"
+  - data_id: "15158680"
+    service: "FinancesService"
+    operation: "getComparisonEducationExpensesLoanUseStudentRatioTuition"
+    summary: "학자금대출 이용학생비율(등록금(학비))_대학비교통계"
+    scope_strategy: "per_school_by_year"
+    classification_basis: "공식 명세에서 학교코드 필수"
+    swagger_required_parameters: ["serviceKey", "schlId", "svyYr"]
+    swagger_optional_parameters: ["pageNo", "numOfRows"]
+    output_fields: ["indctId", "indctVal1", "indctYr", "schlDivNm", "schlEstbNm", "schlId", "schlKrnNm", "svyYr"]
+    endpoint_url: "https://apis.data.go.kr/B340014/FinancesService/getComparisonEducationExpensesLoanUseStudentRatioTuition"
+    spec_url: "https://www.data.go.kr/data/15158680/openapi.do"
+  - data_id: "15158680"
+    service: "FinancesService"
+    operation: "getRegionalTuitionCrntSt"
+    summary: "등록금 현황 조회_지역별통계"
+    scope_strategy: "regional_by_school_type"
+    classification_basis: "공식 명세에서 학교구분 필수"
+    swagger_required_parameters: ["serviceKey", "schlDivCd"]
+    swagger_optional_parameters: ["pageNo", "numOfRows"]
+    output_fields: ["fieldType1", "fieldType2", "fieldVal1", "fieldVal2", "fieldVal3", "fieldVal4", "fieldVal5", "fieldVal6", "fieldVal7", "indctId", "schlDivCd"]
+    endpoint_url: "https://apis.data.go.kr/B340014/FinancesService/getRegionalTuitionCrntSt"
+    spec_url: "https://www.data.go.kr/data/15158680/openapi.do"
+  - data_id: "15158680"
+    service: "FinancesService"
+    operation: "getRegionalScholarshipBenefitCrntSt"
+    summary: "장학금 수혜 현황 조회_지역별통계"
+    scope_strategy: "regional_by_school_type"
+    classification_basis: "공식 명세에서 학교구분 필수"
+    swagger_required_parameters: ["serviceKey", "schlDivCd"]
+    swagger_optional_parameters: ["pageNo", "numOfRows"]
+    output_fields: ["fieldType1", "fieldType2", "fieldType3", "fieldType4", "fieldType5", "fieldType6", "fieldType7", "fieldVal1", "fieldVal2", "fieldVal3", "fieldVal4", "fieldVal5", "fieldVal6", "fieldVal7", "indctId", "schlDivCd"]
+    endpoint_url: "https://apis.data.go.kr/B340014/FinancesService/getRegionalScholarshipBenefitCrntSt"
+    spec_url: "https://www.data.go.kr/data/15158680/openapi.do"
+  - data_id: "15158680"
+    service: "FinancesService"
+    operation: "getRegionalEducationExpensesLoanCrntSt"
+    summary: "학자금 대출 현황 조회_지역별통계"
+    scope_strategy: "regional_by_school_type"
+    classification_basis: "공식 명세에서 학교구분 필수"
+    swagger_required_parameters: ["serviceKey", "schlDivCd"]
+    swagger_optional_parameters: ["pageNo", "numOfRows"]
+    output_fields: ["fieldType1", "fieldType2", "fieldType3", "fieldType4", "fieldType5", "fieldType6", "fieldType7", "fieldVal1", "fieldVal2", "fieldVal3", "fieldVal4", "fieldVal5", "fieldVal6", "fieldVal7", "indctId", "schlDivCd"]
+    endpoint_url: "https://apis.data.go.kr/B340014/FinancesService/getRegionalEducationExpensesLoanCrntSt"
+    spec_url: "https://www.data.go.kr/data/15158680/openapi.do"
+  - data_id: "15158680"
+    service: "FinancesService"
+    operation: "getRegionalEducationExpensesLoanUseStudentRatioTuition"
+    summary: "학자금대출 이용학생비율(등록금(학비))_지역별통계"
+    scope_strategy: "regional_all_school_types"
+    classification_basis: "전체 응답 검증에서 학교구분 생략 시 01·02를 함께 반환"
+    swagger_required_parameters: ["serviceKey"]
+    swagger_optional_parameters: ["pageNo", "numOfRows", "schlDivCd"]
+    output_fields: ["indctFirstSchlCntRmk", "indctSecondSchlCntRmk", "indctThirdSchlCntRmk", "indctFirstSvyYr", "indctSecondSvyYr", "indctThirdSvyYr", "znNmRmk", "indctFirstSchlCnt", "indctSecondSchlCnt", "indctThirdSchlCnt", "indctFirstVal", "indctSecondVal", "indctThirdVal", "znNm", "indctId", "schlDivCd"]
+    endpoint_url: "https://apis.data.go.kr/B340014/FinancesService/getRegionalEducationExpensesLoanUseStudentRatioTuition"
+    spec_url: "https://www.data.go.kr/data/15158680/openapi.do"
+  - data_id: "15158666"
+    service: "SchoolMajorInfoService"
+    operation: "getSchoolMajorInfo"
+    summary: "한국대학교육협의회_대학별 학과정보"
+    scope_strategy: "nationwide_by_year"
+    classification_basis: "앞선 실험에서 학교명 생략 전국 조회 확인"
+    swagger_required_parameters: ["serviceKey", "svyYr", "schlKrnNm"]
+    swagger_optional_parameters: ["pageNo", "numOfRows", "schlId"]
+    output_fields: ["clgNm", "dghtDivNm", "edcCrseLtrCtnt", "eschlPscpNum", "grdtNum", "kediMjrId", "korMjrNm", "lsnTrmNm", "lstUpdtDtm", "mjrAreaCd", "mjrAreaNm", "mjrAreaSignguCd", "mjrAreaSignguNm", "mjrUpdtDtm", "onsfSrsClftNm", "pbnfDgriCrseDivNm", "pwayEmplLtrCtnt", "schlKndNm", "schlMjrCharNm", "schlMjrStatNm", "schlNm", "stdClftMjrId", "svyYr"]
+    endpoint_url: "https://apis.data.go.kr/B340014/SchoolMajorInfoService/getSchoolMajorInfo"
+    spec_url: "https://www.data.go.kr/data/15158666/openapi.do"
+  - data_id: "15158679"
+    service: "EducationConditionService"
+    operation: "getComparisonLibraryBudgetCrntSt"
+    summary: "도서관예산 현황 조회_대학비교통계"
+    scope_strategy: "per_school_by_year"
+    classification_basis: "공식 명세에서 학교코드 필수"
+    swagger_required_parameters: ["serviceKey", "schlId", "svyYr"]
+    swagger_optional_parameters: ["pageNo", "numOfRows"]
+    output_fields: ["indctId", "schlDivNm", "schlEstbNm", "schlId", "schlKrnNm", "svyYr", "indctVal1"]
+    endpoint_url: "https://apis.data.go.kr/B340014/EducationConditionService/getComparisonLibraryBudgetCrntSt"
+    spec_url: "https://www.data.go.kr/data/15158679/openapi.do"
+  - data_id: "15158679"
+    service: "EducationConditionService"
+    operation: "getComparisonDormitoryAcceptanceCrntSt"
+    summary: "기숙사 수용 현황 조회_대학비교통계"
+    scope_strategy: "per_school_by_year"
+    classification_basis: "공식 명세에서 학교코드 필수"
+    swagger_required_parameters: ["serviceKey", "schlId", "svyYr"]
+    swagger_optional_parameters: ["pageNo", "numOfRows"]
+    output_fields: ["indctId", "indctVal1", "schlDivNm", "schlEstbNm", "schlId", "schlKrnNm", "svyYr"]
+    endpoint_url: "https://apis.data.go.kr/B340014/EducationConditionService/getComparisonDormitoryAcceptanceCrntSt"
+    spec_url: "https://www.data.go.kr/data/15158679/openapi.do"
+  - data_id: "15158679"
+    service: "EducationConditionService"
+    operation: "getComparisonBasicPropertiesForProfitBurdenRate"
+    summary: "수익용 기본재산 부담률_대학비교통계"
+    scope_strategy: "per_school_by_year"
+    classification_basis: "공식 명세에서 학교코드 필수"
+    swagger_required_parameters: ["serviceKey", "schlId", "svyYr"]
+    swagger_optional_parameters: ["pageNo", "numOfRows"]
+    output_fields: ["indctId", "indctVal1", "indctYr", "schlDivNm", "schlEstbNm", "schlId", "schlKrnNm", "svyYr"]
+    endpoint_url: "https://apis.data.go.kr/B340014/EducationConditionService/getComparisonBasicPropertiesForProfitBurdenRate"
+    spec_url: "https://www.data.go.kr/data/15158679/openapi.do"
+  - data_id: "15158679"
+    service: "EducationConditionService"
+    operation: "getComparisonBasicPropertiesForprofitCrntSt"
+    summary: "수익용기본재산 확보 현황 조회_대학비교통계"
+    scope_strategy: "per_school_by_year"
+    classification_basis: "공식 명세에서 학교코드 필수"
+    swagger_required_parameters: ["serviceKey", "schlId", "svyYr"]
+    swagger_optional_parameters: ["pageNo", "numOfRows"]
+    output_fields: ["indctId", "indctVal1", "schlDivNm", "schlEstbNm", "schlId", "schlKrnNm", "svyYr"]
+    endpoint_url: "https://apis.data.go.kr/B340014/EducationConditionService/getComparisonBasicPropertiesForprofitCrntSt"
+    spec_url: "https://www.data.go.kr/data/15158679/openapi.do"
+  - data_id: "15158679"
+    service: "EducationConditionService"
+    operation: "getComparisonStudentForPersonDataPurchasePrice"
+    summary: "학생 1인당 자료 구입비_대학비교통계"
+    scope_strategy: "per_school_by_year"
+    classification_basis: "공식 명세에서 학교코드 필수"
+    swagger_required_parameters: ["serviceKey", "schlId", "svyYr"]
+    swagger_optional_parameters: ["pageNo", "numOfRows"]
+    output_fields: ["indctId", "indctVal1", "indctYr", "schlDivNm", "schlEstbNm", "schlId", "schlKrnNm", "svyYr"]
+    endpoint_url: "https://apis.data.go.kr/B340014/EducationConditionService/getComparisonStudentForPersonDataPurchasePrice"
+    spec_url: "https://www.data.go.kr/data/15158679/openapi.do"
+  - data_id: "15158679"
+    service: "EducationConditionService"
+    operation: "getComparisonSchoolGroundsAndBdsEnsureRate"
+    summary: "교지, 교사 확보율 조회_대학비교통계"
+    scope_strategy: "per_school_by_year"
+    classification_basis: "공식 명세에서 학교코드 필수"
+    swagger_required_parameters: ["serviceKey", "schlId", "svyYr"]
+    swagger_optional_parameters: ["pageNo", "numOfRows", "indctId"]
+    output_fields: ["indctYr", "schlDivNm", "schlEstbNm", "schlId", "schlKrnNm", "svyYr", "indctId", "indctVal1"]
+    endpoint_url: "https://apis.data.go.kr/B340014/EducationConditionService/getComparisonSchoolGroundsAndBdsEnsureRate"
+    spec_url: "https://www.data.go.kr/data/15158679/openapi.do"
+  - data_id: "15158679"
+    service: "EducationConditionService"
+    operation: "getRegionalSchoolGroundsAndBdsEnsureRate"
+    summary: "교지, 교사 확보율 조회_지역별통계"
+    scope_strategy: "regional_by_school_type"
+    classification_basis: "공식 명세에서 학교구분 필수"
+    swagger_required_parameters: ["serviceKey", "schlDivCd"]
+    swagger_optional_parameters: ["pageNo", "numOfRows", "indctId"]
+    output_fields: ["fieldType1", "fieldType2", "fieldType3", "fieldType4", "fieldType5", "fieldType6", "fieldType7", "fieldVal1", "fieldVal2", "fieldVal3", "fieldVal4", "fieldVal5", "fieldVal6", "fieldVal7", "indctId", "schlDivCd"]
+    endpoint_url: "https://apis.data.go.kr/B340014/EducationConditionService/getRegionalSchoolGroundsAndBdsEnsureRate"
+    spec_url: "https://www.data.go.kr/data/15158679/openapi.do"
+  - data_id: "15158679"
+    service: "EducationConditionService"
+    operation: "getRegionalDormitoryAcceptanceCrntSt"
+    summary: "기숙사 수용 현황 조회_지역별통계"
+    scope_strategy: "regional_by_school_type"
+    classification_basis: "공식 명세에서 학교구분 필수"
+    swagger_required_parameters: ["serviceKey", "schlDivCd"]
+    swagger_optional_parameters: ["pageNo", "numOfRows"]
+    output_fields: ["fieldType1", "fieldType2", "fieldType3", "fieldType4", "fieldType5", "fieldType6", "fieldType7", "fieldVal1", "fieldVal2", "fieldVal3", "fieldVal4", "fieldVal5", "fieldVal6", "fieldVal7", "indctId", "schlDivCd"]
+    endpoint_url: "https://apis.data.go.kr/B340014/EducationConditionService/getRegionalDormitoryAcceptanceCrntSt"
+    spec_url: "https://www.data.go.kr/data/15158679/openapi.do"
+  - data_id: "15158679"
+    service: "EducationConditionService"
+    operation: "getRegionalLibraryBudgetCrntSt"
+    summary: "도서관예산 현황 조회_지역별통계"
+    scope_strategy: "regional_by_school_type"
+    classification_basis: "공식 명세에서 학교구분 필수"
+    swagger_required_parameters: ["serviceKey", "schlDivCd"]
+    swagger_optional_parameters: ["pageNo", "numOfRows"]
+    output_fields: ["fieldType1", "fieldType2", "fieldType3", "fieldType4", "fieldType5", "fieldType6", "fieldType7", "fieldVal1", "fieldVal2", "fieldVal3", "fieldVal4", "fieldVal5", "fieldVal6", "fieldVal7", "indctId", "schlDivCd"]
+    endpoint_url: "https://apis.data.go.kr/B340014/EducationConditionService/getRegionalLibraryBudgetCrntSt"
+    spec_url: "https://www.data.go.kr/data/15158679/openapi.do"
+  - data_id: "15158679"
+    service: "EducationConditionService"
+    operation: "getRegionalBasicPropertiesForProfitBurdenRate"
+    summary: "수익용 기본재산 부담률_지역별통계"
+    scope_strategy: "regional_by_school_type"
+    classification_basis: "공식 명세에서 학교구분 필수"
+    swagger_required_parameters: ["serviceKey", "schlDivCd"]
+    swagger_optional_parameters: ["pageNo", "numOfRows"]
+    output_fields: ["schlDivCd", "indctFirstSchlCntRmk", "indctSecondSchlCntRmk", "indctThirdSchlCntRmk", "indctFirstSvyYr", "indctSecondSvyYr", "indctThirdSvyYr", "znNmRmk", "indctFirstSchlCnt", "indctSecondSchlCnt", "indctThirdSchlCnt", "indctFirstVal", "indctSecondVal", "indctThirdVal", "znNm", "indctId"]
+    endpoint_url: "https://apis.data.go.kr/B340014/EducationConditionService/getRegionalBasicPropertiesForProfitBurdenRate"
+    spec_url: "https://www.data.go.kr/data/15158679/openapi.do"
+  - data_id: "15158679"
+    service: "EducationConditionService"
+    operation: "getRegionalBasicPropertiesForprofitCrntSt"
+    summary: "수익용기본재산 확보 현황 조회_지역별통계"
+    scope_strategy: "regional_by_school_type"
+    classification_basis: "공식 명세에서 학교구분 필수"
+    swagger_required_parameters: ["serviceKey", "schlDivCd"]
+    swagger_optional_parameters: ["pageNo", "numOfRows"]
+    output_fields: ["fieldType1", "fieldType2", "fieldType3", "fieldType4", "fieldType5", "fieldType6", "fieldType7", "fieldVal1", "fieldVal2", "fieldVal3", "fieldVal4", "fieldVal5", "fieldVal6", "fieldVal7", "indctId", "schlDivCd"]
+    endpoint_url: "https://apis.data.go.kr/B340014/EducationConditionService/getRegionalBasicPropertiesForprofitCrntSt"
+    spec_url: "https://www.data.go.kr/data/15158679/openapi.do"
+  - data_id: "15158679"
+    service: "EducationConditionService"
+    operation: "getRegionalStudentForPersonDataPurchasePrice"
+    summary: "학생 1인당 자료 구입비_지역별통계"
+    scope_strategy: "regional_by_school_type"
+    classification_basis: "공식 명세에서 학교구분 필수"
+    swagger_required_parameters: ["serviceKey", "schlDivCd"]
+    swagger_optional_parameters: ["pageNo", "numOfRows"]
+    output_fields: ["indctFirstSchlCntRmk", "indctSecondSchlCntRmk", "indctThirdSchlCntRmk", "indctFirstSvyYr", "indctSecondSvyYr", "indctThirdSvyYr", "znNmRmk", "indctFirstSchlCnt", "indctSecondSchlCnt", "indctThirdSchlCnt", "indctFirstVal", "indctSecondVal", "indctThirdVal", "znNm", "indctId", "schlDivCd"]
+    endpoint_url: "https://apis.data.go.kr/B340014/EducationConditionService/getRegionalStudentForPersonDataPurchasePrice"
+    spec_url: "https://www.data.go.kr/data/15158679/openapi.do"
+  - data_id: "15158955"
+    service: "BasicInformationService_1"
+    operation: "getCodeByLargeSeries"
+    summary: "표준분류 대계열 코드조회"
+    scope_strategy: "lookup_by_year"
+    classification_basis: "연도별 학과 분류 코드 조회"
+    swagger_required_parameters: ["serviceKey", "svyYr"]
+    swagger_optional_parameters: ["pageNo", "numOfRows", "cdid", "cdnm"]
+    output_fields: ["cdid", "cdnm"]
+    endpoint_url: "https://apis.data.go.kr/B340014/BasicInformationService_1/getCodeByLargeSeries"
+    spec_url: "https://www.data.go.kr/data/15158955/openapi.do"
+  - data_id: "15158955"
+    service: "BasicInformationService_1"
+    operation: "getUniversityMajorCode"
+    summary: "학교별학과 코드조회"
+    scope_strategy: "per_school_by_year"
+    classification_basis: "공식 명세에서 학교코드 필수"
+    swagger_required_parameters: ["serviceKey", "svyYr", "schlId"]
+    swagger_optional_parameters: ["pageNo", "numOfRows", "schlMjrId"]
+    output_fields: ["svyYr", "srsSclftCd", "srsMclftCd", "srsLclftCd", "schlMjrStatNm", "schlMjrStatCd", "schlMjrId", "schlMjrCharNm", "schlMjrCharCd", "schlKndNm", "schlKndCd", "schlId", "schlEstbDivNm", "schlEstbDivCd", "psbsDivNm", "psbsDivCd", "pbnfDgriCrseDivNm", "pbnfDgriCrseDivCd", "onsfSrsClftNm", "onsfSrsClftCd", "mjrUpdtDtm", "mjrId", "mjrAreaSignguNm", "mjrAreaNm", "mjrAreaCd", "lsnTrmNm", "lsnTrmCd", "korSrsSclftNm", "korSrsMclftNm", "korSrsLclftNm", "korSchlNm", "korMjrNm", "kediMjrId", "grdtNum", "eschlPscpNum", "edcGoalKwrdLtrCtnt", "edcGoalCtnt", "edcCrseLtrCtnt", "dghtDivNm", "dghtDivCd", "clgNm", "clgCd", "pwayEmplLtrCtnt"]
+    endpoint_url: "https://apis.data.go.kr/B340014/BasicInformationService_1/getUniversityMajorCode"
+    spec_url: "https://www.data.go.kr/data/15158955/openapi.do"
+  - data_id: "15158955"
+    service: "BasicInformationService_1"
+    operation: "getCodeByMiddleSeries"
+    summary: "표준분류 중계열 코드조회"
+    scope_strategy: "lookup_by_year"
+    classification_basis: "연도별 학과 분류 코드 조회"
+    swagger_required_parameters: ["serviceKey", "svyYr"]
+    swagger_optional_parameters: ["pageNo", "numOfRows", "cdid", "cdnm"]
+    output_fields: ["cdid", "cdnm"]
+    endpoint_url: "https://apis.data.go.kr/B340014/BasicInformationService_1/getCodeByMiddleSeries"
+    spec_url: "https://www.data.go.kr/data/15158955/openapi.do"
+  - data_id: "15158955"
+    service: "BasicInformationService_1"
+    operation: "getCodeBySeriesSystem"
+    summary: "표준분류 계열체계 조회"
+    scope_strategy: "lookup_by_year"
+    classification_basis: "연도별 학과 분류 코드 조회"
+    swagger_required_parameters: ["serviceKey", "svyYr"]
+    swagger_optional_parameters: ["pageNo", "numOfRows", "srsLclftCd", "srsMclftCd", "srsSclftCd"]
+    output_fields: ["svyYr", "srsLclftCd", "srsMclftCd", "srsSclftCd"]
+    endpoint_url: "https://apis.data.go.kr/B340014/BasicInformationService_1/getCodeBySeriesSystem"
+    spec_url: "https://www.data.go.kr/data/15158955/openapi.do"
+  - data_id: "15158955"
+    service: "BasicInformationService_1"
+    operation: "getCodeByPrincipalSchoolBranchSchool"
+    summary: "본분교 코드조회"
+    scope_strategy: "lookup_once"
+    classification_basis: "필수 범위 필터가 없는 코드·연도 조회"
+    swagger_required_parameters: ["serviceKey"]
+    swagger_optional_parameters: ["pageNo", "numOfRows", "cdid", "cdnm"]
+    output_fields: ["cdid", "cdnm"]
+    endpoint_url: "https://apis.data.go.kr/B340014/BasicInformationService_1/getCodeByPrincipalSchoolBranchSchool"
+    spec_url: "https://www.data.go.kr/data/15158955/openapi.do"
+  - data_id: "15158955"
+    service: "BasicInformationService_1"
+    operation: "getCodeByLessonTerm"
+    summary: "수업연한 코드조회"
+    scope_strategy: "lookup_once"
+    classification_basis: "필수 범위 필터가 없는 코드·연도 조회"
+    swagger_required_parameters: ["serviceKey"]
+    swagger_optional_parameters: ["pageNo", "numOfRows", "cdid", "cdnm"]
+    output_fields: ["cdid", "cdnm"]
+    endpoint_url: "https://apis.data.go.kr/B340014/BasicInformationService_1/getCodeByLessonTerm"
+    spec_url: "https://www.data.go.kr/data/15158955/openapi.do"
+  - data_id: "15158955"
+    service: "BasicInformationService_1"
+    operation: "getCodeByDegreeCourse"
+    summary: "학위과정 코드조회"
+    scope_strategy: "lookup_once"
+    classification_basis: "필수 범위 필터가 없는 코드·연도 조회"
+    swagger_required_parameters: ["serviceKey"]
+    swagger_optional_parameters: ["pageNo", "numOfRows", "cdid", "cdnm"]
+    output_fields: ["cdid", "cdnm"]
+    endpoint_url: "https://apis.data.go.kr/B340014/BasicInformationService_1/getCodeByDegreeCourse"
+    spec_url: "https://www.data.go.kr/data/15158955/openapi.do"
+  - data_id: "15158955"
+    service: "BasicInformationService_1"
+    operation: "getCodeByDayAndNight"
+    summary: "주야간 코드조회"
+    scope_strategy: "lookup_once"
+    classification_basis: "필수 범위 필터가 없는 코드·연도 조회"
+    swagger_required_parameters: ["serviceKey"]
+    swagger_optional_parameters: ["pageNo", "numOfRows", "cdid", "cdnm"]
+    output_fields: ["cdid", "cdnm"]
+    endpoint_url: "https://apis.data.go.kr/B340014/BasicInformationService_1/getCodeByDayAndNight"
+    spec_url: "https://www.data.go.kr/data/15158955/openapi.do"
+  - data_id: "15158955"
+    service: "BasicInformationService_1"
+    operation: "getCodeByCollege"
+    summary: "단과대학 코드조회"
+    scope_strategy: "lookup_once"
+    classification_basis: "필수 범위 필터가 없는 코드·연도 조회"
+    swagger_required_parameters: ["serviceKey"]
+    swagger_optional_parameters: ["pageNo", "numOfRows", "cdid", "cdnm"]
+    output_fields: ["cdid", "cdnm"]
+    endpoint_url: "https://apis.data.go.kr/B340014/BasicInformationService_1/getCodeByCollege"
+    spec_url: "https://www.data.go.kr/data/15158955/openapi.do"
+  - data_id: "15158955"
+    service: "BasicInformationService_1"
+    operation: "getCodeByMajorStatus"
+    summary: "학과상태 코드조회"
+    scope_strategy: "lookup_once"
+    classification_basis: "필수 범위 필터가 없는 코드·연도 조회"
+    swagger_required_parameters: ["serviceKey"]
+    swagger_optional_parameters: ["pageNo", "numOfRows", "cdid", "cdnm"]
+    output_fields: ["cdid", "cdnm"]
+    endpoint_url: "https://apis.data.go.kr/B340014/BasicInformationService_1/getCodeByMajorStatus"
+    spec_url: "https://www.data.go.kr/data/15158955/openapi.do"
+  - data_id: "15158955"
+    service: "BasicInformationService_1"
+    operation: "getCodeByMajorCharacter"
+    summary: "학과특성 코드조회"
+    scope_strategy: "lookup_once"
+    classification_basis: "필수 범위 필터가 없는 코드·연도 조회"
+    swagger_required_parameters: ["serviceKey"]
+    swagger_optional_parameters: ["pageNo", "numOfRows", "cdid", "cdnm"]
+    output_fields: ["cdid", "cdnm"]
+    endpoint_url: "https://apis.data.go.kr/B340014/BasicInformationService_1/getCodeByMajorCharacter"
+    spec_url: "https://www.data.go.kr/data/15158955/openapi.do"
+  - data_id: "15158955"
+    service: "BasicInformationService_1"
+    operation: "getCodeByOneselfSeries"
+    summary: "대학자체계열 코드조회"
+    scope_strategy: "lookup_once"
+    classification_basis: "필수 범위 필터가 없는 코드·연도 조회"
+    swagger_required_parameters: ["serviceKey"]
+    swagger_optional_parameters: ["pageNo", "numOfRows", "cdid", "cdnm"]
+    output_fields: ["cdid", "cdnm"]
+    endpoint_url: "https://apis.data.go.kr/B340014/BasicInformationService_1/getCodeByOneselfSeries"
+    spec_url: "https://www.data.go.kr/data/15158955/openapi.do"
+  - data_id: "15158955"
+    service: "BasicInformationService_1"
+    operation: "getCodeBySmallSeries"
+    summary: "표준분류 소계열 코드조회"
+    scope_strategy: "lookup_by_year"
+    classification_basis: "연도별 학과 분류 코드 조회"
+    swagger_required_parameters: ["serviceKey", "svyYr"]
+    swagger_optional_parameters: ["pageNo", "numOfRows", "cdid", "cdnm"]
+    output_fields: ["cdid", "cdnm"]
+    endpoint_url: "https://apis.data.go.kr/B340014/BasicInformationService_1/getCodeBySmallSeries"
+    spec_url: "https://www.data.go.kr/data/15158955/openapi.do"
+  - data_id: "15158626"
+    service: "IndustryAcademicCooperationService"
+    operation: "getCntrctmjrInstOperCstt"
+    summary: "계약학과설치운영현황"
+    scope_strategy: "per_school_by_year"
+    classification_basis: "공식 명세에서 학교코드 필수"
+    swagger_required_parameters: ["serviceKey", "svyYr", "schlId"]
+    swagger_optional_parameters: ["pageNo", "numOfRows"]
+    output_fields: ["svyYr", "schlKrnNm", "schlDivNm", "schlEstbNm", "indctVal1", "indctVal2", "indctVal3", "indctVal4", "indctVal5", "indctVal6", "indctVal7", "indctVal8", "indctVal9", "indctVal10", "indctVal11", "indctVal12", "indctVal13", "indctVal14", "indctVal15", "indctVal16", "indctVal17", "indctVal18", "indctVal19", "indctVal20", "indctVal21", "indctVal22", "indctVal23", "indctVal24", "indctVal25", "indctId", "schlId", "indctYr"]
+    endpoint_url: "https://apis.data.go.kr/B340014/IndustryAcademicCooperationService/getCntrctmjrInstOperCstt"
+    spec_url: "https://www.data.go.kr/data/15158626/openapi.do"
+  - data_id: "15158626"
+    service: "IndustryAcademicCooperationService"
+    operation: "getOrdmthEdcCrseInstOper"
+    summary: "주문식교육과정설치운영현황"
+    scope_strategy: "per_school_by_year"
+    classification_basis: "공식 명세에서 학교코드 필수"
+    swagger_required_parameters: ["serviceKey", "svyYr", "schlId"]
+    swagger_optional_parameters: ["pageNo", "numOfRows"]
+    output_fields: ["svyYr", "schlKrnNm", "schlDivNm", "schlEstbNm", "indctVal1", "indctVal2", "indctVal3", "indctVal4", "indctVal5", "indctVal6", "indctVal7", "indctVal8", "indctVal9", "indctVal10", "indctVal11", "indctVal12", "indctVal13", "indctVal14", "indctVal15", "indctVal16", "indctVal17", "indctVal18", "indctVal19", "indctId", "schlId", "indctYr"]
+    endpoint_url: "https://apis.data.go.kr/B340014/IndustryAcademicCooperationService/getOrdmthEdcCrseInstOper"
+    spec_url: "https://www.data.go.kr/data/15158626/openapi.do"
+  - data_id: "15158626"
+    service: "IndustryAcademicCooperationService"
+    operation: "getGrndsPrcOperCstt"
+    summary: "현장실습운영현황"
+    scope_strategy: "per_school_by_year"
+    classification_basis: "공식 명세에서 학교코드 필수"
+    swagger_required_parameters: ["serviceKey", "svyYr", "schlId"]
+    swagger_optional_parameters: ["pageNo", "numOfRows"]
+    output_fields: ["svyYr", "schlKrnNm", "schlDivNm", "schlEstbNm", "indctVal1", "indctVal2", "indctVal3", "indctVal4", "indctVal5", "indctVal6", "indctVal7", "indctVal8", "indctVal9", "indctVal10", "indctVal11", "indctVal12", "indctVal13", "indctVal14", "indctVal15", "indctVal16", "indctVal17", "indctId", "schlId", "indctYr"]
+    endpoint_url: "https://apis.data.go.kr/B340014/IndustryAcademicCooperationService/getGrndsPrcOperCstt"
+    spec_url: "https://www.data.go.kr/data/15158626/openapi.do"
+  - data_id: "15158626"
+    service: "IndustryAcademicCooperationService"
+    operation: "getCsptDsgnOperCstt"
+    summary: "캡스톤디자인운영현황"
+    scope_strategy: "per_school_by_year"
+    classification_basis: "공식 명세에서 학교코드 필수"
+    swagger_required_parameters: ["serviceKey", "svyYr", "schlId"]
+    swagger_optional_parameters: ["pageNo", "numOfRows"]
+    output_fields: ["svyYr", "schlKrnNm", "schlDivNm", "schlEstbNm", "indctVal1", "indctVal2", "indctVal3", "indctVal4", "indctVal5", "indctVal6", "indctVal7", "indctVal8", "indctVal9", "indctVal10", "indctVal11", "indctVal12", "indctVal13", "indctVal14", "indctVal15", "indctVal16", "indctVal17", "indctId", "schlId", "indctYr"]
+    endpoint_url: "https://apis.data.go.kr/B340014/IndustryAcademicCooperationService/getCsptDsgnOperCstt"
+    spec_url: "https://www.data.go.kr/data/15158626/openapi.do"
+  - data_id: "15158626"
+    service: "IndustryAcademicCooperationService"
+    operation: "getTcherStupSuptCstt"
+    summary: "교원의창업및창업지원현황"
+    scope_strategy: "per_school_by_year"
+    classification_basis: "공식 명세에서 학교코드 필수"
+    swagger_required_parameters: ["serviceKey", "svyYr", "schlId"]
+    swagger_optional_parameters: ["pageNo", "numOfRows"]
+    output_fields: ["svyYr", "schlKrnNm", "schlDivNm", "schlEstbNm", "indctVal1", "indctVal2", "indctVal3", "indctVal4", "indctVal5", "indctVal6", "indctVal7", "indctVal8", "indctVal9", "indctVal10", "indctVal11", "indctVal12", "indctId", "schlId", "indctYr"]
+    endpoint_url: "https://apis.data.go.kr/B340014/IndustryAcademicCooperationService/getTcherStupSuptCstt"
+    spec_url: "https://www.data.go.kr/data/15158626/openapi.do"
+  - data_id: "15158626"
+    service: "IndustryAcademicCooperationService"
+    operation: "getStdnStupSuptCstt"
+    summary: "학생의창업및창업지원현황"
+    scope_strategy: "per_school_by_year"
+    classification_basis: "공식 명세에서 학교코드 필수"
+    swagger_required_parameters: ["serviceKey", "svyYr", "schlId"]
+    swagger_optional_parameters: ["pageNo", "numOfRows"]
+    output_fields: ["svyYr", "schlKrnNm", "schlDivNm", "schlEstbNm", "indctVal1", "indctVal2", "indctVal3", "indctVal4", "indctVal5", "indctVal6", "indctVal7", "indctVal8", "indctVal9", "indctVal10", "indctVal11", "indctVal12", "indctId", "schlId", "indctYr"]
+    endpoint_url: "https://apis.data.go.kr/B340014/IndustryAcademicCooperationService/getStdnStupSuptCstt"
+    spec_url: "https://www.data.go.kr/data/15158626/openapi.do"
+  - data_id: "15158626"
+    service: "IndustryAcademicCooperationService"
+    operation: "getStupEdcSuptCstt"
+    summary: "창업교육지원현황"
+    scope_strategy: "per_school_by_year"
+    classification_basis: "공식 명세에서 학교코드 필수"
+    swagger_required_parameters: ["serviceKey", "svyYr", "schlId"]
+    swagger_optional_parameters: ["pageNo", "numOfRows"]
+    output_fields: ["svyYr", "schlKrnNm", "schlDivNm", "schlEstbNm", "indctVal1", "indctVal2", "indctVal3", "indctVal4", "indctVal5", "indctVal6", "indctVal7", "indctVal8", "indctVal9", "indctVal10", "indctVal11", "indctVal12", "indctVal13", "indctVal14", "indctVal15", "indctVal16", "indctVal17", "indctVal18", "indctVal19", "indctVal20", "indctId", "schlId", "indctYr"]
+    endpoint_url: "https://apis.data.go.kr/B340014/IndustryAcademicCooperationService/getStupEdcSuptCstt"
+    spec_url: "https://www.data.go.kr/data/15158626/openapi.do"
+  - data_id: "15158665"
+    service: "SchoolInfoService"
+    operation: "getSchoolInfo"
+    summary: "한국대학교육협의회_대학 및 전문대학정보"
+    scope_strategy: "nationwide_by_year"
+    classification_basis: "앞선 실험에서 학교명 생략 전국 조회 확인"
+    swagger_required_parameters: ["serviceKey", "svyYr", "schlKrnNm"]
+    swagger_optional_parameters: ["pageNo", "numOfRows", "schlId"]
+    output_fields: ["lstUpdtDtm", "pbnfAreaCd", "pbnfAreaNm", "postNo", "postNoAdrs", "psbsDivNm", "schlDivNm", "schlEngNm", "schlEstbDivNm", "schlEstbDt", "schlId", "schlKndNm", "schlNm", "schlRepFxNoCtnt", "schlRepTpNoCtnt", "schlUrlAdrs", "svyYr"]
+    endpoint_url: "https://apis.data.go.kr/B340014/SchoolInfoService/getSchoolInfo"
+    spec_url: "https://www.data.go.kr/data/15158665/openapi.do"

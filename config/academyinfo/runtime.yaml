@@ -1,0 +1,31 @@
+version: 3
+academyinfo:
+  default_concurrency: 2
+  max_concurrency: 4
+  request_timeout_seconds: 30
+  default_collection_mode: "probe_then_single_page_total_count"
+  probe_page_size: 1
+  single_page:
+    request_timeout_seconds: 180
+    preserve_all_returned_rows: true
+    validate_returned_row_count_against_total_count: true
+    duplicate_handling: "preserve_and_report"
+    max_verified_rows: 70000
+    max_observed_payload_bytes: 106265723
+    on_exceeds_verified_rows: "stop_and_review"
+  fallback_pagination:
+    enabled: false
+    benchmark_page_size: 2000
+    requires_operation_specific_validation: true
+  operation_overrides:
+    SchoolMajorInfoService/getSchoolMajorInfo:
+      collection_mode: "single_page_total_count"
+      probe_page_size: 1
+      request_timeout_seconds: 180
+      max_verified_rows: 70000
+      observed_payload_bytes: 106265723
+evidence:
+  validation_notebook: "notebooks/academyinfo_validation.ipynb"
+  endpoint_config: "config/academyinfo/endpoints.yaml"
+  validation_scope: "103개 기능의 대표 범위 1행 live probe와 요청 규칙 검사"
+  validation_outputs: "노트북 셀 출력만 보존하며 별도 중간 파일을 생성하지 않음"
