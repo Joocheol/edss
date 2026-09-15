@@ -1,0 +1,10 @@
+{
+  "sources": {
+    "고등교육통계": 133,
+    "대학정보공시": 130,
+    "취업통계": 2
+  },
+  "expected_physical_download_units": 265,
+  "default_file_year": "ALL",
+  "landing_url": "https://www.edmgr.kr/edss/es/opd/odd/od/es_opd_oddod01_001"
+}

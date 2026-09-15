@@ -1,0 +1,45 @@
+{
+  "landing_url": "https://kess.kedi.re.kr/contents/dataset?itemCode=04&menuId=m_02_04_03_02&tabId=m2",
+  "expected_physical_year_files": 146,
+  "groups": {
+    "02": {
+      "domain": "고등교육통계",
+      "series": {
+        "학교별(상반기)": {"id": "school_spring", "expected_files": 19},
+        "학과별(상반기)": {"id": "department_spring", "expected_files": 19},
+        "학교별X학과별(상반기)": {"id": "school_department_spring", "expected_files": 19},
+        "학교별(하반기)": {"id": "school_fall", "expected_files": 11},
+        "학과별(하반기)": {"id": "department_fall", "expected_files": 11},
+        "학교별X학과별(하반기)": {"id": "school_department_fall", "expected_files": 11},
+        "학교별X국가별(외국 학생)": {"id": "school_country_international", "expected_files": 14}
+      }
+    },
+    "03": {
+      "domain": "졸업자취업통계",
+      "series": {
+        "학교별": {"id": "school", "expected_files": 14},
+        "학과별": {"id": "department", "expected_files": 14},
+        "학교별X학과별": {"id": "school_department", "expected_files": 14}
+      }
+    }
+  },
+  "affiliations": {
+    "government": "07",
+    "research_institute": "08",
+    "local_government": "09",
+    "education_staff": "10",
+    "education_office": "11",
+    "student": "12",
+    "private_organization": "13",
+    "other": "14"
+  },
+  "purposes": {
+    "general_interest": "01",
+    "academic_research": "02",
+    "policy": "03",
+    "research_project": "04",
+    "civil_request": "05",
+    "media": "06",
+    "other": "07"
+  }
+}

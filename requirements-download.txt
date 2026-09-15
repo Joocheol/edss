@@ -1,0 +1,3 @@
+# EDSS file downloads use the provider's browser-only download flow.
+-r requirements.txt
+playwright>=1.55,<2
